@@ -329,12 +329,12 @@ class Graph(object):
             vertex_reference[v_before_union] = Vertex(disjoint_union_graph)
 
         # Add edges
-        for v_before_union in self.edges + other.edges:
+        for e_before_union in self.edges + other.edges:
             # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
             disjoint_union_graph.add_edge(
                 Edge(
-                    vertex_reference[v_before_union.tail],
-                    vertex_reference[v_before_union.head]
+                    vertex_reference[e_before_union.tail],
+                    vertex_reference[e_before_union.head]
                 )
             )
 
