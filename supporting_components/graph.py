@@ -319,20 +319,8 @@ class Graph(object):
         :param other: Graph to add to `self'.
         :return: New graph which is a disjoint union of `self' and `other'.
         """
-
-        d = dict()
-        G = Graph(False, 0) # directive??? From other graphs?
-        for v1 in self.vertices:
-            d[v1] = Vertex(G)
-        for v2 in other.vertices:
-            d[v2] = Vertex(G)
-
-        for e1 in self.edges:
-            G.add_edge(Edge(d[e1.head], d[e1.tail]))
-        for e2 in other.edges:
-            G.add_edge(Edge(d[e2.head], d[e2.tail]))
-
-        return G
+        # TODO: implementation
+        pass
 
     def __iadd__(self, other: Union[Edge, Vertex]) -> "Graph":
         """
