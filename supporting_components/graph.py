@@ -316,11 +316,29 @@ class Graph(object):
     def __add__(self, other: "Graph") -> "Graph":
         """
         Make a disjoint union of two graphs.
+        A dictionary is used with the self and other graph's vertices as key.
+        The value of the dictionary (dict) is a new vertex in the disjoint union.
         :param other: Graph to add to `self'.
-        :return: New graph which is a disjoint union of `self' and `other'.
+        :return: New undirected graph which is a disjoint union of `self' and `other'.
         """
-        # TODO: implementation
-        pass
+        disjoint_union_graph = Graph(directed=False)
+
+        vertex_reference = dict()
+
+        for v_before_union in self.vertices + other.vertices:
+            vertex_reference[v_before_union] = Vertex(disjoint_union_graph)
+
+        # Add edges
+        for v_before_union in self.edges + other.edges:
+            # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
+            disjoint_union_graph.add_edge(
+                Edge(
+                    vertex_reference[v_before_union.tail],
+                    vertex_reference[v_before_union.head]
+                )
+            )
+
+        return disjoint_union_graph
 
     def __iadd__(self, other: Union[Edge, Vertex]) -> "Graph":
         """
