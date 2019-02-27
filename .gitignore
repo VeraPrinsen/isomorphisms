@@ -105,3 +105,6 @@ venv.bak/
 
 # JetBrains
 .idea/
+
+# Other
+output_graphs/
