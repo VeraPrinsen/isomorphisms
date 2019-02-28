@@ -14,13 +14,15 @@ def color_refinement(G: "Graph"):
 
     has_changed = True
     while has_changed:
+        has_changed = False
         for colornum, vertices in colors.copy().items():
             max_colornum += 1
 
             if len(vertices) == 1:
                 continue
 
-            __colorgroup_refinement(colors, colornum, vertices, max_colornum)
+            if __colorgroup_refinement(colors, colornum, vertices, max_colornum):
+                has_changed = True
     return G
 
 
@@ -59,11 +61,15 @@ def __colorgroup_refinement(colors, colornum, vertices: List["Vertex"], next_col
         v0_colors.append(v.colornum)
 
     # Compare the neighbours of each vertex in 'vertices' with the first vertex in 'vertices'
+    has_changed = False
     for v in vertices[1:]:
         if not __neighbours_equal(v0_colors.copy(), v):
             v.colornum = next_colornum
             colors.setdefault(next_colornum, []).append(v)
             colors[colornum].remove(v)
+            has_changed = True
+
+    return has_changed
 
 
 def __neighbours_equal(v0_colors: List[int], v: Vertex):
