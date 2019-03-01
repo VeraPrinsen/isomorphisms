@@ -63,9 +63,16 @@ def __colorgroup_refinement(colors, colornum, vertices: List["Vertex"], next_col
         v0_colors.append(v.colornum)
 
     # Compare each vertex other than the first vertex in 'vertices' with the first vertex in 'vertices'
+    # If the vertex is different, remember it in different_vertices
     has_changed = False
+    different_vertices = []
     for v in vertices[1:]:
         if not __neighbours_equal(v0_colors.copy(), v):
+            different_vertices.append(v)
+
+    # After all vertices have been compared, change the colornum of all different vertices
+    if len(different_vertices) > 0:
+        for v in different_vertices:
             v.colornum = next_colornum
             colors.setdefault(next_colornum, []).append(v)
             colors[colornum].remove(v)
