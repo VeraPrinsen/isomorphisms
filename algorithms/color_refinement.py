@@ -67,16 +67,15 @@ def __colorgroup_refinement(colors, colornum, vertices: List["Vertex"], next_col
     has_changed = False
     different_vertices = []
     for v in vertices[1:]:
-        if not __neighbours_equal(v0_colors.copy(), v):
+        if not __neighbours_equal(v0_colors, v):
             different_vertices.append(v)
 
     # After all vertices have been compared, change the colornum of all different vertices
-    if len(different_vertices) > 0:
-        for v in different_vertices:
-            v.colornum = next_colornum
-            colors.setdefault(next_colornum, []).append(v)
-            colors[colornum].remove(v)
-            has_changed = True
+    for v in different_vertices:
+        v.colornum = next_colornum
+        colors.setdefault(next_colornum, []).append(v)
+        colors[colornum].remove(v)
+        has_changed = True
 
     return has_changed
 
@@ -90,7 +89,7 @@ def __neighbours_equal(v0_colors: List[int], v: Vertex):
     :return: Boolean if neighbours of vertex v0 and v are equal
     """
     for n in v.neighbours:
-        if n.colornum in v0_colors:
+        if n.colornum in v0_colors.copy():
             v0_colors.remove(n.colornum)
         else:
             return False
