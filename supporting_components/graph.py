@@ -323,18 +323,28 @@ class Graph(object):
         """
         disjoint_union_graph = Graph(directed=False)
 
-        vertex_reference = dict()
+        vertex_reference_self = dict()
+        vertex_reference_other = dict()
 
-        for v_before_union in self.vertices + other.vertices:
-            vertex_reference[v_before_union] = Vertex(disjoint_union_graph)
+        for v_before_union in self.vertices:
+            vertex_reference_self[v_before_union] = Vertex(disjoint_union_graph)
+        for v_before_union in other.vertices:
+            vertex_reference_other[v_before_union] = Vertex(disjoint_union_graph)
 
         # Add edges
-        for e_before_union in self.edges + other.edges:
-            # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
+        # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
+        for e_before_union in self.edges:
             disjoint_union_graph.add_edge(
                 Edge(
-                    vertex_reference[e_before_union.tail],
-                    vertex_reference[e_before_union.head]
+                    vertex_reference_self[e_before_union.tail],
+                    vertex_reference_self[e_before_union.head]
+                )
+            )
+        for e_before_union in other.edges:
+            disjoint_union_graph.add_edge(
+                Edge(
+                    vertex_reference_other[e_before_union.tail],
+                    vertex_reference_other[e_before_union.head]
                 )
             )
 
