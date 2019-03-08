@@ -1,5 +1,6 @@
 from supporting_components.graph_io import write_dot
 import subprocess
+import os
 
 
 """
@@ -9,6 +10,8 @@ Install instructions:
     https://www.graphviz.org/download/
 """
 
+ROOT = os.path.abspath('../')
+
 
 def save_graph_as_dot(G, filename):
     """
@@ -17,7 +20,7 @@ def save_graph_as_dot(G, filename):
     :param filename: The filename in which the graph should be saved.
     """
 
-    dot_filename = '../output_graphs/dot/' + filename + '.dot'
+    dot_filename = ROOT + '/output_graphs/dot/' + filename + '.dot'
     with open(dot_filename, 'w') as g0:
         write_dot(G, g0)
 
@@ -28,6 +31,6 @@ def save_graph_in_png(filename):
     :param filename: The filename of the .dot file without the extension, this will also be the filename for the .png file
     """
 
-    dot_filename = '../output_graphs/dot/' + filename + '.dot'
-    png_filename = '../output_graphs/png/' + filename + '.png'
+    dot_filename = ROOT + '/output_graphs/dot/' + filename + '.dot'
+    png_filename = ROOT + '/output_graphs/png/' + filename + '.png'
     subprocess.run(["dot", "-Tpng", dot_filename, "-o", png_filename])
