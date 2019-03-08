@@ -1,5 +1,6 @@
 from supporting_components.graph_io import *
 from time import time
+from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
 from input_output.file_output import save_graph_as_dot, save_graph_in_png
 
@@ -36,7 +37,7 @@ for file in files:
         for j in range(i + 1, len(L[0])):
             G = L[0][i] + L[0][j]
             start = time()
-            color_refinement(G)
+            color_refinement(degree_color_initialization(G))
             end = time()
 
             output_filename = file + '_' + str(i) + '_' + str(j)

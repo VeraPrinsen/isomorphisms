@@ -10,10 +10,8 @@ def color_refinement(G: "Graph"):
     :return: Finished colored graph
     """
 
-    # In the initialization a dictionary 'colors' is created in which the keys are the 'colornum' property of vertices
-    # and the values are lists of vertices with that property colornum, max_colornum is the largest colornum used in
-    # the dictionary at that moment
-    colors, max_colornum = __initialize_colors(G)
+    # Get the current distribution of colors over the vertices and the maximum colornum in the graph
+    colors, max_colornum = get_colors(G)
 
     has_changed = True
     while has_changed:
@@ -27,20 +25,19 @@ def color_refinement(G: "Graph"):
     return G
 
 
-def __initialize_colors(G: "Graph"):
+def get_colors(G: "Graph"):
     """
-    Initializes the colornum properties of all vertices in graph G.
-    :param G: Graph to be initialized
-    :return colors: Dictionary with colornums as keys and a list of vertices as values
-    :return max_colornum: The current maximum colornum key in the dictionary 'colors'
+    Returns a map with the colors of the graph as keys and a list of all the vertices in the graph with that color as
+    values and the maximum colornum property in the graph.
+    :param G: The graph.
+    :return: The color map and the maximum colornum
     """
     colors = {}
     max_colornum = 0
     for v in G.vertices:
-        v.colornum = v.degree
-        if v.degree > max_colornum:
-            max_colornum = v.degree
-        colors.setdefault(v.degree, []).append(v)
+        colors.setdefault(v.colornum, []).append(v)
+        if v.colornum > max_colornum:
+            max_colornum = v.colornum
     return colors, max_colornum
 
 
