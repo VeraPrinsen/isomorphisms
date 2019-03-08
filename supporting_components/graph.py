@@ -319,6 +319,7 @@ class Graph(object):
         """
         Make a disjoint union of two graphs.
         A dictionary is used with the self and other graph's vertices as key.
+        A graph_label property is added to distinguish between the original graphs.
         The value of the dictionary (dict) is a new vertex in the disjoint union.
         The new vertex labelled using the property `graph_label` of Vertex.
         Vertices originating from self are graph_label = True, the other graph_label = False.
@@ -391,6 +392,48 @@ class Graph(object):
         :return: Whether the vertices are adjacent
         """
         return v in u.neighbours and (not self.directed or any(e.head == v for e in u.incidence))
+
+    def copy(self):
+        """
+        Returns a copy of the graph.
+        :return: The copy of the graph.
+        """
+        copy = Graph(self.directed)
+        vertices_old_to_new = {}
+
+        for v in self.vertices:
+            vertices_old_to_new[v] = Vertex(copy)
+            vertices_old_to_new[v].label = v.label
+            vertices_old_to_new[v].colornum = v.colornum
+            vertices_old_to_new[v].graph_label = v.graph_label
+
+        for e in self.edges:
+            edge = Edge(vertices_old_to_new[e.tail], vertices_old_to_new[e.head])
+            copy.add_edge(edge)
+
+        return copy
+
+    def is_equal(self, other):
+        """
+        Returns whether or not these two graphs are equal. It checks for three things
+        - If the same vertex is not in the copy.
+        - If the attributes of the vertices with the same label are equal.
+        - If the length of the list of the other graph is empty in the end.
+        This last check should be true, since if a vertex equal to a vertex in the graph is found in the other graph,
+        it is removed from the list of vertices in the other graph.
+        :param other: The other graph to compare this graph with.
+        :return: Whether or not these two graphs are equal.
+        """
+        other_vertices = other.vertices
+        for v in self.vertices:
+            if v in other.vertices:
+                return False
+            for o in other_vertices:
+                if v.label == o.label:
+                    if v.graph_label != o.graph_label or v.colornum != o.colornum:
+                        return False
+                    other_vertices.remove(o)
+        return len(other_vertices) == 0
 
 
 class UnsafeGraph(Graph):
