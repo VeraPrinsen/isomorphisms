@@ -1,6 +1,3 @@
-from supporting_components.graph import Graph
-from supporting_components.graph import Vertex
-
 def is_balanced_or_bijected(G: 'Graph'):
     """
     :param G:
