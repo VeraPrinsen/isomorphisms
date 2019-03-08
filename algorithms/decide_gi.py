@@ -30,10 +30,10 @@ def __is_balanced(G: 'Graph'):
     g_other_colornums = []
 
     for v in G.vertices:
-        if type(v.graph_label) == bool:
-            if v.graph_label == True:
+        if type(v.graph_label) == int:
+            if v.graph_label == 1:
                 g_self_colornums.append(v.colornum)
-            else:
+            elif v.graph_label == 2:
                 g_other_colornums.append(v.colornum)
         else:
             print("Error: Vertex graph_label is not of type bool")
