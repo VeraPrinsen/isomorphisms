@@ -18,10 +18,11 @@ def __is_balanced(G: 'Graph'):
 
     The vertex coloring of the `self` and `other` graph are extracted from the disjoint union.
     The extraction of `self` and `other` works via the attribute `graph_label` from Vertex.
-    If `graph_label` == True the vertex colornum is stored in the g_self_colornums list.
-    If `graph_label` == False the vertex colornum is stored in the g_other_colornums list.
+    If `graph_label` == 1 the vertex colornum is stored in the g_self_colornums list.
+    If `graph_label` == 2 the vertex colornum is stored in the g_other_colornums list.
 
-    To determine if the coloring is balanced, the lists g_self_colornums and g_other_colornums are compared for equality element-wise.
+    To determine if the disjoint union Graph coloring is balanced, the two graphs in the disjoint union are compared
+    element-wise.
     """
     g_self_colornums  = []
     g_other_colornums = []
