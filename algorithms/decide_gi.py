@@ -1,9 +1,9 @@
 def is_balanced_or_bijected(G: 'Graph'):
     """
-    :param G:
-    :return: bool is_balanced, bool is_bijected
     This function returns if the graph is balanced and bijected.
     Note: Only a balanced graph can be bijected.
+    :param G: Disjoint union graph
+    :return: bool is_balanced, bool is_bijected
     """
     is_balanced, colors = __is_balanced(G)
     if is_balanced:
@@ -13,9 +13,6 @@ def is_balanced_or_bijected(G: 'Graph'):
 
 def __is_balanced(G: 'Graph'):
     """
-    :param G:
-    :return: bool is_balanced, list g_self_colornums
-
     The vertex coloring of the `self` and `other` graph are extracted from the disjoint union.
     The extraction of `self` and `other` works via the attribute `graph_label` from Vertex.
     If `graph_label` == 1 the vertex colornum is stored in the g_self_colornums list.
@@ -23,6 +20,8 @@ def __is_balanced(G: 'Graph'):
 
     To determine if the disjoint union Graph coloring is balanced, the two graphs in the disjoint union are compared
     element-wise.
+    :param G: Disjoint union graph
+    :return: bool is_balanced, list g_self_colornums
     """
     g_self_colornums  = []
     g_other_colornums = []
@@ -46,12 +45,11 @@ def __is_balanced(G: 'Graph'):
 
 def __is_bijected(g_self_colornums: list):
     """
-    :param g_self_colornums list of colors
-    :return bool is_bijected
-
     Bijection can be tested after a Graph has been proven to be balanced.
     With use of a set it is tested if each color only is present once.
     If this is the case, the graph is a bijected.
+    :param g_self_colornums list of colors
+    :return bool is_bijected
     """
     g_self_colornums_set = set(g_self_colornums)
 
