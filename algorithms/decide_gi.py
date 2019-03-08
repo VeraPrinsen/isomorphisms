@@ -32,8 +32,11 @@ def __is_balanced(G: 'Graph'):
                 g_self_colornums.append(v.colornum)
             elif v.graph_label == 2:
                 g_other_colornums.append(v.colornum)
+            else:
+                raise ValueError('Error: Vertex with graph_label {graph_label} is not an int 1 or 2"'.format(
+                    graph_label=repr(v.graph_label)))
         else:
-            print("Error: Vertex graph_label is not of type bool")
+            raise ValueError('Error: Vertex with graph_label {graph_label} is not of type int"'.format(graph_label=repr(v.graph_label)))
 
     for self_colnum in g_self_colornums:
         if self_colnum in g_other_colornums:
