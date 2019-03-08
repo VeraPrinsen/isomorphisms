@@ -28,20 +28,22 @@ class Vertex(object):
     except for `__str__`.
     """
 
-    def __init__(self, graph: "Graph", label=None):
+    def __init__(self, graph: "Graph", label=None, graph_label=None):
         """
         Creates a vertex, part of `graph`, with optional label `label`.
         (Labels of different vertices may be chosen the same; this does
         not influence correctness of the methods, but will make the string
         representation of the graph ambiguous.)
         :param graph: The graph that this `Vertex` is a part of
-        :param label: Optional parameter to specify a label for the
+        :param label: Optional parameter to specify a label for the vertex
+        :param graph_label: Optional parameter to specify a graph label for the vertex. For ex.: used to identify vertex originating Graph in unions.
         """
         if label is None:
             label = graph._next_label()
 
         self._graph = graph
         self.label = label
+        self.graph_label = graph_label
         self._incidence = {}
 
     def __repr__(self):
@@ -318,6 +320,8 @@ class Graph(object):
         Make a disjoint union of two graphs.
         A dictionary is used with the self and other graph's vertices as key.
         The value of the dictionary (dict) is a new vertex in the disjoint union.
+        The new vertex labelled using the property `graph_label` of Vertex.
+        Vertices originating from self are graph_label = True, the other graph_label = False.
         :param other: Graph to add to `self'.
         :return: New undirected graph which is a disjoint union of `self' and `other'.
         """
@@ -327,9 +331,9 @@ class Graph(object):
         vertex_reference_other = dict()
 
         for v_before_union in self.vertices:
-            vertex_reference_self[v_before_union] = Vertex(disjoint_union_graph)
+            vertex_reference_self[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=1)
         for v_before_union in other.vertices:
-            vertex_reference_other[v_before_union] = Vertex(disjoint_union_graph)
+            vertex_reference_other[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=2)
 
         # Add edges
         # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
