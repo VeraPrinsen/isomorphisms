@@ -1,6 +1,6 @@
 from input_output.file_output import load_graph_list
 from input_output.sys_output import fail
-from algorithms.isomorphism_problem import is_isomorph, amount_of_isomorphisms
+from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
 
 
@@ -93,7 +93,7 @@ for i_file in i_files:
             print('---------------------------')
 
             start_isomorph = time()
-            boolean_isomorph = is_isomorph(G, H)
+            boolean_isomorph = are_isomorph(G, H)
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
