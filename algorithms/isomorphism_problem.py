@@ -1,4 +1,5 @@
-# import
+from algorithms.branching import count_isomorphisms
+from algorithms.color_initialization import degree_color_initialization
 
 
 """
@@ -14,8 +15,7 @@ def are_isomorph(G, H):
     """
     G_disjoint_union = G + H
 
-    # Todo: Implement
-    return False
+    return count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], False)
 
 
 def amount_of_isomorphisms(G, H):
@@ -26,5 +26,8 @@ def amount_of_isomorphisms(G, H):
     """
     G_disjoint_union = G + H
 
-    # Todo: Implement
-    return 0
+    return count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+
+
+
+
