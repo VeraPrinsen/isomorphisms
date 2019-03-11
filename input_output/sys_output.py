@@ -4,6 +4,7 @@ In this module are methods that format the output to the terminal.
 
 # Format: \033[i;j;km
 START = '\033['
+DELIMITER = ';'
 END = 'm'
 RESET = '\033[0;0m'
 # i = style
@@ -31,8 +32,13 @@ PURPLE_BG = '45'
 CYAN_BG = '46'
 WHITE_BG= '47'
 
-FAIL_COLOR = START + BOLD + ';' + RED_FONT + END
+FAIL_COLOR = START + BOLD + DELIMITER + RED_FONT + END
+PASS_COLOR = START + BOLD + DELIMITER + GREEN_FONT + END
 
 
 def fail(string):
     print(FAIL_COLOR + string + RESET)
+
+
+def passed(string):
+    print(PASS_COLOR + string + RESET)

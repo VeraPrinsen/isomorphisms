@@ -1,5 +1,5 @@
 from input_output.file_output import load_graph_list
-from input_output.sys_output import fail
+from input_output.sys_output import fail, passed
 from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
 
@@ -15,8 +15,12 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 
 
 """
-CHANGE HERE WHICH FILES YOU WANT TO EVALUATE.
+SETTING OF TEST
 """
+# Set this variable to true if you want to show passed test results
+show_passed_results = True
+
+# Change here which files you want to evaluate
 torus24 = True
 trees90 = True
 products72 = True
@@ -103,11 +107,20 @@ for i_file in i_files:
             if (i, j) in solution_map:
                 if not boolean_isomorph:
                     fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
+                else:
+                    if show_passed_results:
+                        passed("Graphs are isomorph")
                 if n_isomorphisms != solution_map[(i, j)]:
                     fail("[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms))
+                else:
+                    if show_passed_results:
+                        passed("Amount of isomorphisms is: " + str(n_isomorphisms))
             else:
                 if boolean_isomorph:
                     fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
+                else:
+                    if show_passed_results:
+                        passed("Graphs are not isomorph")
 
             print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
             print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
