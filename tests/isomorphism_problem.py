@@ -81,6 +81,8 @@ solution_isomorphisms = [
 ]
 
 # For every file that needs to be evaluated, all combinations of graphs within that file are evaluated.
+error_count = 0
+graph_count = 0
 for i_file in i_files:
     file = files[i_file]
     filename = '../test_graphs/individualization_refinement/' + file + '.grl'
@@ -89,6 +91,7 @@ for i_file in i_files:
 
     for i in range(0, len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
+            graph_count += 1
             G = graphs[i]
             H = graphs[j]
 
@@ -107,17 +110,21 @@ for i_file in i_files:
             if (i, j) in solution_map:
                 if not boolean_isomorph:
                     fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
+                    error_count += 1
                 else:
                     if show_passed_results:
                         passed("Graphs are isomorph")
+
                 if n_isomorphisms != solution_map[(i, j)]:
                     fail("[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms))
+                    error_count += 1
                 else:
                     if show_passed_results:
                         passed("Amount of isomorphisms is: " + str(n_isomorphisms))
             else:
                 if boolean_isomorph:
                     fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
+                    error_count += 1
                 else:
                     if show_passed_results:
                         passed("Graphs are not isomorph")
@@ -125,3 +132,15 @@ for i_file in i_files:
             print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
             print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
             print('')
+
+print('---------------------------')
+print("Statistics of test:")
+print('---------------------------')
+print("Amount of graphs tested: " + str(graph_count))
+print("Amount of graphs not colored correctly: " + str(error_count))
+print('')
+if error_count > 0:
+    fail('TEST FAILED')
+else:
+    passed('TEST PASSED')
+print('')
