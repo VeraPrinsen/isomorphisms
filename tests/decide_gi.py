@@ -1,4 +1,5 @@
 from input_output.file_output import load_graph_list
+from input_output.sys_output import fail
 from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
@@ -20,7 +21,7 @@ files = ['colorref_smallexample_2_49', 'colorref_smallexample_4_7', 'colorref_sm
 #       This dictionary contains:
 #           Tuple containing : (is_balanced, is_bijected) ((bool, bool))
 
-expected_results = {}
+expected_results = dict()
 expected_results['colorref_smallexample_2_49'] = {0: {1: (True, True)}}
 expected_results['colorref_smallexample_4_7'] = {0:  {1: (False, False), 2: (True, False), 3: (False, False)},
                                                  1:  {2: (False, False), 3: (True, True)},
@@ -45,10 +46,12 @@ def test_balanced_or_bijected(graph: 'Graph', is_balanced: bool, is_bijected: bo
     test_is_balanced, test_is_bijected = is_balanced_or_bijected(graph)
 
     if not (test_is_balanced == is_balanced and test_is_bijected == is_bijected):
-        print('DEBUG...')
-        print('Should be  : {}, {}'.format(is_balanced, is_bijected))
-        print('Calculated : {}, {}'.format(test_is_balanced, test_is_bijected))
-    return test_is_balanced == is_balanced and test_is_bijected == is_bijected
+        raise ValueError('             is_balanced  is_bijected' +
+                         '\nShould be  :     {}         {}'.format(is_balanced, is_bijected) +
+                         '\nCalculated :     {}         {}'.format(test_is_balanced, test_is_bijected)
+                         )
+    else:
+        return True
 
 
 # Testing loop
@@ -70,22 +73,21 @@ for file in files:
             graph_count += 1
             graph = graphs[i] + graphs[j]
             color_refinement(degree_color_initialization(graph))
-            is_balanced_or_bijected_test_result = test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
-            if not is_balanced_or_bijected_test_result:
+            try:
+                is_balanced_or_bijected_test_result = test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
+            except ValueError as err:
                 error_count += 1
                 print('---------------------------')
                 print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-                print('---------------------------')
-                print("Is calculated is_balanced_or_bijected correctly: " + str(is_balanced_or_bijected_test_result))
+                fail("{0}".format(err))
                 print('')
 print('---------------------------')
 print("Statistics of test is_balanced_or_bijected:")
-print('---------------------------')
 print("Amount of graphs tested: " + str(graph_count) + "/" + str(total_tests))
 print("Amount of graphs failed: " + str(error_count))
 print('')
-if error_count > 0:
-    print('TEST FAILED')
+if error_count > 0 or not total_tests == graph_count:
+    fail('TEST FAILED')
 else:
     print('TEST PASSED')
 print('')
