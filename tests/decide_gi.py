@@ -1,3 +1,4 @@
+from input_output.file_output import load_graph_list
 from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
@@ -20,28 +21,18 @@ files = ['colorref_smallexample_2_49', 'colorref_smallexample_4_7', 'colorref_sm
 #           Tuple containing : (is_balanced, is_bijected) ((bool, bool))
 
 expected_results = {}
-expected_results['colorref_smallexample_2_49'] = {0:
-                                                      {1: (True, True)}
+expected_results['colorref_smallexample_2_49'] = {0: {1: (True, True)}}
+expected_results['colorref_smallexample_4_7'] = {0:  {1: (False, False), 2: (True, False), 3: (False, False)},
+                                                 1:  {2: (False, False), 3: (True, True)},
+                                                 2:  {3: (False, False)}
+                                                 }
+expected_results['colorref_smallexample_6_15'] = {0: {1: (True, True), 2: (False, False), 3: (False, False), 4: (False, False), 5: (False, False)},
+                                                  1: {2: (False, False), 3: (False, False), 4: (False, False), 5: (False, False)},
+                                                  2: {3: (True, True), 4: (False, False), 5: (False, False)},
+                                                  3: {4: (False, False), 5: (False, False)},
+                                                  4: {5: (True, False)}
                                                   }
-expected_results['colorref_smallexample_4_7'] = {0:
-                                                      {1: (False, False), 2: (True, False), 3: (False, False)},
-                                                 1:
-                                                     {2: (False, False), 3: (True, True)},
-                                                 2:
-                                                     {3: (False, False)}
 
-                                                 }
-expected_results['colorref_smallexample_6_15'] = {0:
-                                                      {1: (True, True), 2: (False, False), 3: (False, False), 4: (False, False), 5: (False, False)},
-                                                  1:
-                                                      {2: (False, False), 3: (False, False), 4: (False, False), 5: (False, False)},
-                                                  2:
-                                                      {3: (True, True), 4: (False, False), 5: (False, False)},
-                                                  3:
-                                                      {4: (False, False), 5: (False, False)},
-                                                  4:
-                                                      {5: (True, False)},
-                                                 }
 
 def test_balanced_or_bijected(graph: 'Graph', is_balanced: bool, is_bijected: bool):
     """
@@ -73,21 +64,20 @@ error_count = 0
 graph_count = 0
 for file in files:
     filename = '../test_graphs/color_refinement/' + file + '.grl'
-    with open(filename) as f:
-        L = load_graph(f, read_list=True)
-        for i in range(0, len(L[0])):
-            for j in range(0 , i):
-                graph_count += 1
-                graph = L[0][i] + L[0][j]
-                color_refinement(degree_color_initialization(graph))
-                is_balanced_or_bijected_test_result = test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
-                if not is_balanced_or_bijected_test_result:
-                    error_count += 1
-                    print('---------------------------')
-                    print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-                    print('---------------------------')
-                    print("Is calculated is_balanced_or_bijected correctly: " + str(is_balanced_or_bijected_test_result))
-                    print('')
+    graphs = load_graph_list(filename)
+    for i in range(0, len(graphs)):
+        for j in range(0 , i):
+            graph_count += 1
+            graph = graphs[i] + graphs[j]
+            color_refinement(degree_color_initialization(graph))
+            is_balanced_or_bijected_test_result = test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
+            if not is_balanced_or_bijected_test_result:
+                error_count += 1
+                print('---------------------------')
+                print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                print('---------------------------')
+                print("Is calculated is_balanced_or_bijected correctly: " + str(is_balanced_or_bijected_test_result))
+                print('')
 print('---------------------------')
 print("Statistics of test is_balanced_or_bijected:")
 print('---------------------------')
