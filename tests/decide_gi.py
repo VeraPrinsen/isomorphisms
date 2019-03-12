@@ -37,7 +37,7 @@ expected_results['colorref_smallexample_6_15'] = {0: {1: (True, True), 2: (False
 
 def test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 'Bool'):
     """
-    Tests the is_balanced_or_bijected method of decide_gi.py agains expected answers for is_balanced and is_bijected
+    Tests the is_balanced_or_bijected method of decide_gi.py against expected answers for is_balanced and is_bijected
     :param graph: The graph to test
     :param is_balanced: the expected answer for is_balanced
     :param is_bijected: the expected answer for is_bijected
