@@ -1,3 +1,4 @@
+from input_output.file_output import load_graph_list
 from supporting_components.graph_io import *
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
@@ -18,21 +19,20 @@ error_count = 0
 graph_count = 0
 for file in files:
     filename = '../test_graphs/color_refinement/' + file + '.grl'
-    with open(filename) as f:
-        L = load_graph(f, read_list=True)
-        for i in range(0, len(L[0]) - 1):
-            for j in range(i + 1, len(L[0])):
-                graph_count += 1
-                graph = L[0][i] + L[0][j]
-                color_refinement(degree_color_initialization(graph))
-                is_equal = test_copy(graph)
-                if not is_equal:
-                    error_count += 1
-                    print('---------------------------')
-                    print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-                    print('---------------------------')
-                    print("Is copy equal to graph: " + str(is_equal))
-                    print('')
+    graphs = load_graph_list(filename)
+    for i in range(0, len(graphs) - 1):
+        for j in range(i + 1, len(graphs)):
+            graph_count += 1
+            graph = graphs[i] + graphs[j]
+            color_refinement(degree_color_initialization(graph))
+            is_equal = test_copy(graph)
+            if not is_equal:
+                error_count += 1
+                print('---------------------------')
+                print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                print('---------------------------')
+                print("Is copy equal to graph: " + str(is_equal))
+                print('')
 print('---------------------------')
 print("Statistics of test:")
 print('---------------------------')
