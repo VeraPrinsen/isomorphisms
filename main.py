@@ -11,7 +11,9 @@ filename = 'test_graphs/color_refinement/' + file + '.grl'
 
 graphs = load_graph_list(filename)
 
+os.makedirs(os.path.dirname('output_graphs/main/'), exist_ok=True)
+
 for i in range(0, len(graphs)):
-    outputfilename = 'output_graphs/' + file + '_' + str(i) + '.dot'
+    outputfilename = 'output_graphs/main/' + file + '_' + str(i) + '.dot'
     with open(outputfilename, 'w') as g0:
         write_dot(color_refinement(degree_color_initialization(graphs[i])), g0)
