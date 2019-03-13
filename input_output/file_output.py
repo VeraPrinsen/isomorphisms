@@ -27,11 +27,14 @@ def load_graph_list(filename):
 
 def save_graph_as_dot(G, filename):
     """
-    This method saves a graph in a dot file  .
+    This method saves a graph in a dot file.
+    If folder /output_graphs/dot does not exist it is created
     :param G: The graph to be saved.
     :param filename: The filename in which the graph should be saved.
     """
     dot_filename = ROOT + '/output_graphs/dot/' + filename + '.dot'
+    os.makedirs(os.path.dirname(dot_filename), exist_ok=True)
+
     with open(dot_filename, 'w') as g0:
         write_dot(G, g0)
 
@@ -39,8 +42,12 @@ def save_graph_as_dot(G, filename):
 def save_graph_in_png(filename):
     """
     This method can use a .dot file and transform it into a png image of the graph.
+    If folder /output_graphs/dot or /output_graphs/png does not exist it is created
     :param filename: The filename of the .dot file without the extension, this will also be the filename for the .png file
     """
     dot_filename = ROOT + '/output_graphs/dot/' + filename + '.dot'
     png_filename = ROOT + '/output_graphs/png/' + filename + '.png'
+    os.makedirs(os.path.dirname(dot_filename), exist_ok=True)
+    os.makedirs(os.path.dirname(png_filename), exist_ok=True)
+
     subprocess.run(["dot", "-Tpng", dot_filename, "-o", png_filename])
