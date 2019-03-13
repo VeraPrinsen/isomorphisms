@@ -1,6 +1,8 @@
 from supporting_components.graph_io import load_graph, write_dot
 import subprocess
 import os
+import csv
+import time
 
 
 """
@@ -10,8 +12,10 @@ Install instructions:
     https://www.graphviz.org/download/
 """
 
+# change dir to path of this file
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.abspath('../')
-
+os.chdir(ROOT)
 
 def load_graph_list(filename):
     """
@@ -44,3 +48,34 @@ def save_graph_in_png(filename):
     dot_filename = ROOT + '/output_graphs/dot/' + filename + '.dot'
     png_filename = ROOT + '/output_graphs/png/' + filename + '.png'
     subprocess.run(["dot", "-Tpng", dot_filename, "-o", png_filename])
+
+def create_csv_file(name: 'String'):
+    """
+    Creates an empty CSV file with initializer part for Excel compatibility
+    The filename will be timestamped by prefixing name with the current time:
+    example: YYYYMMDD_HHMMSS_name
+    The path of the csv file, including extension .csv, is returned as String.
+    :param name: name of the file
+    :return: string csv_filename, path to the file on disk
+    """
+    timestr = time.strftime('%Y%m%d_%H%M%S')
+
+    csv_filename = ROOT + '/output_files/csv/' + timestr + '_' + name + '.csv'
+    os.makedirs(os.path.dirname(csv_filename), exist_ok=True)
+    with open(csv_filename, 'w') as csv_init:
+        # Python converts \n to OS specific newline.
+        csv_init.write('sep=,\n')
+
+    return csv_filename
+
+def write_csv_line(csv_filename: 'String', col_strlist: 'List[String]'):
+    """
+    Appends a csv line to a file.
+    Uses Excel compatible delimiter, quotechar and quoting.
+    :param csv_filename:
+    :param col_strlist:
+    :return:
+    """
+    with open(csv_filename, mode='a') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(col_strlist)
