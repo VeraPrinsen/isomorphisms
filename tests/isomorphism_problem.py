@@ -18,20 +18,20 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 SETTING OF TEST
 """
 # Set this variable to true if you want to show passed test results
-show_passed_results = True
+show_passed_results = False
 
 # Change here which files you want to evaluate
-torus24 = True
-trees90 = True
-products72 = True
-cographs1 = True
-bigtrees1 = True
-torus144 = True
-trees36 = True
-modulesC = True
-cubes5 = True
-bigtrees3 = True
-cubes6 = True
+torus24 = False
+trees90 = False
+products72 = False
+cographs1 = False
+bigtrees1 = False
+torus144 = False
+trees36 = False
+modulesC = False
+cubes5 = False
+bigtrees3 = False
+cubes6 = False
 
 
 """
