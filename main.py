@@ -26,7 +26,6 @@ test_result_passed = True
 # main test loop
 for i in range(0, len(graphs)):
     outputfilename = 'output_files/main/' + file + '_' + str(i) + '.dot'
-    os.makedirs(os.path.dirname(outputfilename), exist_ok=True)
 
     start_time = time.time()
     save_graph_as_dot(color_refinement(degree_color_initialization(graphs[i])), outputfilename)
