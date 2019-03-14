@@ -29,7 +29,7 @@ for i in range(0, len(graphs)):
     outputfilename = 'output_files/main/' + file + '_' + str(i) + '.dot'
     os.makedirs(os.path.dirname(outputfilename), exist_ok=True)
 
-    start_time: float = time.time()
+    start_time = time.time()
     with open(outputfilename, 'w') as g0:
         write_dot(color_refinement(degree_color_initialization(graphs[i])), g0)
 
