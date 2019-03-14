@@ -1,5 +1,4 @@
-from input_output.file_output import load_graph_list
-from supporting_components.graph_io import *
+from input_output.file_output import load_graph_list, save_graph_as_dot
 from algorithms.color_refinement import color_refinement
 from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import write_csv_line
@@ -30,8 +29,7 @@ for i in range(0, len(graphs)):
     os.makedirs(os.path.dirname(outputfilename), exist_ok=True)
 
     start_time = time.time()
-    with open(outputfilename, 'w') as g0:
-        write_dot(color_refinement(degree_color_initialization(graphs[i])), g0)
+    save_graph_as_dot(color_refinement(degree_color_initialization(graphs[i])), outputfilename)
 
     test_result = True
     if not test_result:
