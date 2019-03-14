@@ -49,33 +49,37 @@ def save_graph_in_png(filename):
     png_filename = ROOT + '/output_graphs/png/' + filename + '.png'
     subprocess.run(["dot", "-Tpng", dot_filename, "-o", png_filename])
 
+
 def create_csv_file(name: 'String'):
     """
-    Creates an empty CSV file with initializer part for Excel compatibility
+    Creates an empty CSV file with `sep=.` initializer part for Excel compatibility.
     The filename will be timestamped by prefixing name with the current time:
-    example: YYYYMMDD_HHMMSS_name
+    example: YYYYMMDD-HH_MM_SS-name
     The path of the csv file, including extension .csv, is returned as String.
-    :param name: name of the file
-    :return: string csv_filename, path to the file on disk
+    If the folder output_files/csv does not exist it is created.
+    The argument newline = '' to prevens double carriage returns in non-binary mode.
+    :param name: preferred name of the file
+    :return: string csv_filename, path to the file
     """
-    timestr = time.strftime('%Y%m%d_%H%M%S')
 
-    csv_filename = ROOT + '/output_files/csv/' + timestr + '_' + name + '.csv'
+    csv_filename = ROOT + '/output_files/csv/' + time.strftime('%Y%m%d-%H_%M_%S') + '-' + name + '.csv'
     os.makedirs(os.path.dirname(csv_filename), exist_ok=True)
-    with open(csv_filename, 'w') as csv_init:
+    with open(csv_filename, 'w', newline='') as csv_init:
         # Python converts \n to OS specific newline.
         csv_init.write('sep=,\n')
 
     return csv_filename
 
+
 def write_csv_line(csv_filename: 'String', col_strlist: 'List[String]'):
     """
     Appends a csv line to a file.
     Uses Excel compatible delimiter, quotechar and quoting.
+    The argument newline = '' to prevens double carriage returns in non-binary mode.
     :param csv_filename:
     :param col_strlist:
     :return:
     """
-    with open(csv_filename, mode='a') as csv_file:
+    with open(csv_filename, mode='a', newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(col_strlist)
