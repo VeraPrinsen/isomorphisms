@@ -43,24 +43,29 @@ def fast_color_refinement(G: "Graph"):
     while queue:
         # Get first color and remove that from the queue
         color = queue.pop(0)
+        # Get the vertices of the graph in the color group currently investigated
         colors, max_colornum = get_colors(G)
-        # Loop over all color groups in the graph
-        for c, vertices in colors.items():
-            # Skip the color group currently investigating or if the size of the color group is 1
-            if c == color or len(vertices) == 1:
+        vertices_in_color_group = colors[color]
+        # Get the neighbours of the color group grouped by color
+        neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group)
+        for c, color_group in neighbours_of_color_group.items():
+            # Do nothing if the size of the set in neighbours_of_color_group is zero or if the size is the same as the size of the list in colors
+            if len(color_group) == 0 or len(color_group) == len(colors[c]):
                 continue
-            # Create two lists based on whether a vertex has a neighbour in the color group currently investigating
-            neighbour_in_color_group, no_neighbour_in_color_group = __divide_color_group(color, vertices)
-            # Do nothing if one of the lists is empty
-            if len(neighbour_in_color_group) == 0 or len(no_neighbour_in_color_group) == 0:
-                continue
-            unused, max_colornum = get_colors(G)
-            new_color = max_colornum + 1
-            # Change the color of the vertices in one of the lists depending on whether or not the current color is in
-            # the queue
-            __change_color(neighbour_in_color_group, no_neighbour_in_color_group, new_color, c, queue)
-            # Add new color group to the queue
-            queue.append(new_color)
+            # Change the color of the vertices in neighbours_of_color_group
+            max_colornum = max_colornum + 1
+            for vertex in color_group:
+                vertex.colornum = max_colornum
+            # Add the correct color to the queue
+            if c in queue:
+                queue.append(max_colornum)
+            else:
+                # Append the current color to the queue if the amount of vertices that did not change color is larger
+                # than the amount of vertices that did change color
+                if 2 * len(color_group) < len(colors[c]):
+                    queue.append(c)
+                else:
+                    queue.append(max_colornum)
     return G
 
 
@@ -152,60 +157,18 @@ def __initialize_queue(G: "Graph"):
     return queue
 
 
-def __divide_color_group(color, vertices):
+def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group):
     """
-    Divides the vertices in two groups based on whether or not  a vertex has a neighbour in the color group currently
-    investigating
-    :param color: The color currently investigating
-    :param vertices: The vertices of the group to divide
-    :return: The vertices in the group divided into two lists
+    Returns a dict with the color of the color group as key and the set of neighbours of the color group currently
+    investigated as value.
+    :param vertices_in_color_group: The vertices in the color group currently investigated
+    :return: The dict with the color and the vertices in those color groups with a neighbour in the color group
+    currently investigated
     """
-    neighbour_in_color_group = []
-    no_neighbour_in_color_group = []
-    for vertex in vertices:
-        if __has_neighbour_in_color_group(vertex, color):
-            neighbour_in_color_group.append(vertex)
-        else:
-            no_neighbour_in_color_group.append(vertex)
-    return neighbour_in_color_group, no_neighbour_in_color_group
-
-
-def __has_neighbour_in_color_group(vertex: "Vertex", color: "Int"):
-    """
-    Returns whether or not the vertex has a neighbour in the color group currently investigating.
-    :param vertex: The vertex
-    :return: Whether or not the vertex has a neighbour in the color group
-    """
-    neighbours = vertex.neighbours
-    for neighbour in neighbours:
-        if neighbour.colornum == color:
-            return True
-    return False
-
-
-def __change_color(neighbour_in_color_group, no_neighbour_in_color_group, new_color, c, queue):
-    """
-    Changes the color of one of the lists of vertices depending on the length of the lists and whether or not the
-    current color is in the queue
-    :param neighbour_in_color_group: The list of vertices that have a neighbour in the color group currently
-    investigated
-    :param no_neighbour_in_color_group: The list of vertices that do not have a neighbour in the color group currently
-    investigated
-    :param new_color: The new color to assign to the vertices in one of the lists
-    :param c: The current color of the vertices in the lists
-    :param queue: The queue
-    """
-    if len(neighbour_in_color_group) > len(no_neighbour_in_color_group):
-        smallest = no_neighbour_in_color_group
-        largest = neighbour_in_color_group
-    else:
-        smallest = neighbour_in_color_group
-        largest = no_neighbour_in_color_group
-    # Change the color of the vertices of the largest list
-    if c in queue:
-        for vertex in largest:
-            vertex.colornum = new_color
-    # Change the color of the vertices of the smallest list
-    else:
-        for vertex in smallest:
-            vertex.colornum = new_color
+    neighbours_of_color_group = {}
+    for vertex in vertices_in_color_group:
+        neighbours = vertex.neighbours
+        for neighbour in neighbours:
+            if neighbour not in vertices_in_color_group:
+                neighbours_of_color_group.setdefault(neighbour.colornum, set()).add(neighbour)
+    return neighbours_of_color_group
