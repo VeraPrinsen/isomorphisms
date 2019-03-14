@@ -1,16 +1,11 @@
-from input_output.file_output import load_graph_list
+from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
 from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
 
 
 """
-To test if the branching algorithm works finding isomorphisms between two graphs.
-If a test fails, a red [FAIL] print statement is shown in the terminal.
-Furthermore, the processing time per file is mentioned in the terminal.
-
-Notation:
-filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
+To test if the general isomorphism problem algorithms works finding isomorphisms between two graphs.
 """
 
 
@@ -19,10 +14,13 @@ SETTING OF TEST
 """
 # Set this variable to true if you want to show passed test results
 show_passed_results = False
+# Set this variable to true if you want to write all results to a csv file
+create_csv = True
 
+# todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
-torus24 = False
-trees90 = False
+torus24 = True
+trees90 = True
 products72 = False
 cographs1 = False
 bigtrees1 = False
@@ -37,6 +35,13 @@ cubes6 = False
 """
 DO NOT CHANGE ANYTHING BELOW HERE
 """
+# If csv must be created, create an empty file here
+if create_csv:
+    csv_filepath = create_csv_file("isomorphism-problem-test")
+    # Write first row with column names
+    csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'result', 'amount_of_isomorphisms processing time (s)', 'result']
+    write_csv_line(csv_filepath, csv_column_names)
+
 # Only files that needs to be evaluated are added to the list.
 i_files = []
 torus24 and i_files.append(0)
@@ -85,7 +90,7 @@ error_count = 0
 graph_count = 0
 for i_file in i_files:
     file = files[i_file]
-    filename = '../test_graphs/individualization_refinement/' + file + '.grl'
+    filename = '/test_graphs/individualization_refinement/' + file + '.grl'
     graphs = load_graph_list(filename)
     solution_map = solution_isomorphisms[i_file]
 
@@ -107,10 +112,13 @@ for i_file in i_files:
             n_isomorphisms = amount_of_isomorphisms(G, H)
             end_amount_isomorphisms = time()
 
+            are_isomorph_result = True
+            amount_isomorph_result = True
             if (i, j) in solution_map:
                 if not boolean_isomorph:
                     fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
                     error_count += 1
+                    are_isomorph_result = False
                 else:
                     if show_passed_results:
                         passed("Graphs are isomorph")
@@ -118,6 +126,7 @@ for i_file in i_files:
                 if n_isomorphisms != solution_map[(i, j)]:
                     fail("[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms))
                     error_count += 1
+                    amount_isomorph_result = False
                 else:
                     if show_passed_results:
                         passed("Amount of isomorphisms is: " + str(n_isomorphisms))
@@ -125,17 +134,23 @@ for i_file in i_files:
                 if boolean_isomorph:
                     fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
                     error_count += 1
+                    are_isomorph_result = False
                 else:
                     if show_passed_results:
                         passed("Graphs are not isomorph")
 
-            print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
-            print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
+            are_isomorph_time = round((end_isomorph - start_isomorph), 3)
+            amount_isomorph_time = round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
+            print("Processing time is_isomorph(G, H): " + str(are_isomorph_time) + " s")
+            print("Processing time amount_of_isomorphisms(G, H): " + str(amount_isomorph_time) + " s")
             print('')
 
-print('---------------------------')
-print("Statistics of test:")
-print('---------------------------')
+            csv_graph_result = [file, i, j, are_isomorph_time, are_isomorph_result, amount_isomorph_time, amount_isomorph_result]
+            write_csv_line(csv_filepath, csv_graph_result)
+
+print('-------------------------------')
+print("Statistics of branching test:")
+print('-------------------------------')
 print("Amount of graphs tested: " + str(graph_count))
 print("Amount of graphs not colored correctly: " + str(error_count))
 print('')
