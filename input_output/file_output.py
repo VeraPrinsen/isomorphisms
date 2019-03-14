@@ -46,7 +46,7 @@ def save_graph_as_dot(G, filename):
 def save_graph_in_png(filename):
     """
     This method can use a .dot file and transform it into a png image of the graph.
-    If folder /output_files/dot or /output_files/png does not exist it is created
+    If folder /output_files/dot or /output_files/png does not exist it is created using os.makedirs().
     :param filename: The filename of the .dot file without the extension, this will also be the filename for the .png file
     """
     dot_filename = ROOT + '/output_files/dot/' + filename + '.dot'
@@ -63,7 +63,7 @@ def create_csv_file(name: 'String'):
     The filename will be timestamped by prefixing name with the current time:
     example: YYYYMMDD-HH_MM_SS-name
     The path of the csv file, including extension .csv, is returned as String.
-    If the folder output_files/csv does not exist it is created.
+    If the folder output_files/csv does not exist it is created using os.makedirs().
     The argument newline = '' to prevent double carriage returns in non-binary mode.
     :param name: preferred name of the file
     :return: string csv_filename, path to the file
