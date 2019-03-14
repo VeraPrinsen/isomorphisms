@@ -64,7 +64,7 @@ def create_csv_file(name: 'String'):
     example: YYYYMMDD-HH_MM_SS-name
     The path of the csv file, including extension .csv, is returned as String.
     If the folder output_files/csv does not exist it is created.
-    The argument newline = '' to prevens double carriage returns in non-binary mode.
+    The argument newline = '' to prevent double carriage returns in non-binary mode.
     :param name: preferred name of the file
     :return: string csv_filename, path to the file
     """
@@ -82,7 +82,7 @@ def write_csv_line(csv_filename: 'String', col_strlist: 'List[String]'):
     """
     Appends a csv line to a file.
     Uses Excel compatible delimiter, quotechar and quoting.
-    The argument newline = '' to prevens double carriage returns in non-binary mode.
+    The argument newline = '' to prevent double carriage returns in non-binary mode.
     :param csv_filename:
     :param col_strlist:
     :return:
