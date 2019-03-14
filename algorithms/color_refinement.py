@@ -25,6 +25,50 @@ def color_refinement(G: "Graph"):
     return G
 
 
+def fast_color_refinement(G: "Graph"):
+    """
+    Performs fast color refinement on the graph.
+    It creates a queue of color groups to check for the initially colored graph.
+    For each color group in the queue, it splits the other color groups based on whether or not the vertices are
+    neighbours of one of the vertices in the color group.
+    If the result is the same for all vertices in a group, the group is left unchanged.
+    The newly created groups are added to the queue if the original group is in the queue.
+    If the original group is not in the queue, the smallest of the original and the new group is added to the queue.
+    The algorithm terminates if the queue is empty.
+    :param G: The graph to perform color refinement on
+    :return: The colored graph
+    """
+
+    queue = __initialize_queue(G)
+    while queue:
+        # Get first color and remove that from the queue
+        color = queue.pop(0)
+        # Get the vertices of the graph in the color group currently investigated
+        colors, max_colornum = get_colors(G)
+        vertices_in_color_group = colors[color]
+        # Get the neighbours of the color group grouped by color
+        neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group)
+        for c, color_group in neighbours_of_color_group.items():
+            # Do nothing if the size of the set in neighbours_of_color_group is zero or if the size is the same as the size of the list in colors
+            if len(color_group) == 0 or len(color_group) == len(colors[c]):
+                continue
+            # Change the color of the vertices in neighbours_of_color_group
+            max_colornum = max_colornum + 1
+            for vertex in color_group:
+                vertex.colornum = max_colornum
+            # Add the correct color to the queue
+            if c in queue:
+                queue.append(max_colornum)
+            else:
+                # Append the current color to the queue if the amount of vertices that did not change color is larger
+                # than the amount of vertices that did change color
+                if 2 * len(color_group) < len(colors[c]):
+                    queue.append(c)
+                else:
+                    queue.append(max_colornum)
+    return G
+
+
 def get_colors(G: "Graph"):
     """
     Returns a map with the colors of the graph as keys and a list of all the vertices in the graph with that color as
@@ -92,3 +136,39 @@ def __neighbours_equal(v0: List[int], v: Vertex):
         else:
             return False
     return True
+
+
+def __initialize_queue(G: "Graph"):
+    """
+    Initializes the queue of the graph for the fast color refinement using the initial coloring.
+    Puts all color groups in the queue except the largest color group.
+    :param G: The graph to construct the queue for
+    :return: The queue of the graph
+    """
+    colors, max_colornum = get_colors(G)
+    queue = list(colors.keys())
+    largest_color_group_size = 0
+    largest_color_group = 0
+    for color, vertices in colors.items():
+        if len(vertices) > largest_color_group_size:
+            largest_color_group = color
+            largest_color_group_size = len(vertices)
+    queue.remove(largest_color_group)
+    return queue
+
+
+def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group):
+    """
+    Returns a dict with the color of the color group as key and the set of neighbours of the color group currently
+    investigated as value.
+    :param vertices_in_color_group: The vertices in the color group currently investigated
+    :return: The dict with the color and the vertices in those color groups with a neighbour in the color group
+    currently investigated
+    """
+    neighbours_of_color_group = {}
+    for vertex in vertices_in_color_group:
+        neighbours = vertex.neighbours
+        for neighbour in neighbours:
+            if neighbour not in vertices_in_color_group:
+                neighbours_of_color_group.setdefault(neighbour.colornum, set()).add(neighbour)
+    return neighbours_of_color_group
