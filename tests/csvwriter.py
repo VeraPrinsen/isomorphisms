@@ -4,18 +4,21 @@ from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import write_csv_line
 from input_output.file_output import create_csv_file
 import time
+import csv
 
 # This file is to demonstrate the workings of writing test results to a CSV file.
-# The test is a mock.
+# The test itself is a mock and will always pass.
+# The result of the test are written to CSV in the folder output_files/csv/
+from input_output.sys_output import fail, passed
 
 file = 'colorref_smallexample_4_16'
 filename = 'test_graphs/color_refinement/' + file + '.grl'
 graphs = load_graph_list(filename)
 
 # Output csv creation
-csv_filepath = create_csv_file('main')
+csv_filepath = create_csv_file('csvwriter_test')
 # Write first row with column names
-write_csv_line(csv_filepath, ['file', 'i', 'time (s)', 'result'])
+csv_write_array = [['file', 'i', 'time (s)', 'result']]
 
 # Test result accumulators
 end_time_sum = 0
@@ -37,11 +40,31 @@ for i in range(0, len(graphs)):
     end_time = time.time() - start_time
     end_time_sum = end_time_sum + end_time
     # Write individual test result to the csv
-    write_csv_line(csv_filepath, [file, str(i), "{0:.3f}".format(end_time), str(test_result_mock)])
+    csv_write_array.append([file, str(i), "{0:.3f}".format(end_time), str(test_result_mock)])
 
 # Write the total test result row to csv
-write_csv_line(csv_filepath, ['', '', '', ''])
-write_csv_line(csv_filepath, ['', '', 'Total (s)', 'All pass?'])
-write_csv_line(csv_filepath, ['', '', "{0:.3f}".format(end_time_sum), str(test_result_passed)])
+csv_write_array.append(['', '', '', ''])
+csv_write_array.append(['', '', 'Total (s)', 'All pass?'])
+csv_write_array.append(['', '', "{0:.3f}".format(end_time_sum), str(test_result_passed)])
 
-print('CSV written to: '+csv_filepath)
+for line in csv_write_array:
+    write_csv_line(csv_filepath, line)
+
+print('CSV written to: ' + csv_filepath)
+
+print("VERIFYING write action...")
+
+csv_read_array =[]
+
+with open(csv_filepath, newline='') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        csv_read_array.append(row)
+
+# The first row is the separator line, pop it
+csv_read_array.pop(0)
+
+if csv_read_array == csv_write_array:
+    passed("CSV write OK")
+else:
+    fail("CSV write test failed")
