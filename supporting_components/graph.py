@@ -79,6 +79,18 @@ class Vertex(object):
 
         self._incidence[other].add(edge)
 
+    def _del_incidence(self, edge: "Edge"):
+        """
+        For internal use only; deletes an edge from the incidence map
+        :param edge: The edge that needs to be removed
+        """
+        other = edge.other_end(self)
+
+        if edge in self._incidence[other]:
+            self._incidence[other].remove(edge)
+            if len(self._incidence[other]) == 0:
+                del self._incidence[other]
+
     @property
     def graph(self) -> "Graph":
         """
@@ -291,6 +303,17 @@ class Graph(object):
 
         self._v.append(vertex)
 
+    def del_vertex(self, vertex: "Vertex"):
+        """
+        Delete a vertex from the graph. Also remove edges connected to that vertex.
+        :param vertex: The vertex to be removed
+        """
+        for e in vertex.incidence:
+            vertex.graph.del_edge(e)
+
+        self._v.remove(vertex)
+
+
     def add_edge(self, edge: "Edge"):
         """
         Add an edge to the graph. And if necessary also the vertices.
@@ -314,6 +337,17 @@ class Graph(object):
 
         edge.head._add_incidence(edge)
         edge.tail._add_incidence(edge)
+
+    def del_edge(self, edge: "Edge"):
+        """
+        Delete edge from the graph.
+        :param edge: The edge to be deleted.
+        """
+        edge.head._del_incidence(edge)
+        edge.tail._del_incidence(edge)
+
+        if edge in self._e:
+            self._e.remove(edge)
 
     def __add__(self, other: "Graph") -> "Graph":
         """
