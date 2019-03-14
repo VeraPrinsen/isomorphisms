@@ -2,6 +2,7 @@ from supporting_components.graph import Graph, Vertex
 from algorithms.color_refinement import color_refinement, get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
 from typing import List, Dict
+from math import inf
 
 
 def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool'):
@@ -31,21 +32,24 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
             return True
         return 1
 
+    # Start branching algorithm by making a copy of the graph, each branch should have a new copy
     G_copy = G.copy()
     colors, max_colornum = get_colors(G_copy)
 
-    # Choose the color C with at least 4 vertices of that color in the graph
+    # Choose the color class C with at least 4 vertices of that color in the graph
+    # Choose color class with smallest amount of vertices
+    C_len = inf
     for key in colors:
-        if len(colors[key]) >= 4:
+        if len(colors[key]) >= 4 and len(colors[key]) < C_len:
             C = key
-            continue
+            C_len = len(colors[key])
 
     # Choose the first occurring vertex with color C in the list of vertices of the first graph
-    g0 = []
     for v in colors[C]:
         if v.graph_label == 1:
-            g0.append(v)
-    x = g0[0]
+            x = v
+            break
+
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
     x.colornum = max_colornum + 1
     D.append(x)
@@ -74,10 +78,9 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
         if v.graph_label == 2:
             g1.append(v)
 
-    num_isomorphisms = 0
-
     # For each of the vertices in the list of vertices with color C, fix the vertex and change its color to the new
     # color and determine the amount of isomorphisms for the resulting graph
+    num_isomorphisms = 0
     for y0 in g1:
         G_copy = G.copy()
         D_copy = D.copy()
@@ -90,4 +93,5 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
                 num_isomorphisms += count_isomorphisms(G_copy, D_copy, I_copy, count_flag)
                 if not count_flag and num_isomorphisms > 0:
                     return True
+                break
     return num_isomorphisms
