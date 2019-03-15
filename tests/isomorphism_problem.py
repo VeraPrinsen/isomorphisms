@@ -15,7 +15,7 @@ SETTING OF TEST
 # Set this variable to true if you want to show passed test results
 show_passed_results = False
 # Set this variable to true if you want to write all results to a csv file
-create_csv = True
+create_csv = False
 
 # todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
@@ -145,8 +145,9 @@ for i_file in i_files:
             print("Processing time amount_of_isomorphisms(G, H): " + str(amount_isomorph_time) + " s")
             print('')
 
-            csv_graph_result = [file, i, j, are_isomorph_time, are_isomorph_result, amount_isomorph_time, amount_isomorph_result]
-            write_csv_line(csv_filepath, csv_graph_result)
+            if create_csv:
+                csv_graph_result = [file, i, j, are_isomorph_time, are_isomorph_result, amount_isomorph_time, amount_isomorph_result]
+                write_csv_line(csv_filepath, csv_graph_result)
 
 print('-------------------------------')
 print("Statistics of branching test:")
