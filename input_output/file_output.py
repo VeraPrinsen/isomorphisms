@@ -23,7 +23,7 @@ def load_graph_list(filename):
     :param filename: The file the graphs should be extracted from
     :return: A list of graphs
     """
-    with open(filename) as f:
+    with open(ROOT + filename) as f:
         L = load_graph(f, read_list=True)
 
     return L[0]

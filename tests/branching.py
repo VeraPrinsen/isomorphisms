@@ -1,11 +1,17 @@
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
-from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
+from algorithms.branching import count_isomorphisms
+from algorithms.color_initialization import degree_color_initialization
 from time import time
 
 
 """
-To test if the general isomorphism problem algorithms works finding isomorphisms between two graphs.
+To test if the branching algorithm works finding isomorphisms between two graphs.
+If a test fails, a red [FAIL] print statement is shown in the terminal.
+Furthermore, the processing time per file is mentioned in the terminal.
+
+Notation:
+filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
 
@@ -17,7 +23,6 @@ show_passed_results = False
 # Set this variable to true if you want to write all results to a csv file
 create_csv = True
 
-# todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
 torus24 = False
 trees90 = False
@@ -37,7 +42,7 @@ DO NOT CHANGE ANYTHING BELOW HERE
 """
 # If csv must be created, create an empty file here
 if create_csv:
-    csv_filepath = create_csv_file("isomorphism-problem-test")
+    csv_filepath = create_csv_file("branching-test")
     # Write first row with column names
     csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'passed', 'amount_of_isomorphisms processing time (s)', 'passed']
     write_csv_line(csv_filepath, csv_column_names)
@@ -104,12 +109,14 @@ for i_file in i_files:
             print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
             print('---------------------------')
 
+            G_disjoint_union = G + H
+
             start_isomorph = time()
-            boolean_isomorph = are_isomorph(G, H)
+            boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], False)
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
-            n_isomorphisms = amount_of_isomorphisms(G, H)
+            n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
             end_amount_isomorphisms = time()
 
             are_isomorph_result = True
