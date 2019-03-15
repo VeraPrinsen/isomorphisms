@@ -44,7 +44,7 @@ DO NOT CHANGE ANYTHING BELOW HERE
 if create_csv:
     csv_filepath = create_csv_file("branching-test")
     # Write first row with column names
-    csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'result', 'amount_of_isomorphisms processing time (s)', 'result']
+    csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'passed', 'amount_of_isomorphisms processing time (s)', 'passed']
     write_csv_line(csv_filepath, csv_column_names)
 
 # Only files that needs to be evaluated are added to the list.

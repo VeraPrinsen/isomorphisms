@@ -19,8 +19,8 @@ create_csv = True
 
 # todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
-torus24 = True
-trees90 = True
+torus24 = False
+trees90 = False
 products72 = False
 cographs1 = False
 bigtrees1 = False
@@ -39,7 +39,7 @@ DO NOT CHANGE ANYTHING BELOW HERE
 if create_csv:
     csv_filepath = create_csv_file("isomorphism-problem-test")
     # Write first row with column names
-    csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'result', 'amount_of_isomorphisms processing time (s)', 'result']
+    csv_column_names = ['file', 'graph1', 'graph2', 'are_isomorph processing time (s)', 'passed', 'amount_of_isomorphisms processing time (s)', 'passed']
     write_csv_line(csv_filepath, csv_column_names)
 
 # Only files that needs to be evaluated are added to the list.
