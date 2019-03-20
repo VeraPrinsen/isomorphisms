@@ -105,11 +105,11 @@ for i_file in i_files:
             print('---------------------------')
 
             start_isomorph = time()
-            boolean_isomorph = are_isomorph(G, H)
+            boolean_isomorph = are_isomorph(G.copy(), H.copy())
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
-            n_isomorphisms = amount_of_isomorphisms(G, H)
+            n_isomorphisms = amount_of_isomorphisms(G.copy(), H.copy())
             end_amount_isomorphisms = time()
 
             are_isomorph_result = True
