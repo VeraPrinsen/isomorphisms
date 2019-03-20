@@ -45,6 +45,7 @@ class Vertex(object):
         self.label = label
         self.graph_label = graph_label
         self._incidence = {}
+        self.twin_degree = None
 
     def __repr__(self):
         """

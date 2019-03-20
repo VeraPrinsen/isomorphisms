@@ -10,8 +10,11 @@ def remove_twins(G: 'Graph'):
     :return factor: To find the right amount of isomorphisms, the amount of isomorphisms found with the remaining
     graph should be multiplied by this factor.
     """
+    # First save degrees of vertices in twin_degree, so that will not change even though twins are removed
+    # Also put all vertices in a queue for evaluation
     queue = []
     for v in G.vertices:
+        v.twin_degree = v.degree
         queue.append(v)
 
     factor = 1

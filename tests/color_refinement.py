@@ -1,8 +1,9 @@
-from algorithms.color_initialization import degree_color_initialization
+from algorithms.color_initialization import twins_color_initialization
 from algorithms.color_refinement import color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png
 from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
+from algorithms.preprocessing import remove_twins
 from time import time
 
 """
@@ -34,7 +35,7 @@ solution_isomorphisms = [
 files = ['colorref_smallexample_4_7', 'colorref_smallexample_6_15', 'colorref_smallexample_2_49']
 for i_file in range(0,len(files)):
     file = files[i_file]
-    filename = '../test_graphs/color_refinement/' + file + '.grl'
+    filename = '/test_graphs/color_refinement/' + file + '.grl'
     graphs = load_graph_list(filename)
 
     for i in range(0, len(graphs) - 1):
@@ -42,7 +43,8 @@ for i_file in range(0,len(files)):
             G = graphs[i] + graphs[j]
 
             start = time()
-            color_refinement(degree_color_initialization(G))
+            remove_twins(G)
+            color_refinement(twins_color_initialization(G))
             end = time()
 
             output_filename = file + '_' + str(i) + '_' + str(j)
