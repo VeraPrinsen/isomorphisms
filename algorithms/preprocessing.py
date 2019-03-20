@@ -1,5 +1,6 @@
 from supporting_components.graph import Graph, Vertex
 from math import factorial
+from typing import List
 
 
 def remove_twins(G: 'Graph'):
@@ -50,10 +51,19 @@ def are_twins(v0: "Vertex", v1: "Vertex"):
     :return: Boolean if vertices v0 and v1 are twins or not
     """
     if v0 in v1.neighbours:
-        v0_neighbours = v0.neighbours
+        v0_neighbours = v0.neighbours.copy()
         v0_neighbours.remove(v1)
-        v1_neighbours = v1.neighbours
+        v1_neighbours = v1.neighbours.copy()
         v1_neighbours.remove(v0)
-        return v0_neighbours == v1_neighbours
+        return neighbours_equal(v0_neighbours, v1_neighbours)
     else:
-        return v0.neighbours == v1.neighbours
+        return neighbours_equal(v0.neighbours.copy(), v1.neighbours.copy())
+
+
+def neighbours_equal(v0_neighbours: "List[Vertex]", v1_neighbours: "List[Vertex]"):
+    for neighbour in v0_neighbours:
+        if neighbour in v1_neighbours:
+            v1_neighbours.remove(neighbour)
+        else:
+            return False
+    return len(v1_neighbours) == 0
