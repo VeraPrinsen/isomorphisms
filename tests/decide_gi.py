@@ -6,8 +6,15 @@ from input_output.sys_output import passed
 from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
+import fun_provider
 
 class Decide_gi:
+
+    def unittest(self):
+        # Swap in the color refinement object Default_color_refinement().
+        # This object has .color_refine(), which is what this function expects for color refinement during test.
+        return _test_decide_gi(test_name='decide_gi_unit', color_refine_object = fun_provider.Default_color_refinement())
+
     # Create a function for the object to be called externally
     def run_color_refinement(self, color_refine_object: "Default_color_refinement"):
         return _test_decide_gi(test_name='decide_gi_CR', color_refine_object = color_refine_object)
