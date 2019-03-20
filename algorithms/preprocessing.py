@@ -1,5 +1,28 @@
 from supporting_components.graph import Graph, Vertex
+from algorithms.color_initialization import degree_color_initialization
+from algorithms.decide_gi import __is_balanced
 from math import factorial
+
+
+def could_be_isomorphic(G: 'Graph', H: 'Graph'):
+    """
+    Based on properties of the graphs a few simple comparisons are made to determine if the graphs could be isomorphic.
+    :param G, H: The graphs of which it should be determined if they could be isomorphic.
+    :return: Boolean that indicates if the two graphs could be isomorphic or not.
+    """
+    # Isomorphic graphs should have the same amount of vertices
+    if len(G.vertices) != len(H.vertices):
+        return False
+    # Isomorphic graphs should have the same amount of edges
+    if len(G.edges) != len(H.edges):
+        return False
+    # Isomorphic graphs should have the same amount of vertices with a specific degree
+    degree_color_initialization(G)
+    degree_color_initialization(H)
+    if not __is_balanced(G + H)[0]:
+        return False
+
+    return True
 
 
 def remove_twins(G: 'Graph'):
