@@ -51,13 +51,13 @@ def are_twins(v0: "Vertex", v1: "Vertex"):
     :return: Boolean if vertices v0 and v1 are twins or not
     """
     if v0 in v1.neighbours:
-        v0_neighbours = v0.neighbours.copy()
+        v0_neighbours = v0.neighbours
         v0_neighbours.remove(v1)
-        v1_neighbours = v1.neighbours.copy()
+        v1_neighbours = v1.neighbours
         v1_neighbours.remove(v0)
         return neighbours_equal(v0_neighbours, v1_neighbours)
     else:
-        return neighbours_equal(v0.neighbours.copy(), v1.neighbours.copy())
+        return neighbours_equal(v0.neighbours, v1.neighbours)
 
 
 def neighbours_equal(v0_neighbours: "List[Vertex]", v1_neighbours: "List[Vertex]"):

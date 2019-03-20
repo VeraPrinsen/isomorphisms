@@ -46,6 +46,7 @@ class Vertex(object):
         self.graph_label = graph_label
         self._incidence = {}
         self.twin_degree = None
+        self.colornum = None
 
     def __repr__(self):
         """
@@ -368,8 +369,10 @@ class Graph(object):
 
         for v_before_union in self.vertices:
             vertex_reference_self[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=1)
+            vertex_reference_self[v_before_union].twin_degree = v_before_union.twin_degree
         for v_before_union in other.vertices:
             vertex_reference_other[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=2)
+            vertex_reference_other[v_before_union].twin_degree = v_before_union.twin_degree
 
         # Add edges
         # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
