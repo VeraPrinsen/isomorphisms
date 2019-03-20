@@ -6,9 +6,17 @@ from input_output.sys_output import passed
 from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
-from algorithms.color_refinement import color_refinement
 
-def test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 'Bool'):
+class Decide_gi:
+    # Create a function for the object to be called externally
+    def run_color_refinement(self, color_refine_object: "Default_color_refinement"):
+        return _test_decide_gi(test_name='decide_gi_CR', color_refine_object = color_refine_object)
+
+    def run_fast_color_refinement(self, color_refine_object: "Fast_color_refinement"):
+        # Need to implement
+        return _test_decide_gi(test_name='decide_gi_FCR', color_refine_object = color_refine_object)
+
+def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 'Bool'):
     """
     Tests the is_balanced_or_bijected method of decide_gi.py against expected answers for is_balanced and is_bijected
     :param graph: The graph to test
@@ -27,10 +35,9 @@ def test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 
         return True
 
 
-def test():
-    testname = 'decide_gi'
-    csv_filepath = create_csv_file(testname)
-    print('<'+testname+'> '+ 'Appending to CSV: ' + "file:///"+csv_filepath.replace('\\', '/') + '\nStart...')
+def _test_decide_gi(test_name, color_refine_object: "Object"):
+    csv_filepath = create_csv_file(test_name)
+    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
     write_csv_line(csv_filepath, ['file', 'j', 'i', 'Pass?', 'Time (s)'])
 
@@ -90,11 +97,11 @@ def test():
                 graph = graphs[i] + graphs[j]
 
                 # Color refinement with degree coloring initialization
-                color_refinement(degree_color_initialization(graph))
+                color_refine_object.color_refine(degree_color_initialization(graph))
 
                 # Try catch for test_balanced_or_bijected raises ValueError
                 try:
-                    is_balanced_or_bijected_test_result = test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
+                    is_balanced_or_bijected_test_result = _test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
 
                     t1 = time.time() - t0
                     pass_line = [file, str(j), str(i), str(is_balanced_or_bijected_test_result), "{0:.3f}".format(t1)]
@@ -117,15 +124,17 @@ def test():
     if error_count == 0 and total_tests == graph_count:
         test_pass_bool = True
         passed(
-            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\tdecide_gi.py'.format(str(graph_count),
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
                                                                     str(total_tests), str(error_count),
-                                                                    str(test_pass_bool), "{0:.3f}".format(total_time))
+                                                                    str(test_pass_bool), "{0:.3f}".format(total_time),
+                                                                                             test_name)
             )
     else:
         fail(
-            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\tdecide_gi.py'.format(str(graph_count),
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
                                                                     str(total_tests), str(error_count),
-                                                                    str(test_pass_bool), "{0:.3f}".format(total_time))
+                                                                    str(test_pass_bool), "{0:.3f}".format(total_time),
+                                                                                             test_name)
             )
 
     # Test summary
@@ -133,5 +142,5 @@ def test():
     write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
     write_csv_line(csv_filepath, [str(graph_count) + "/" + str(total_tests), str(error_count), str(test_pass_bool), "{0:.3f}".format(total_time)])
 
-    print('</' + testname + '>')
+    print('</' + test_name + '>')
     return test_pass_bool
