@@ -99,7 +99,7 @@ def _test_decide_gi(test_name, color_refine_object: "Object"):
 
         for i in range(0, len(graphs)):
             for j in range(0, i):
-                t0 = time.time()
+
                 graph_count += 1
 
                 # Create disjoint union
@@ -108,6 +108,7 @@ def _test_decide_gi(test_name, color_refine_object: "Object"):
                 # Color refinement with degree coloring initialization
                 color_refine_object.color_refine(degree_color_initialization(graph))
 
+                t0 = time.time()
                 # Try catch for test_balanced_or_bijected raises ValueError
                 try:
                     is_balanced_or_bijected_test_result = _test_balanced_or_bijected(graph, expected_results[file][j][i][0], expected_results[file][j][i][1])
