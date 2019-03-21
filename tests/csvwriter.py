@@ -11,7 +11,8 @@ from input_output.sys_output import fail, passed
 # The test itself is a mock and will always pass.
 # The result of the test are written to CSV in the folder output_files/csv/
 
-class Csvwriter:
+
+class CsvWriter:
     def unittest(self):
         return _unittest()
 

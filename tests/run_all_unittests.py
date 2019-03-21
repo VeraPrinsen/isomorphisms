@@ -1,13 +1,13 @@
 from input_output.sys_output import passed, fail
-from tests.decide_gi import Decide_gi
-from tests.csvwriter import Csvwriter
+from tests.decide_gi import DecideGi
+from tests.csvwriter import CsvWriter
 
 all_pass_flag = True
 
 # Add functions to test by constructing objects in a list
 functions_to_test = [
-    Decide_gi(),
-    Csvwriter(),
+    DecideGi(),
+    CsvWriter(),
 
 ]
 
