@@ -1,7 +1,6 @@
 from input_output.sys_output import passed, fail
 from tests.decide_gi import Decide_gi
 from tests.csvwriter import Csvwriter
-from tests import fun_provider
 
 all_pass_flag = True
 
@@ -21,4 +20,4 @@ print('')
 if all_pass_flag:
     passed('---> All test passed!')
 else:
-    fail('---> Not all tests passed, aborted.')
+    fail('---> Not all tests passed !')
