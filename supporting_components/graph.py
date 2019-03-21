@@ -367,10 +367,8 @@ class Graph(object):
 
         for v_before_union in self.vertices:
             vertex_reference_self[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=1)
-            vertex_reference_self[v_before_union].colornum = v_before_union.colornum
         for v_before_union in other.vertices:
             vertex_reference_other[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=2)
-            vertex_reference_other[v_before_union].colornum = v_before_union.colornum
 
         # Add edges
         # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.

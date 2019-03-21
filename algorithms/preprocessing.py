@@ -1,6 +1,6 @@
 from supporting_components.graph import Graph, Vertex
 from algorithms.color_initialization import degree_color_initialization
-from algorithms.decide_gi import __is_balanced
+from algorithms.decide_gi import is_balanced
 from math import factorial
 
 
@@ -17,9 +17,9 @@ def could_be_isomorphic(G: 'Graph', H: 'Graph'):
     if len(G.edges) != len(H.edges):
         return False
     # Isomorphic graphs should have the same amount of vertices with a specific degree
-    degree_color_initialization(G)
-    degree_color_initialization(H)
-    if not __is_balanced(G + H)[0]:
+    G_disjoint_union = G + H
+    degree_color_initialization(G_disjoint_union)
+    if not is_balanced(G_disjoint_union)[0]:
         return False
 
     return True
