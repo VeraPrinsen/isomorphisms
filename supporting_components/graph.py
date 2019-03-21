@@ -45,8 +45,8 @@ class Vertex(object):
         self.label = label
         self.graph_label = graph_label
         self._incidence = {}
-        self.twin_degree = None
         self.colornum = None
+        self.twin_degree = None
 
     def __repr__(self):
         """
@@ -444,6 +444,7 @@ class Graph(object):
             vertices_old_to_new[v].label = v.label
             vertices_old_to_new[v].colornum = v.colornum
             vertices_old_to_new[v].graph_label = v.graph_label
+            vertices_old_to_new[v].twin_degree = v.twin_degree
 
         for e in self.edges:
             edge = Edge(vertices_old_to_new[e.tail], vertices_old_to_new[e.head])
