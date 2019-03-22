@@ -5,13 +5,13 @@ def is_balanced_or_bijected(G: 'Graph'):
     :param G: Disjoint union graph
     :return: bool is_balanced, bool is_bijected
     """
-    is_balanced, colors = __is_balanced(G)
-    if is_balanced:
-        return is_balanced, __is_bijected(colors)
+    is_balanced_bool, colors = is_balanced(G)
+    if is_balanced_bool:
+        return is_balanced_bool, __is_bijected(colors)
 
     return False, False
 
-def __is_balanced(G: 'Graph'):
+def is_balanced(G: 'Graph'):
     """
     The vertex coloring of the `self` and `other` graph are extracted from the disjoint union.
     The extraction of `self` and `other` works via the attribute `graph_label` from Vertex.
