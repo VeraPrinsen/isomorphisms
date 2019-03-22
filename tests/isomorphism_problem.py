@@ -19,7 +19,7 @@ create_csv = False
 
 # todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
-torus24 = True
+torus24 = False
 trees90 = False
 products72 = False
 cographs1 = False
