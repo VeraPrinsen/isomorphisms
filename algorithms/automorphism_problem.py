@@ -5,6 +5,7 @@ from algorithms.color_refinement import color_refinement, get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
 from typing import List, Dict
 from math import inf
+from input_output.file_output import save_graph_as_dot
 
 """
 With these methods, the amount of graph automorphs can be counted.
@@ -19,6 +20,7 @@ def amount_of_automorphisms(G):
     :return: Amount of isomorphisms graph G and H have.
     """
     G_disjoint_union = G + G
+    save_graph_as_dot(G_disjoint_union, 'testGG')
 
     return generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], find_all=True)
 
@@ -65,6 +67,8 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
         #    / \   / \
         #   .   .  .  .
         #  xx  xy yx  yy
+        print(D)
+        print(I)
         return [1]
 
     colors, max_colornum = get_colors(G)
@@ -87,7 +91,8 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
 
     # Construct a trivial node
     x.colornum = max_colornum + 1
-    D = [x]
+    D_copy = D.copy()
+    D_copy.append(x)
 
     # And branch in separate I = Ix
     Ix = []
@@ -104,9 +109,11 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
             Iy.append(v)
 
     # Call the left leg and wait for return (form: list with length 1 or more)
-    # Inherit find_all from the previous trivial node
+    # No need to loop al the X (last lecture 3)
     # Color the vertex
     # By reference changes so copy the current value
+    I_copy = I.copy()
+    I_copy.append(Ix[0])
     Ix_colornum_copy = Ix[0].colornum
     Ix[0].colornum = x.colornum
     G_DxDx = G.copy()
@@ -114,30 +121,55 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     Ix[0].colornum = Ix_colornum_copy
 
     # Changed by reference in G
-    permutations = generate_automorphism(G=G_DxDx, D=D.copy(), I=Ix, find_all=find_all)
+    # Calculate the left leg
+    permutations = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy, find_all=find_all)
 
-    # Possible: finding the empty set if find_all = True
-    if find_all == True:
+    # Only when finding the empty set find_all can be = True
+    if find_all:
         # If is_empty set
         if permutations == [1]:
-            # Get the right leg
-            for vDy in Iy:
-                # Change color by reference in G
-                vDy_colornum_copy = vDy.colornum
-                vDy.colornum = x.colornum
-                # Copy graph
-                G_DxDy = G.copy()
-                # Revert colorchange in G
-                vDy.colornum = vDy_colornum_copy
+            print('disjoint_offset={}'.format(disjoint_offset))
 
-                perm_right = generate_automorphism(G=G_DxDy, D=D.copy(), I=[vDy], find_all=False)
-                if perm_right == [0]:
-                    continue
+        # Get the right leg
+        for vDy in Iy:
+            I_copy = I.copy()
+            I_copy.append(vDy)
+            # Change color by reference in G
+            vDy_colornum_copy = vDy.colornum
+            vDy.colornum = x.colornum
+            # Copy graph
+            G_DxDy = G.copy()
+            # Revert colorchange in G after copy
+            vDy.colornum = vDy_colornum_copy
 
-                if perm_right == [1]:
-                    # Got it!
-                    permutations.append(perm_right)
-                    break
+            perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, find_all=False)
+            if perm_right == [0]:
+                continue
+
+            if perm_right == [1]:
+                # Got it!
+                permutations.append(perm_right)
+                break
+
+    # if not find_all: #syn: if not findall
+    #     # Get the right leg
+    #     for vDy in Iy:
+    #         # Change color by reference in G
+    #         vDy_colornum_copy = vDy.colornum
+    #         vDy.colornum = x.colornum
+    #         # Copy graph
+    #         G_DxDy = G.copy()
+    #         # Revert colorchange in G after copy
+    #         vDy.colornum = vDy_colornum_copy
+    #
+    #         perm_right = generate_automorphism(G=G_DxDy, D=D.copy(), I=[vDy], find_all=False)
+    #         if perm_right == [0]:
+    #             continue
+    #
+    #         if perm_right == [1]:
+    #             # Got it!
+    #             permutations.append(perm_right)
+    #             break
 
 
     return permutations

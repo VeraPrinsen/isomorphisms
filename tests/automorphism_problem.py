@@ -24,10 +24,14 @@ v6 = Vertex(G)
 G.add_edge(Edge(v0, v1))
 G.add_edge(Edge(v0, v2))
 G.add_edge(Edge(v0, v3))
+G.add_edge(Edge(v3, v1))
+G.add_edge(Edge(v3, v2))
 
 G.add_edge(Edge(v0, v4))
 G.add_edge(Edge(v0, v5))
 G.add_edge(Edge(v0, v6))
+G.add_edge(Edge(v6, v4))
+G.add_edge(Edge(v6, v5))
 n_isomorphisms = amount_of_automorphisms(G)
 
 
