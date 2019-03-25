@@ -20,22 +20,22 @@ def amount_of_automorphisms(G):
     """
     G_disjoint_union = G + G
 
-    return generate_automorphism(degree_color_initialization(G_disjoint_union), [], [])
+    return generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], find_all=True)
 
 
-def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
+def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find_all: 'Bool'):
     """
     It counts the number of isomorphisms of the graph (disjoint union of two graphs) if 'count_flag' is True.
     It checks if the graph (disjoint union of two graphs) has at least one isomorphism if 'count_flag' is False.
     :param G: The graph (disjoint union of two graphs) to check for isomorphisms
     :param D: The list of vertices in one of the graphs that is fixed
     :param I: The list of vertices in the other graph that is fixed
+    :param full_search: find_all, choice of finding all or any bijection(s).
     :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
     isomorphism if 'count_flag' is False
     """
     # To correct for the disjoint union labelling
     disjoint_offset = int(len(G.vertices)/2)
-
 
     # Do color refinement on the graph
     color_refinement(G)
@@ -43,7 +43,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the graph has no isomorphism
-        return 0
+        return [0]
     if is_bijected:
         # If the graph is balanced and bijected, the graph has exactly one isomorphism
         #
@@ -65,7 +65,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
         #    / \   / \
         #   .   .  .  .
         #  xx  xy yx  yy
-        return 1
+        return [1]
 
     colors, max_colornum = get_colors(G)
 
@@ -87,16 +87,14 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
 
     # Construct a trivial node
     x.colornum = max_colornum + 1
-    D.append(x)
+    D = [x]
 
-    # Find the situation Dx, Dx
-    # Start branching algorithm by making a copy of the graph, each branch should have a new copy
-    G_DxDx = G.copy()
-    G_DxDy = G.copy()
     # And branch in separate I = Ix
-    Ix = I.copy()
-    Iy = I.copy()
+    Ix = []
+    Iy = []
 
+    # Must visit Dx,Dx earlier then Dx,Dy
+    # Store list Ix and list Iy
     for v in colors[color_c]:
         # Look for Dx, Dx
         if v.graph_label == 2 and x.label == (v.label - disjoint_offset):
@@ -106,11 +104,43 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
             Iy.append(v)
 
     # Call the left leg and wait for return (form: list with length 1 or more)
-    permutations = generate_automorphism(G_DxDx, D.copy(), Ix)
+    # Inherit find_all from the previous trivial node
+    # Color the vertex
+    # By reference changes so copy the current value
+    Ix_colornum_copy = Ix[0].colornum
+    Ix[0].colornum = x.colornum
+    G_DxDx = G.copy()
+    # Restore the coloring in G
+    Ix[0].colornum = Ix_colornum_copy
 
-    # Call right leg and wait for return
-    # For loop here ?
-    permutations.append(generate_automorphism(G_DxDy, D.copy(), Iy))
+    # Changed by reference in G
+    permutations = generate_automorphism(G=G_DxDx, D=D.copy(), I=Ix, find_all=find_all)
+
+    # Possible: finding the empty set if find_all = True
+    if find_all == True:
+        # If is_empty set
+        if permutations == [1]:
+            # Get the right leg
+            for vDy in Iy:
+                # Change color by reference in G
+                vDy_colornum_copy = vDy.colornum
+                vDy.colornum = x.colornum
+                # Copy graph
+                G_DxDy = G.copy()
+                # Revert colorchange in G
+                vDy.colornum = vDy_colornum_copy
+
+                perm_right = generate_automorphism(G=G_DxDy, D=D.copy(), I=[vDy], find_all=False)
+                if perm_right == [0]:
+                    continue
+
+                if perm_right == [1]:
+                    # Got it!
+                    permutations.append(perm_right)
+                    break
+
+
+    return permutations
 
     # Return trivial node conclusion
 
