@@ -8,6 +8,7 @@ from math import inf
 
 """
 With these methods, the amount of graph automorphs can be counted.
+
 """
 
 
@@ -32,6 +33,10 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
     :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
     isomorphism if 'count_flag' is False
     """
+    # To correct for the disjoint union labelling
+    disjoint_offset = int(len(G.vertices)/2)
+
+
     # Do color refinement on the graph
     color_refinement(G)
 
@@ -62,27 +67,58 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]'):
         #  xx  xy yx  yy
         return 1
 
-    # Start branching algorithm by making a copy of the graph, each branch should have a new copy
-    G_copy = G.copy()
-    colors, max_colornum = get_colors(G_copy)
+    colors, max_colornum = get_colors(G)
 
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
     C_len = inf
     for key in colors:
-        if len(colors[key]) >= 4 and len(colors[key]) < C_len:
-            C = key
+        if 4 <= len(colors[key]) < C_len:
+            color_c = key
             C_len = len(colors[key])
 
     # Choose the first occurring vertex with color C in the list of vertices of the first graph
-    for v in colors[C]:
-        if v.graph_label == 1 :
+    for v in colors[color_c]:
+        if v.graph_label == 1:
             x = v
             break
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
+
+    # Construct a trivial node
     x.colornum = max_colornum + 1
     D.append(x)
+
+    # Find the situation Dx, Dx
+    # Start branching algorithm by making a copy of the graph, each branch should have a new copy
+    G_DxDx = G.copy()
+    G_DxDy = G.copy()
+    # And branch in separate I = Ix
+    Ix = I.copy()
+    Iy = I.copy()
+
+    for v in colors[color_c]:
+        # Look for Dx, Dx
+        if v.graph_label == 2 and x.label == (v.label - disjoint_offset):
+            Ix.append(v)
+        else:
+            # Create the Dx, Dy combinations
+            Iy.append(v)
+
+    # Call the left leg and wait for return (form: list with length 1 or more)
+    permutations = generate_automorphism(G_DxDx, D.copy(), Ix)
+
+    # Call right leg and wait for return
+    # For loop here ?
+    permutations.append(generate_automorphism(G_DxDy, D.copy(), Iy))
+
+    # Return trivial node conclusion
+
+
+
+
+
+
     #
     # TODO: check if y = x in (D+x, D+y)
     # Flag for this if this is the case
