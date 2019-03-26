@@ -19,13 +19,13 @@ def amount_of_automorphisms(G):
     :param G, H: The two graphs of which the amount of isomorphisms must be determined.
     :return: Amount of isomorphisms graph G and H have.
     """
-    G_disjoint_union = G + G
+    G_disjoint_union = G.self_disjoint_union()
     save_graph_as_dot(G_disjoint_union, 'testGG')
 
-    return generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], find_all=True)
+    return generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
 
 
-def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find_all: 'Bool'):
+def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node: 'Bool'):
     """
     It counts the number of isomorphisms of the graph (disjoint union of two graphs) if 'count_flag' is True.
     It checks if the graph (disjoint union of two graphs) has at least one isomorphism if 'count_flag' is False.
@@ -36,8 +36,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
     isomorphism if 'count_flag' is False
     """
-    # To correct for the disjoint union labelling
-    disjoint_offset = int(len(G.vertices)/2)
+
 
     # Do color refinement on the graph
     color_refinement(G)
@@ -45,7 +44,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the graph has no isomorphism
-        return [0]
+        return []
     if is_bijected:
         # If the graph is balanced and bijected, the graph has exactly one isomorphism
         #
@@ -67,9 +66,8 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
         #    / \   / \
         #   .   .  .  .
         #  xx  xy yx  yy
-        print(D)
-        print(I)
-        return [1]
+        return [(D,I)]
+        #return [(D,I)]
 
     colors, max_colornum = get_colors(G)
 
@@ -78,14 +76,14 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     C_len = inf
     for key in colors:
         if 4 <= len(colors[key]) < C_len:
+            # Check firstly if Dx,Dx exists
             color_c = key
-            C_len = len(colors[key])
 
-    # Choose the first occurring vertex with color C in the list of vertices of the first graph
-    for v in colors[color_c]:
-        if v.graph_label == 1:
-            x = v
-            break
+            # Choose the first occurring vertex with color C in the list of vertices of the first graph
+            for v in colors[color_c]:
+                if v.graph_label == 1:
+                    x = v
+                    C_len = len(colors[key])
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
 
@@ -102,54 +100,61 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     # Store list Ix and list Iy
     for v in colors[color_c]:
         # Look for Dx, Dx
-        if v.graph_label == 2 and x.label == (v.label - disjoint_offset):
+        if v.graph_label == 2 and x.coupling_label == v.coupling_label:
             Ix.append(v)
         else:
             # Create the Dx, Dy combinations
             Iy.append(v)
 
-    # Call the left leg and wait for return (form: list with length 1 or more)
-    # No need to loop al the X (last lecture 3)
-    # Color the vertex
-    # By reference changes so copy the current value
-    I_copy = I.copy()
-    I_copy.append(Ix[0])
-    Ix_colornum_copy = Ix[0].colornum
-    Ix[0].colornum = x.colornum
-    G_DxDx = G.copy()
-    # Restore the coloring in G
-    Ix[0].colornum = Ix_colornum_copy
+    # Look for permutations
+    permutations = []
 
-    # Changed by reference in G
-    # Calculate the left leg
-    permutations = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy, find_all=find_all)
+    if trivial_node:
+        # Always do DXDX
+        # Call the left leg and wait for return (form: list with length 1 or more)
+        # No need to loop al the X (last lecture 3)
+        # Color the vertex
+        # By reference changes so copy the current value
+        if len(Ix) == 0:
+            print('Error no DxDx... This is not a trivial node')
+            return 0
 
-    # Only when finding the empty set find_all can be = True
-    if find_all:
-        # If is_empty set
-        if permutations == [1]:
-            print('disjoint_offset={}'.format(disjoint_offset))
+        I_copy = I.copy()
+        I_copy.append(Ix[0])
+        Ix_colornum_copy = Ix[0].colornum
+        Ix[0].colornum = x.colornum
+        G_DxDx = G.copy()
+        # Restore the coloring in G
+        Ix[0].colornum = Ix_colornum_copy
+        # Changed by reference in G
+        # Calculate the left leg
+        # Below it will also be a trivial node
+        permutations = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy, trivial_node=True)
+    else:
+        # allow to check again
+        Iy +=Ix
 
-        # Get the right leg
-        for vDy in Iy:
-            I_copy = I.copy()
-            I_copy.append(vDy)
-            # Change color by reference in G
-            vDy_colornum_copy = vDy.colornum
-            vDy.colornum = x.colornum
-            # Copy graph
-            G_DxDy = G.copy()
-            # Revert colorchange in G after copy
-            vDy.colornum = vDy_colornum_copy
+    # Get the right leg to provide all results
+    for vDy in Iy:
+        I_copy = I.copy()
+        I_copy.append(vDy)
+        # Change color by reference in G
+        vDy_colornum_copy = vDy.colornum
+        vDy.colornum = x.colornum
+        # Copy graph
+        G_DxDy = G.copy()
+        # Revert colorchange in G after copy
+        vDy.colornum = vDy_colornum_copy
 
-            perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, find_all=False)
-            if perm_right == [0]:
-                continue
+        perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
+        if perm_right == []:
+            continue
+        else:
+            # Got it!
+            permutations += perm_right
+            break
 
-            if perm_right == [1]:
-                # Got it!
-                permutations.append(perm_right)
-                break
+    return permutations
 
     # if not find_all: #syn: if not findall
     #     # Get the right leg
@@ -170,9 +175,6 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     #             # Got it!
     #             permutations.append(perm_right)
     #             break
-
-
-    return permutations
 
     # Return trivial node conclusion
 
@@ -200,7 +202,6 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', find
     #           With X and Y puzzle together the number using some algebra
 
     # Create branches for all the possible fixed pairs of vertices for the chosen color
-    return
 
 
 def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool'):
