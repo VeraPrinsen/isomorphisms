@@ -66,7 +66,7 @@ def test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 
 error_count = 0
 graph_count = 0
 for file in files:
-    filename = '../test_graphs/color_refinement/' + file + '.grl'
+    filename = '/test_graphs/color_refinement/' + file + '.grl'
     graphs = load_graph_list(filename)
     for i in range(0, len(graphs)):
         for j in range(0 , i):

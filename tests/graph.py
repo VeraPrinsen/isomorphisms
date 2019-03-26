@@ -18,7 +18,7 @@ files = ['colorref_smallexample_4_7', 'colorref_smallexample_6_15', 'colorref_sm
 error_count = 0
 graph_count = 0
 for file in files:
-    filename = '../test_graphs/color_refinement/' + file + '.grl'
+    filename = '/test_graphs/color_refinement/' + file + '.grl'
     graphs = load_graph_list(filename)
     for i in range(0, len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
