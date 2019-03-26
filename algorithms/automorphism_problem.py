@@ -6,6 +6,7 @@ from algorithms.decide_gi import is_balanced_or_bijected
 from typing import List, Dict
 from math import inf
 from input_output.file_output import save_graph_as_dot
+from supporting_components.permv2 import permutation
 
 """
 With these methods, the amount of graph automorphs can be counted.
@@ -23,18 +24,20 @@ def amount_of_automorphisms(G):
     save_graph_as_dot(G_disjoint_union, 'testGG')
 
     permutations=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
-    for perm in permutations:
-        mat = []
-        print('D:')
-        for p in perm[0]:
-            print(p.coupling_label, end = ',')
-        print('')
-        for p in perm[1]:
-            print(p.coupling_label, end = ',')
-        print('')
+    # Convert into objects
+    permutation_objects = []
+    for raw_perm_group in permutations:
+        # Contains tuple (D, I) of equal length
+        cycle_list = []
+        for i in range(0,len(raw_perm_group[0])):
+            cycle_list.append([raw_perm_group[0][i].coupling_label, (raw_perm_group[1][i].coupling_label)])
 
-    print('')
+        permutation_objects.append(permutation(len(G.vertices), cycle_list))
+
+    print(permutation_objects)
+
     return 0
+
 
 def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node: 'Bool'):
     """
