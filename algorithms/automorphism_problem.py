@@ -22,8 +22,19 @@ def amount_of_automorphisms(G):
     G_disjoint_union = G.self_disjoint_union()
     save_graph_as_dot(G_disjoint_union, 'testGG')
 
-    return generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
+    permutations=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
+    for perm in permutations:
+        mat = []
+        print('D:')
+        for p in perm[0]:
+            print(p.coupling_label, end = ',')
+        print('')
+        for p in perm[1]:
+            print(p.coupling_label, end = ',')
+        print('')
 
+    print('')
+    return 0
 
 def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node: 'Bool'):
     """
@@ -66,7 +77,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         #    / \   / \
         #   .   .  .  .
         #  xx  xy yx  yy
-        return [(D,I)]
+        return [(D,I,'bijected')]
         #return [(D,I)]
 
     colors, max_colornum = get_colors(G)
@@ -86,8 +97,6 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
                     C_len = len(colors[key])
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
-
-    # Construct a trivial node
     x.colornum = max_colornum + 1
     D_copy = D.copy()
     D_copy.append(x)
@@ -120,9 +129,9 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
             return 0
 
         I_copy = I.copy()
-        I_copy.append(Ix[0])
         Ix_colornum_copy = Ix[0].colornum
         Ix[0].colornum = x.colornum
+        I_copy.append(Ix[0]) # to store the actual vertex object, not reference as with append (?)
         G_DxDx = G.copy()
         # Restore the coloring in G
         Ix[0].colornum = Ix_colornum_copy
@@ -130,9 +139,11 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         # Calculate the left leg
         # Below it will also be a trivial node
         permutations = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy, trivial_node=True)
-    else:
-        # allow to check again
-        Iy +=Ix
+
+    # allow to check again
+    # But DxDx is first (lecture)
+    if not trivial_node:
+        Iy = Ix+Iy
 
     # Get the right leg to provide all results
     for vDy in Iy:
@@ -168,6 +179,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     #         vDy.colornum = vDy_colornum_copy
     #
     #         perm_right = generate_automorphism(G=G_DxDy, D=D.copy(), I=[vDy], find_all=False)
+    #         if perm_right == [0]:
     #         if perm_right == [0]:
     #             continue
     #
