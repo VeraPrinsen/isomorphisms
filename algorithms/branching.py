@@ -1,11 +1,11 @@
 from supporting_components.graph import Graph, Vertex
-from algorithms.color_refinement import color_refinement, get_colors
+from algorithms.color_refinement import get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
 from typing import List, Dict
 from math import inf
 
 
-def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool'):
+def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement):
     """
     It counts the number of isomorphisms of the graph (disjoint union of two graphs) if 'count_flag' is True.
     It checks if the graph (disjoint union of two graphs) has at least one isomorphism if 'count_flag' is False.
@@ -54,10 +54,10 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
     x.colornum = max_colornum + 1
     D.append(x)
     # Create branches for all the possible fixed pairs of vertices for the chosen color
-    return __branching(G_copy, colors, C, D.copy(), I.copy(), count_flag)
+    return __branching(G_copy, colors, C, D.copy(), I.copy(), count_flag, color_refinement)
 
 
-def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool'):
+def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement):
     """
     Creates branches of the graph (disjoint union of two graphs) and count the amount of isomorphisms for those graphs.
     In one graph, one vertex of the color group is fixed. For each of the vertices in the other graph, a branch is
@@ -90,8 +90,11 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
             if y.graph_label == 2 and y.label == y0.label:
                 y.colornum = max_colornum
                 I_copy.append(y)
-                num_isomorphisms += count_isomorphisms(G_copy, D_copy, I_copy, count_flag)
+                num_isomorphisms += count_isomorphisms(G_copy, D_copy, I_copy, count_flag, color_refinement)
                 if not count_flag and num_isomorphisms > 0:
                     return True
                 break
-    return num_isomorphisms
+    if not count_flag:
+        return num_isomorphisms > 0
+    else:
+        return num_isomorphisms
