@@ -23,7 +23,7 @@ files = ['5', '10', '20', '40', '80', '160', '320', '640', '1280', '2560', '5120
 do_slow = [True, True, True, True, True, True, True, True, True, False, False, False]
 for i_file in range(0, len(files)):
     file = files[i_file]
-    filename = '../test_graphs/fast_color_refinement/threepaths' + file + '.gr'
+    filename = '/test_graphs/fast_color_refinement/threepaths' + file + '.gr'
     graphs = load_graph_list(filename)
 
     for i in range(0, len(graphs)):
