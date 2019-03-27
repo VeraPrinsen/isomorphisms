@@ -166,9 +166,10 @@ def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group):
     currently investigated
     """
     neighbours_of_color_group = {}
+    color = vertices_in_color_group[0].colornum
     for vertex in vertices_in_color_group:
         neighbours = vertex.neighbours
         for neighbour in neighbours:
-            if neighbour not in vertices_in_color_group:
+            if neighbour.colornum != color:
                 neighbours_of_color_group.setdefault(neighbour.colornum, set()).add(neighbour)
     return neighbours_of_color_group
