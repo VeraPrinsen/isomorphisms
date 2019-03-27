@@ -6,23 +6,7 @@ from input_output.sys_output import passed
 from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
-import tests.fun_provider as fun_provider
-
-
-class DecideGi:
-
-    def unittest(self):
-        # Swap in the color refinement object Default_color_refinement().
-        # This object has .color_refine(), which is what this function expects for color refinement during test.
-        return _test_decide_gi(test_name='decide_gi_unit', color_refine_object=fun_provider.Default_color_refinement())
-
-    # Create a function for the object to be called externally
-    def run_color_refinement(self, color_refine_object: "Default_color_refinement"):
-        return _test_decide_gi(test_name='decide_gi_CR', color_refine_object=color_refine_object)
-
-    def run_fast_color_refinement(self, color_refine_object: "Fast_color_refinement"):
-        # Need to implement
-        return _test_decide_gi(test_name='decide_gi_FCR', color_refine_object = color_refine_object)
+from algorithms.color_refinement import color_refinement
 
 
 def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 'Bool'):
@@ -44,7 +28,8 @@ def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected:
         return True
 
 
-def _test_decide_gi(test_name, color_refine_object: "Object"):
+def unit_test():
+    test_name = 'decide_gi'
     csv_filepath = create_csv_file(test_name)
     print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
@@ -106,7 +91,7 @@ def _test_decide_gi(test_name, color_refine_object: "Object"):
                 graph = graphs[i] + graphs[j]
 
                 # Color refinement with degree coloring initialization
-                color_refine_object.color_refine(degree_color_initialization(graph))
+                color_refinement(degree_color_initialization(graph))
 
                 t0 = time.time()
                 # Try catch for test_balanced_or_bijected raises ValueError
@@ -154,3 +139,9 @@ def _test_decide_gi(test_name, color_refine_object: "Object"):
 
     print('</' + test_name + '>')
     return test_pass_bool
+
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()
+

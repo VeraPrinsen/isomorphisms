@@ -1,23 +1,15 @@
 from input_output.sys_output import passed, fail
-from tests.decide_gi import DecideGi
-from tests.csvwriter import CsvWriter
+from tests import decide_gi, csvwriter
 
 all_pass_flag = True
+result_boolean = list()
 
-# Add functions to test by constructing objects in a list
-functions_to_test = [
-    DecideGi(),
-    CsvWriter(),
-
-]
-
-for test_object in functions_to_test:
-    if not test_object.unittest():
-        all_pass_flag = False
+result_boolean.append(decide_gi.unit_test())
+result_boolean.append(csvwriter.unit_test())
 
 # Finally
 print('')
-if all_pass_flag:
-    passed('---> All test passed!')
-else:
+if False in result_boolean:
     fail('---> Not all tests passed !')
+else:
+    passed('---> All test passed!')

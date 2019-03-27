@@ -12,12 +12,8 @@ from input_output.sys_output import fail, passed
 # The result of the test are written to CSV in the folder output_files/csv/
 
 
-class CsvWriter:
-    def unittest(self):
-        return _unittest()
-
-
-def _unittest():
+def unit_test():
+    print('<csvwriter>')
     file = 'colorref_smallexample_4_16'
     filename = 'test_graphs/color_refinement/' + file + '.grl'
     graphs = load_graph_list(filename)
@@ -73,7 +69,15 @@ def _unittest():
 
     if csv_read_array == csv_write_array:
         passed("CSV write OK")
+        print('</csvwriter>')
         return True
     else:
         fail("CSV write test failed")
+        print('</csvwriter>')
         return False
+
+
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()
