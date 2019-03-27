@@ -32,8 +32,8 @@ def fast_color_refinement(G: "Graph"):
     For each color group in the queue, it splits the other color groups based on whether or not the vertices are
     neighbours of one of the vertices in the color group.
     If the result is the same for all vertices in a group, the group is left unchanged.
-    The newly created groups are added to the queue if the original group is in the queue.
-    If the original group is not in the queue, the smallest of the original and the new group is added to the queue.
+    The newly created group is added to the queue if the original group is in the queue.
+    If the original group is not in the queue, the largest of the original and the new group is added to the queue.
     The algorithm terminates if the queue is empty.
     :param G: The graph to perform color refinement on
     :return: The colored graph
@@ -157,7 +157,7 @@ def __initialize_queue(G: "Graph"):
     return queue
 
 
-def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group):
+def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group: "List[Vertex]"):
     """
     Returns a dict with the color of the color group as key and the set of neighbours of the color group currently
     investigated as value.
@@ -166,10 +166,12 @@ def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group):
     currently investigated
     """
     neighbours_of_color_group = {}
+    # Get the color of the color group currently investigated
     color = vertices_in_color_group[0].colornum
     for vertex in vertices_in_color_group:
         neighbours = vertex.neighbours
         for neighbour in neighbours:
             if neighbour.colornum != color:
+                # Only add the vertex to the map if it is not in the color group currently investigated
                 neighbours_of_color_group.setdefault(neighbour.colornum, set()).add(neighbour)
     return neighbours_of_color_group
