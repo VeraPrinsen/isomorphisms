@@ -16,7 +16,7 @@ def unit_test():
     csv_filepath = create_csv_file(test_name)
     print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
-    write_csv_line(csv_filepath, ['file', 'i', 'j', 'Pass?', 'Time (s)'])
+    write_csv_line(csv_filepath, ['file', 'i', 'mode', 'Pass?', 'Time (s)'])
 
     """
     SETTINGS OF TEST
