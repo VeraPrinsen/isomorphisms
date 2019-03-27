@@ -113,30 +113,38 @@ def unit_test():
 
                 total_time += t1
 
+    return determine_test_outcome(csv_filepath, error_count, graph_count, test_name, total_tests, total_time)
 
+
+def determine_test_outcome(csv_filepath, error_count, graph_count, test_name, total_tests, total_time):
     # Determine test outcome
     test_pass_bool = False
     if error_count == 0 and total_tests == graph_count:
         test_pass_bool = True
         passed(
-            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
-                                                                    str(total_tests), str(error_count),
-                                                                    str(test_pass_bool), "{0:.3f}".format(total_time),
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestname:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
+                                                                                             str(total_tests),
+                                                                                             str(error_count),
+                                                                                             str(test_pass_bool),
+                                                                                             "{0:.3f}".format(
+                                                                                                 total_time),
                                                                                              test_name)
-            )
+        )
     else:
         fail(
-            '#Tests\t#Fail\tPASS?\tTime(s)\tTestfile:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
-                                                                    str(total_tests), str(error_count),
-                                                                    str(test_pass_bool), "{0:.3f}".format(total_time),
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestname:\n{0}/{1}\t{2}\t\t{3}\t{4}\t{5}'.format(str(graph_count),
+                                                                                             str(total_tests),
+                                                                                             str(error_count),
+                                                                                             str(test_pass_bool),
+                                                                                             "{0:.3f}".format(
+                                                                                                 total_time),
                                                                                              test_name)
-            )
-
+        )
     # Test summary
     write_csv_line(csv_filepath, ['', '', '', ''])
     write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
-    write_csv_line(csv_filepath, [str(graph_count) + "/" + str(total_tests), str(error_count), str(test_pass_bool), "{0:.3f}".format(total_time)])
-
+    write_csv_line(csv_filepath, [str(graph_count) + "/" + str(total_tests), str(error_count), str(test_pass_bool),
+                                  "{0:.3f}".format(total_time)])
     print('</' + test_name + '>')
     return test_pass_bool
 
