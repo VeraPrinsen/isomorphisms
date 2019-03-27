@@ -1,5 +1,6 @@
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
+from supporting_components.basicpermutationgroup import FindNonTrivialOrbit, Stabilizer, Orbit
 from supporting_components.graph import Graph, Vertex
 from algorithms.color_refinement import color_refinement, get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
@@ -26,6 +27,7 @@ def amount_of_automorphisms(G):
     permutations=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
     # Convert into objects
     permutation_objects = []
+    print(permutations)
     for raw_perm_group in permutations:
         # Contains tuple (D, I) of equal length
         cycle_list = []
@@ -36,8 +38,46 @@ def amount_of_automorphisms(G):
 
     print(permutation_objects)
 
-    return 0
+    # Set has been found. Now 2 problems remain:
+    # (lec4 slide 19)
+    # 1. Membership testing
+    # 2. Order computation
 
+    # Order computation of "H"
+    # Slide 21
+    return order_computation(permutation_objects)
+
+
+def order_computation(H: 'List[permutation]'):
+    """
+    Based on slide 21 of lecture 4 and notes.
+    TODO:
+    :param H: Permutation group
+    :return: int with the order of the list of permutations
+    """
+
+    # Choose a in V, |H| = |Ha| * |a^H| note: (numel(a^H) > 2)
+    # Built in function basicpermutationgroup
+    # Choose a with non trivial orbit a: 0^H yields |0^H|
+    a = FindNonTrivialOrbit(H) # ?a=0? slide 21 lec4
+    # a is unit element
+    # The numel(unit element) divides the group |H|
+    # Group always contains G and e
+    # Now find subgroups (defined as coset) of equal size
+    # https://www.youtube.com/watch?v=TCcSZEL_3CQ
+    # Use left or right cosets.
+    # Each subgroup should not include the unit element or any previous elements
+
+    # Orbit contains all elements reachable by applying all elements in <H> to a
+    orbit_a = Orbit(H, a)
+    # ? is orbit left coset ?
+    # Stabilizer contains all elements that stay the same after applying all elements in <H> to a
+    stabilizer_a = Stabilizer(H, a)
+
+    return a
+
+def recursive_membership_testing(H: 'List[permutation]', a: permutation):
+    # ? what to do with this testing?
 
 def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node: 'Bool'):
     """
