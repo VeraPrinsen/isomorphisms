@@ -21,7 +21,8 @@ v4 = Vertex(G)
 v5 = Vertex(G)
 v6 = Vertex(G)
 
-
+# The order in which edges are added has effect on the outcome
+# Symmetry (?) The following order matches the slides lec4-p.16:
 G.add_edge(Edge(v0, v5))
 G.add_edge(Edge(v0, v6))
 G.add_edge(Edge(v0, v4))
@@ -29,11 +30,6 @@ G.add_edge(Edge(v0, v4))
 G.add_edge(Edge(v0, v1))
 G.add_edge(Edge(v0, v3))
 G.add_edge(Edge(v0, v2))
-
-
-
-
-
 
 G.add_edge(Edge(v1, v3))
 G.add_edge(Edge(v2, v3))
@@ -132,8 +128,8 @@ for i_file in i_files:
     graphs = load_graph_list(filename)
     solution_map = solution_isomorphisms[i_file]
 
-    for i in range(0, 1):
-        for j in range(3, 4):
+    for i in range(0, len(graphs) - 1):
+        for j in range(i + 1, len(graphs)):
             graph_count += 1
             G = graphs[i]
             H = graphs[j]
