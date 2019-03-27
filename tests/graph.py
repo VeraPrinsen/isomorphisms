@@ -14,6 +14,7 @@ def test_copy(graph):
     copy = graph.copy()
     return copy.is_equal(graph)
 
+
 def unit_test():
     test_name = 'graph'
     csv_filepath = create_csv_file(test_name)
