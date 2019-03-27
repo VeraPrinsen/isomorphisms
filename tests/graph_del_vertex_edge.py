@@ -48,3 +48,7 @@ def unit_test():
     print('</' + test_name + '>')
 
     return pass_bool
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()
