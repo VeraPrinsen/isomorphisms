@@ -63,28 +63,34 @@ def unit_test():
                 #print('---------------------------')
                 #print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
                 #print('---------------------------')
-                csv_line = []
 
                 if (i, j) in solution_isomorphisms[i_file]:
                     if not is_balanced_or_bijected(G)[0]:
                         remark = "[FAIL] Coloring of graph should be balanced, this is not the case."
                         fail(remark)
-                        csv_line = [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
+                        )
                     elif show_passed_results:
                         remark = "Coloring of graph is balanced."
                         passed(remark)
-                        csv_line = [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
+                        )
                 else:
                     if is_balanced_or_bijected(G)[0]:
                         remark = "[FAIL] Coloring of graph should not be balanced, this is the case though."
                         fail(remark)
-                        csv_line = [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
+                        )
                     elif show_passed_results:
                         remark = "Coloring of graph is not balanced."
                         passed(remark)
-                        csv_line = [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
+                        )
 
-                write_csv_line(csv_filepath, csv_line)
                 total_time += end - start
                 total_tests += 1
 

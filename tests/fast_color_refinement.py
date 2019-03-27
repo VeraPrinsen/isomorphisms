@@ -109,6 +109,7 @@ def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, to
     print('</' + test_name + '>')
     return test_pass_bool
 
+
 if __name__ == '__main__':
     # Run the unit test if file is called
     unit_test()

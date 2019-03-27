@@ -1,4 +1,4 @@
-from input_output.file_output import load_graph_list
+from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
 from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
@@ -13,134 +13,222 @@ Notation:
 filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
+def unit_test():
+    test_name = 'isomorphism_problem'
+    csv_filepath = create_csv_file(test_name)
+    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
-"""
-SETTING OF TEST
-"""
-# Set this variable to true if you want to show passed test results
-show_passed_results = False
+    write_csv_line(csv_filepath, ['file', 'i', 'j', 'Pass?', 'Are isomorph Time (s)', 'Amount isomorph Time (s)'])
 
-# Change here which files you want to evaluate
-torus24 = False
-trees90 = False
-products72 = False
-cographs1 = False
-bigtrees1 = False
-torus144 = False
-trees36 = False
-modulesC = False
-cubes5 = False
-bigtrees3 = False
-cubes6 = False
+    """
+    SETTING OF TEST
+    """
+    # Set this variable to true if you want to show passed test results
+    show_passed_results = False
+
+    # Change here which files you want to evaluate
+    torus24 = True
+    trees90 = False
+    products72 = False
+    cographs1 = False
+    bigtrees1 = False
+    torus144 = False
+    trees36 = False
+    modulesC = False
+    cubes5 = False
+    bigtrees3 = False
+    cubes6 = False
 
 
-"""
-DO NOT CHANGE ANYTHING BELOW HERE
-"""
-# Only files that needs to be evaluated are added to the list.
-i_files = []
-torus24 and i_files.append(0)
-trees90 and i_files.append(1)
-products72 and i_files.append(2)
-cographs1 and i_files.append(3)
-bigtrees1 and i_files.append(4)
-torus144 and i_files.append(5)
-trees36 and i_files.append(6)
-modulesC and i_files.append(7)
-cubes5 and i_files.append(8)
-bigtrees3 and i_files.append(9)
-cubes6 and i_files.append(10)
+    """
+    DO NOT CHANGE ANYTHING BELOW HERE
+    """
+    # Only files that needs to be evaluated are added to the list.
+    i_files = []
+    torus24 and i_files.append(0)
+    trees90 and i_files.append(1)
+    products72 and i_files.append(2)
+    cographs1 and i_files.append(3)
+    bigtrees1 and i_files.append(4)
+    torus144 and i_files.append(5)
+    trees36 and i_files.append(6)
+    modulesC and i_files.append(7)
+    cubes5 and i_files.append(8)
+    bigtrees3 and i_files.append(9)
+    cubes6 and i_files.append(10)
 
-files = [
-    'torus24',
-    'trees90',
-    'products72',
-    'cographs1',
-    'bigtrees1',
-    'torus144',
-    'trees36',
-    'modulesC',
-    'cubes5',
-    'bigtrees3',
-    'cubes6'
-]
+    files = [
+        'torus24',
+        'trees90',
+        'products72',
+        'cographs1',
+        'bigtrees1',
+        'torus144',
+        'trees36',
+        'modulesC',
+        'cubes5',
+        'bigtrees3',
+        'cubes6'
+    ]
 
-# Solutions given on Canvas per file
-solution_isomorphisms = [
-    {(0, 3): 96, (1, 2): 96},
-    {(0, 3): 6912, (1, 2): 20736},
-    {(0, 6): 288, (1, 5): 576, (2, 3): 576, (4, 7): 864},
-    {(0, 3): 5971968, (1, 2): 995328},
-    {(0, 2): 442368, (1, 3): 5308416},
-    {(0, 6): 576, (1, 7): 576, (2, 4): 576, (3, 10): 576, (5, 9): 1152, (8, 11): 576},
-    {(0, 7): 2, (1, 4): 6, (2, 6): 2, (3, 5): 6},
-    {(0, 7): 17915904, (1, 5): 17915904, (2, 4): 2488320, (3, 6): 2985984},
-    {(0, 1): 3840, (2, 3): 24},
-    {(0, 2): 2772351862699137701073289910157312, (1, 3): 462058643783189616845548318359552},
-    {(0, 1): 96, (2, 3): 46080}
-]
+    # Solutions given on Canvas per file
+    solution_isomorphisms = [
+        {(0, 3): 96, (1, 2): 96},
+        {(0, 3): 6912, (1, 2): 20736},
+        {(0, 6): 288, (1, 5): 576, (2, 3): 576, (4, 7): 864},
+        {(0, 3): 5971968, (1, 2): 995328},
+        {(0, 2): 442368, (1, 3): 5308416},
+        {(0, 6): 576, (1, 7): 576, (2, 4): 576, (3, 10): 576, (5, 9): 1152, (8, 11): 576},
+        {(0, 7): 2, (1, 4): 6, (2, 6): 2, (3, 5): 6},
+        {(0, 7): 17915904, (1, 5): 17915904, (2, 4): 2488320, (3, 6): 2985984},
+        {(0, 1): 3840, (2, 3): 24},
+        {(0, 2): 2772351862699137701073289910157312, (1, 3): 462058643783189616845548318359552},
+        {(0, 1): 96, (2, 3): 46080}
+    ]
 
-# For every file that needs to be evaluated, all combinations of graphs within that file are evaluated.
-error_count = 0
-graph_count = 0
-for i_file in i_files:
-    file = files[i_file]
-    filename = '../test_graphs/individualization_refinement/' + file + '.grl'
-    graphs = load_graph_list(filename)
-    solution_map = solution_isomorphisms[i_file]
+    # For every file that needs to be evaluated, all combinations of graphs within that file are evaluated.
+    error_count = 0
+    total_tests = 0
+    total_time = 0
+    for i_file in i_files:
+        file = files[i_file]
+        filename = 'test_graphs/individualization_refinement/' + file + '.grl'
+        graphs = load_graph_list(filename)
+        solution_map = solution_isomorphisms[i_file]
 
-    for i in range(0, len(graphs) - 1):
-        for j in range(i + 1, len(graphs)):
-            graph_count += 1
-            G = graphs[i]
-            H = graphs[j]
+        for i in range(0, len(graphs) - 1):
+            for j in range(i + 1, len(graphs)):
+                total_tests += 1
+                G = graphs[i]
+                H = graphs[j]
 
-            print('---------------------------')
-            print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-            print('---------------------------')
+                #print('---------------------------')
+                #print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                #print('---------------------------')
 
-            start_isomorph = time()
-            boolean_isomorph = are_isomorph(G, H)
-            end_isomorph = time()
+                start_isomorph = time()
+                boolean_isomorph = are_isomorph(G, H)
+                end_isomorph = time()
 
-            start_amount_isomorphisms = time()
-            n_isomorphisms = amount_of_isomorphisms(G, H)
-            end_amount_isomorphisms = time()
+                start_amount_isomorphisms = time()
+                n_isomorphisms = amount_of_isomorphisms(G, H)
+                end_amount_isomorphisms = time()
 
-            if (i, j) in solution_map:
-                if not boolean_isomorph:
-                    fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
-                    error_count += 1
+                if (i, j) in solution_map:
+                    if not boolean_isomorph:
+                        remark = "[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it"
+                        fail(remark)
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), False,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        error_count += 1
+                    else:
+                        remark = "[PASS] Graphs are isomorph"
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), True,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph),
+                                           "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        if show_passed_results:
+                            passed(remark)
+
+
+                    if n_isomorphisms != solution_map[(i, j)]:
+                        remark = "[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms)
+                        fail(remark)
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), False,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        error_count += 1
+                    else:
+                        remark = "[PASS] Amount of isomorphisms is: " + str(n_isomorphisms)
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), True,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph),
+                                           "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        if show_passed_results:
+                            passed(remark)
                 else:
-                    if show_passed_results:
-                        passed("Graphs are isomorph")
+                    if boolean_isomorph:
+                        remark = "[FAIL] Graphs are not isomorph, is_isomorph determined they were"
+                        fail(remark)
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), False,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        error_count += 1
+                    else:
+                        remark = "[PASS] Graphs are not isomorph"
+                        write_csv_line(
+                            csv_filepath, [file, str(i), str(j), True,
+                                           "{0:.3f}".format(start_isomorph - end_isomorph),
+                                           "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                           "{0}".format(remark)]
+                        )
+                        if show_passed_results:
+                            passed(remark)
 
-                if n_isomorphisms != solution_map[(i, j)]:
-                    fail("[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms))
-                    error_count += 1
-                else:
-                    if show_passed_results:
-                        passed("Amount of isomorphisms is: " + str(n_isomorphisms))
-            else:
-                if boolean_isomorph:
-                    fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
-                    error_count += 1
-                else:
-                    if show_passed_results:
-                        passed("Graphs are not isomorph")
+                total_time += (end_isomorph - start_isomorph) + (end_amount_isomorphisms - start_amount_isomorphisms)
+                #print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
+                #print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
+                #print('')
 
-            print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
-            print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
-            print('')
+    print('---------------------------')
+    print("Statistics of test:")
+    print('---------------------------')
+    print("Amount of graphs tested: " + str(total_tests))
+    print("Amount of graphs not colored correctly: " + str(error_count))
+    print('')
+    if error_count > 0:
+        fail('TEST FAILED')
+    else:
+        passed('TEST PASSED')
+    print('')
 
-print('---------------------------')
-print("Statistics of test:")
-print('---------------------------')
-print("Amount of graphs tested: " + str(graph_count))
-print("Amount of graphs not colored correctly: " + str(error_count))
-print('')
-if error_count > 0:
-    fail('TEST FAILED')
-else:
-    passed('TEST PASSED')
-print('')
+    return determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time)
+
+
+def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time):
+    # Determine test outcome
+    test_pass_bool = False
+    if error_count == 0:
+        test_pass_bool = True
+        passed(
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestname:\n{0}\t\t{1}\t\t{2}\t{3}\t{4}'.format(
+                str(total_tests),
+                str(error_count),
+                str(test_pass_bool),
+                "{0:.3f}".format(
+                    total_time),
+                test_name)
+        )
+    else:
+        fail(
+            '#Tests\t#Fail\tPASS?\tTime(s)\tTestname:\n{0}\t\t{1}\t\t{2}\t{3}\t{4}'.format(
+                str(total_tests),
+                str(error_count),
+                str(test_pass_bool),
+                "{0:.3f}".format(
+                    total_time),
+                test_name)
+        )
+    # Test summary
+    write_csv_line(csv_filepath, ['', '', '', ''])
+    write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
+    write_csv_line(csv_filepath, [str(total_tests), str(error_count), str(test_pass_bool),
+                                  "{0:.3f}".format(total_time)])
+    print('</' + test_name + '>')
+    return test_pass_bool
+
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()
