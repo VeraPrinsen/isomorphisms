@@ -13,13 +13,15 @@ from input_output.sys_output import fail, passed
 
 
 def unit_test():
-    print('<csvwriter>')
+    test_name = 'csv_writer'
     file = 'colorref_smallexample_4_16'
     filename = 'test_graphs/color_refinement/' + file + '.grl'
+
     graphs = load_graph_list(filename)
 
     # Output csv creation
     csv_filepath = create_csv_file('csvwriter_test')
+    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
     # Write first row with column names
     csv_write_array = [['file', 'i', 'time (s)', 'result']]
 
@@ -53,8 +55,6 @@ def unit_test():
     for line in csv_write_array:
         write_csv_line(csv_filepath, line)
 
-    print('CSV written to: ' + csv_filepath)
-
     print("VERIFYING write action...")
 
     csv_read_array =[]
@@ -69,11 +69,11 @@ def unit_test():
 
     if csv_read_array == csv_write_array:
         passed("CSV write OK")
-        print('</csvwriter>')
+        print('</'+test_name+'>')
         return True
     else:
         fail("CSV write test failed")
-        print('</csvwriter>')
+        print('</'+test_name+'>')
         return False
 
 
