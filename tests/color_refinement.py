@@ -50,7 +50,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     # test loop
     for i_file in range(0, len(files)):
         file = files[i_file]
-        filename = 'test_graphs/color_refinement/' + file + '.grl'
+        filename = '/test_graphs/color_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
 
         # file loop

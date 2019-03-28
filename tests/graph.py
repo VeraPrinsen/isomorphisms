@@ -34,7 +34,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
 
     # Test loop
     for file in files:
-        filename = 'test_graphs/color_refinement/' + file + '.grl'
+        filename = '/test_graphs/color_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
         for i in range(0, len(graphs) - 1):
             for j in range(i + 1, len(graphs)):

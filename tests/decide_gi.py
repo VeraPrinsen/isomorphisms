@@ -82,7 +82,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     total_time = 0
 
     for file in files:
-        filename = 'test_graphs/color_refinement/' + file + '.grl'
+        filename = '/test_graphs/color_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
 
         for i in range(0, len(graphs)):

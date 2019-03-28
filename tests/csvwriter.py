@@ -16,7 +16,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     # Because this test does not show any intermediate results, the arguments are ignored.
     test_name = 'csv_writer'
     file = 'colorref_smallexample_4_16'
-    filename = 'test_graphs/color_refinement/' + file + '.grl'
+    filename = '/test_graphs/color_refinement/' + file + '.grl'
 
     graphs = load_graph_list(filename)
 
