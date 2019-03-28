@@ -1,3 +1,5 @@
+import sys
+
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png, create_csv_file, \
@@ -15,40 +17,42 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
 
-def unit_test():
-    test_name = 'color_refinement'
-    csv_filepath = create_csv_file(test_name)
-    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
-
-    write_csv_line(csv_filepath, ['file', 'i', 'j', 'Pass?', 'Time (s)'])
-
+def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
     """
     SETTINGS OF TEST
     """
-    # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
-    save_png = True
-    # Set this variable to true if you want to show passed test results
-    show_passed_results = False
+    test_name = 'color_refinement'
+    if write_csv_any:
+        csv_filepath = create_csv_file(test_name)
+        print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
+        write_csv_line(csv_filepath, ['file', 'i', 'j', 'Pass?', 'Time (s)'])
+    else:
+        print('<' + test_name + '>')
 
-    """
-    DO NOT CHANGE ANYTHING BELOW HERE
-    """
+    # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
+    save_png = False
+
+    # files to test
+    files = ['colorref_smallexample_4_7', 'colorref_smallexample_6_15', 'colorref_smallexample_2_49']
+    # Solutions of the files
     solution_isomorphisms = [
         {(1, 3), (0, 2)},
         {(0, 1), (2, 3), (4, 5)},
         {(0, 1)}
     ]
 
+    # Test observables
     error_count = 0
     total_tests = 0
     total_time = 0
 
-    files = ['colorref_smallexample_4_7', 'colorref_smallexample_6_15', 'colorref_smallexample_2_49']
+    # test loop
     for i_file in range(0, len(files)):
         file = files[i_file]
         filename = 'test_graphs/color_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
 
+        # file loop
         for i in range(0, len(graphs) - 1):
             for j in range(i + 1, len(graphs)):
                 G = graphs[i] + graphs[j]
@@ -59,44 +63,48 @@ def unit_test():
 
                 output_filename = file + '_' + str(i) + '_' + str(j)
                 save_graph_as_dot(G, output_filename)
-
-                #print('---------------------------')
-                #print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-                #print('---------------------------')
+                process_time = end - start
+                filestr = '-> ' + "{0:.3f}".format(process_time) + 's ' + file + "-" + str(i) + "_" + str(j) + ' '
 
                 if (i, j) in solution_isomorphisms[i_file]:
                     if not is_balanced_or_bijected(G)[0]:
-                        remark = "[FAIL] Coloring of graph should be balanced, this is not the case."
-                        fail(remark)
-                        write_csv_line(
-                            csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
-                        )
-                    elif show_passed_results:
-                        remark = "Coloring of graph is balanced."
-                        passed(remark)
-                        write_csv_line(
-                            csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
-                        )
+                        error_count += 1
+                        remark = filestr + "[FAIL] Coloring of graph should be balanced, this is not the case."
+                        if write_stdout_fail:
+                            fail(remark)
+                        if write_csv_any:
+                            write_csv_line(
+                                csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(process_time), "{0}".format(remark)]
+                            )
+                    else:
+                        remark = filestr + "[PASS] Coloring of graph is balanced."
+                        if write_stdout_pass:
+                            passed(remark)
+                        if write_csv_any:
+                            write_csv_line(
+                                csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(process_time), "{0}".format(remark)]
+                            )
                 else:
                     if is_balanced_or_bijected(G)[0]:
-                        remark = "[FAIL] Coloring of graph should not be balanced, this is the case though."
-                        fail(remark)
-                        write_csv_line(
-                            csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(end - start), "{0}".format(remark)]
-                        )
-                    elif show_passed_results:
-                        remark = "Coloring of graph is not balanced."
-                        passed(remark)
-                        write_csv_line(
-                            csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(end-start), "{0}".format(remark)]
-                        )
+                        error_count += 1
+                        remark = filestr + "[FAIL] Coloring of graph should not be balanced, this is the case though."
+                        if write_stdout_fail:
+                            fail(remark)
+                        if write_csv_any:
+                            write_csv_line(
+                                csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(process_time), "{0}".format(remark)]
+                            )
+                    else:
+                        remark = filestr + "[PASS] Coloring of graph is not balanced."
+                        if write_stdout_pass:
+                            passed(remark)
+                        if write_csv_any:
+                            write_csv_line(
+                                csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(process_time), "{0}".format(remark)]
+                            )
 
                 total_time += end - start
                 total_tests += 1
-
-                #print("Processing time: " + str(round((end-start), 3)) + " ms")
-
-                #print('')
 
         if save_png:
             for i in range(0, len(graphs) - 1):
@@ -104,10 +112,6 @@ def unit_test():
                     output_filename = file + '_' + str(i) + '_' + str(j)
                     save_graph_in_png(output_filename)
 
-    return determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time)
-
-
-def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time):
     # Determine test outcome
     test_pass_bool = False
     if error_count == 0:
@@ -131,15 +135,18 @@ def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, to
                                                                                                  total_time),
                                                                                              test_name)
         )
-    # Test summary
-    write_csv_line(csv_filepath, ['', '', '', ''])
-    write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
-    write_csv_line(csv_filepath, [str(total_tests), str(error_count), str(test_pass_bool),
-                                  "{0:.3f}".format(total_time)])
+
+    if write_csv_any:
+        # Test summary
+        write_csv_line(csv_filepath, ['', '', '', ''])
+        write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
+        write_csv_line(csv_filepath, [str(total_tests), str(error_count), str(test_pass_bool),
+                                      "{0:.3f}".format(total_time)])
+
     print('</' + test_name + '>')
     return test_pass_bool
 
 
 if __name__ == '__main__':
-    # Run the unit test if file is called
+    # Run the unit test if file is called. If all arguments are supplied with those. Otherwise default True.
     unit_test()
