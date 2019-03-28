@@ -1,11 +1,11 @@
 from supporting_components.graph import Graph, Vertex
 from algorithms.color_refinement import get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
-from typing import List, Dict
+from typing import List, Dict, Callable
 from math import inf
 
 
-def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method):
+def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
     """
     It counts the number of isomorphisms of the graph (disjoint union of two graphs) if 'count_flag' is True.
     It checks if the graph (disjoint union of two graphs) has at least one isomorphism if 'count_flag' is False.
@@ -57,7 +57,7 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
     return __branching(G_copy, colors, C, D.copy(), I.copy(), count_flag, color_refinement_method)
 
 
-def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method):
+def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
     """
     Creates branches of the graph (disjoint union of two graphs) and count the amount of isomorphisms for those graphs.
     In one graph, one vertex of the color group is fixed. For each of the vertices in the other graph, a branch is

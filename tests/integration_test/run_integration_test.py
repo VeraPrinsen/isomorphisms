@@ -38,7 +38,8 @@ if write_to_csv:
 ACTUAL TEST
 """
 # For every file that needs to be evaluated, all combinations of graphs within that file are evaluated.
-graph_count = 0
+test_graph_count = 0
+notest_graph_count = 0
 error_count = 0
 for filepath in file_paths:
     graphs = load_graph_list_from_filepath(filepath)
@@ -52,10 +53,10 @@ for filepath in file_paths:
             G = graphs[i]
             H = graphs[j]
 
-            if console_pass or console_fail:
-                print('---------------------------')
-                print("Statistics of " + filename + "-" + str(i) + "_" + str(j) + ":")
-                print('---------------------------')
+            print('---------------------------')
+            print("Statistics of " + filename + "-" + str(i) + "_" + str(j) + ":")
+            print('---------------------------')
+
 
             G_copy = G.copy()
             H_copy = H.copy()
@@ -69,7 +70,7 @@ for filepath in file_paths:
 
             # If solution of file is in solutions.py, check if solution is correct
             if bool(solution_map):
-                graph_count += 1
+                test_graph_count += 1
                 are_isomorph_expected = (i, j) in solution_map
                 if are_isomorph_expected:
                     amount_isomorph_expected = solution_map[(i, j)]
@@ -109,18 +110,19 @@ for filepath in file_paths:
                         if console_pass:
                             passed("Graphs are not isomorph")
             else:
+                notest_graph_count += 1
                 are_isomorph_expected = '-'
                 are_isomorph_passed = '-'
                 amount_isomorph_expected = '-'
                 amount_isomorph_passed = '-'
 
+
             are_isomorph_time = round((end_isomorph - start_isomorph), 3)
             amount_isomorph_time = round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
 
-            if console_pass or console_fail:
-                print("Processing time is_isomorph(G, H): " + str(are_isomorph_time) + " s")
-                print("Processing time amount_of_isomorphisms(G, H): " + str(amount_isomorph_time) + " s")
-                print('')
+            print("Processing time is_isomorph(G, H): " + str(are_isomorph_time) + " s")
+            print("Processing time amount_of_isomorphisms(G, H): " + str(amount_isomorph_time) + " s")
+            print('')
 
             if write_to_csv:
                 csv_graph_result = [filename, i, j,
@@ -130,15 +132,16 @@ for filepath in file_paths:
 
 if console_pass or console_fail:
     print('-------------------------------')
-    print("Statistics of branching test:")
+    print("Statistics of integration test:")
     print('-------------------------------')
-    print("Amount of graphs tested: " + str(graph_count))
-    print("Amount of graphs with failed results: " + str(error_count))
+    print("Amount of graphs evaluated: " + str(notest_graph_count + test_graph_count))
+    print("Amount of graphs tested: " + str(test_graph_count))
+    print("Amount of tested graphs with failed results: " + str(error_count))
     print('')
     if error_count > 0:
-        fail('TEST FAILED')
+        fail('INTEGRATION TEST FAILED')
     else:
-        passed('TEST PASSED')
+        passed('INTEGRATION TEST PASSED')
     print('')
 
 
