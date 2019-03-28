@@ -1,3 +1,4 @@
+from algorithms.preprocessing import fix_degrees
 from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, branching_method
 
 """
@@ -9,6 +10,8 @@ def are_isomorph(G: "Graph", H: "Graph"):
     :param G, H: The two graphs of which it must be determined if there is an isomorphism.
     :return: Boolean that indicates if graph G and H are isomorph or not.
     """
+    fix_degrees(G), fix_degrees(H)
+
     if not apply_could_be_isomorphic(G, H):
         return False
 
@@ -23,6 +26,8 @@ def amount_of_isomorphisms(G: "Graph", H: "Graph"):
     :param G, H: The two graphs of which the amount of isomorphisms must be determined.
     :return: Amount of isomorphisms graph G and H have.
     """
+    fix_degrees(G), fix_degrees(H)
+
     if not apply_could_be_isomorphic(G, H):
         return 0
 

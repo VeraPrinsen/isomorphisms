@@ -5,6 +5,17 @@ from math import factorial
 from typing import List
 
 
+def fix_degrees(G: "Graph"):
+    """
+    Because the property 'degree' of vertices changes when the neighbours change, a property degree_fixed is added
+    to vertices to fix the degree of the vertex at this moment.
+    :param G:
+    :return:
+    """
+    for v in G.vertices:
+        v.degree_fixed = v.degree
+
+
 def could_be_isomorphic(G: 'Graph', H: 'Graph'):
     """
     Based on properties of the graphs a few simple comparisons are made to determine if the graphs could be isomorphic.
@@ -34,11 +45,9 @@ def remove_twins(G: 'Graph'):
     :return factor: To find the right amount of isomorphisms, the amount of isomorphisms found with the remaining
     graph should be multiplied by this factor.
     """
-    # First save degrees of vertices in twin_degree, so that will not change even though twins are removed
-    # Also put all vertices in a queue for evaluation
+    # Put all vertices in a queue for evaluation
     queue = []
     for v in G.vertices:
-        v.twin_degree = v.degree
         queue.append(v)
 
     factor = 1
