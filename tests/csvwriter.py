@@ -12,7 +12,8 @@ from input_output.sys_output import fail, passed
 # The result of the test are written to CSV in the folder output_files/csv/
 
 
-def unit_test():
+def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+    # Because this test does not show any intermediate results, the arguments are ignored.
     test_name = 'csv_writer'
     file = 'colorref_smallexample_4_16'
     filename = 'test_graphs/color_refinement/' + file + '.grl'
@@ -21,7 +22,7 @@ def unit_test():
 
     # Output csv creation
     csv_filepath = create_csv_file('csvwriter_test')
-    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
+    print('<' + test_name + '> ' + 'Appending mock result to CSV: ' + "file:///" + csv_filepath.replace('\\', '/'))
     # Write first row with column names
     csv_write_array = [['file', 'i', 'time (s)', 'result']]
 
@@ -55,8 +56,6 @@ def unit_test():
     for line in csv_write_array:
         write_csv_line(csv_filepath, line)
 
-    print("VERIFYING write action...")
-
     csv_read_array =[]
 
     with open(csv_filepath, newline='') as f:
@@ -75,7 +74,6 @@ def unit_test():
         fail("CSV write test failed")
         print('</'+test_name+'>')
         return False
-
 
 
 if __name__ == '__main__':
