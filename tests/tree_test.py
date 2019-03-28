@@ -1,6 +1,6 @@
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
-from algorithms.tree_isomorphisms import trees_are_isomorph, trees_amount_of_isomorphisms
+from algorithms.tree_isomorphisms import trees_are_isomorph, trees_count_isomorphisms
 from time import time
 
 
@@ -33,7 +33,7 @@ def unit_test(create_csv, console_fail, console_pass):
                 T2 = graphs[j]
 
                 start_are_isomorph = time()
-                are_isomorph_actual, amount_of_isomorphisms_actual = trees_amount_of_isomorphisms(T1, T2)
+                are_isomorph_actual, amount_of_isomorphisms_actual = trees_count_isomorphisms(T1, T2)
                 end_are_isomorph = time()
 
                 if console_fail or console_pass:

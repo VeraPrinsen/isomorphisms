@@ -6,22 +6,24 @@ def is_tree(G: "Graph"):
     return len(G.edges) == len(G.vertices) - 1
 
 
-def trees_amount_of_isomorphisms(T1: "Graph", T2: "Graph"):
+def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
     """
     :param T1, T2: Graphs that are trees (so is_tree(T1) and is_tree(T2) return True)
     :return:
     """
-    root_T1 = root_label(T1)
-    root_T2 = root_label(T2)
+    root_T1 = __root_label(T1)
+    root_T2 = __root_label(T2)
 
     # Tree can have one or two roots, if amount of roots is not equal, not isomorphic
     if len(root_T1) != len(root_T2):
-        return False, 0
+        if count_flag:
+            return 0
+        return False
 
     # Assign level numbers to all nodes
     # todo: adept to when there are 2 roots.
-    assign_level(root_T1[0], 0, [])
-    assign_level(root_T2[0], 0, [])
+    __assign_level(root_T1[0], 0, [])
+    __assign_level(root_T2[0], 0, [])
 
     # Assign all vertices to level number lists
     L1 = {}
@@ -34,7 +36,9 @@ def trees_amount_of_isomorphisms(T1: "Graph", T2: "Graph"):
     # The number of levels of each tree should be equal
     h1, h2 = max(L1.keys()), max(L2.keys())
     if max(L1.keys()) != max(L2.keys()):
-        return False, 0
+        if count_flag:
+            return 0
+        return False
     h = h1
 
     for i in range(h, -1, -1):
@@ -97,80 +101,16 @@ def trees_amount_of_isomorphisms(T1: "Graph", T2: "Graph"):
         H1.sort()
         H2.sort()
         if H1 != H2:
-            return False, 0
-
-    return True, L1[0][0].auto
-
-
-def trees_are_isomorph(T1: "Graph", T2: "Graph"):
-    """
-    :param T1, T2: Graphs that are trees (so is_tree(T1) and is_tree(T2) return True)
-    :return:
-    """
-    root_T1 = root_label(T1)
-    root_T2 = root_label(T2)
-
-    # Tree can have one or two roots, if amount of roots is not equal, not isomorphic
-    if len(root_T1) != len(root_T2):
-        return False
-
-    # Assign level numbers to all nodes
-    assign_level(root_T1[0], 0, [])
-    assign_level(root_T2[0], 0, [])
-
-    # Assign all vertices to level number lists
-    L1 = {}
-    for v in T1:
-        L1.setdefault(v.level, []).append(v)
-    L2 = {}
-    for v in T2:
-        L2.setdefault(v.level, []).append(v)
-
-    # The number of levels of each tree should be equal
-    h1, h2 = max(L1.keys()), max(L2.keys())
-    if max(L1.keys()) != max(L2.keys()):
-        return False
-    h = h1
-
-    # Tree is processed level by leven, from bottom to root
-    # Vertices in the same layer whose subtrees are isomorphic, get the same string
-    for i in range(0, h+1):
-        H1 = []
-        for v in L1[i]:
-            if v.degree == 1:
-                # v.string = 0
-                H1.append(1)
-            else:
-                # For each vertex, get the set of string assigned to its children
-                str = 0
-                for n in v.neighbours:
-                    if n.level > v.level:
-                        str += 1
-                # v.string = str
-                H1.append(str)
-
-        H2 = []
-        for v in L2[i]:
-            if v.degree == 1:
-                # v.string = 0
-                H2.append(1)
-            else:
-                # For each vertex, get the set of string assigned to its children
-                str = 0
-                for n in v.neighbours:
-                    if n.level > v.level:
-                        str += 1
-                # v.string = str
-                H2.append(str)
-
-        H1.sort()
-        H2.sort()
-        if H1 != H2:
+            if count_flag:
+                return 0
             return False
 
+    if count_flag:
+        return L1[0][0].auto
     return True
 
-def root_label(T: "Graph"):
+
+def __root_label(T: "Graph"):
     """
     Root of tree T
     :param T:
@@ -198,7 +138,7 @@ def root_label(T: "Graph"):
     return T_root
 
 
-def assign_level(vertex: "Vertex", level, already_assigned: "List[Vertex]"):
+def __assign_level(vertex: "Vertex", level, already_assigned: "List[Vertex]"):
     vertex.level = level
     already_assigned.append(vertex)
     if vertex.degree == 1:
@@ -206,4 +146,4 @@ def assign_level(vertex: "Vertex", level, already_assigned: "List[Vertex]"):
     else:
         for neighbour in vertex.neighbours:
             if neighbour not in already_assigned:
-                assign_level(neighbour, level+1, already_assigned)
+                __assign_level(neighbour, level + 1, already_assigned)
