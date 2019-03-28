@@ -57,8 +57,10 @@ for filepath in file_paths:
                 print("Statistics of " + filename + "-" + str(i) + "_" + str(j) + ":")
                 print('---------------------------')
 
+            G_copy = G.copy()
+            H_copy = H.copy()
             start_isomorph = time()
-            are_isomorph_actual = are_isomorph(G.copy(), H.copy())
+            are_isomorph_actual = are_isomorph(G_copy, H_copy)
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
@@ -73,15 +75,15 @@ for filepath in file_paths:
                     amount_isomorph_expected = solution_map[(i, j)]
                 else:
                     amount_isomorph_expected = 0
-                are_isomorph_result = True
-                amount_isomorph_result = True
+                are_isomorph_passed = True
+                amount_isomorph_passed = True
                 # Graphs should be isomorphic
                 if are_isomorph_expected:
                     if not are_isomorph_actual:
                         if console_fail:
                             fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
                         error_count += 1
-                        are_isomorph_result = False
+                        are_isomorph_passed = False
                     else:
                         if console_pass:
                             passed("Graphs are isomorph")
@@ -92,7 +94,7 @@ for filepath in file_paths:
                             if console_fail:
                                 fail("[FAIL] Amount of isomorphisms should be " + str(amount_isomorph_expected) + ", not " + str(amount_isomorph_actual))
                             error_count += 1
-                            amount_isomorph_result = False
+                            amount_isomorph_passed = False
                         else:
                             if console_pass:
                                 passed("Amount of isomorphisms is: " + str(amount_isomorph_actual))
@@ -102,15 +104,15 @@ for filepath in file_paths:
                         if console_fail:
                             fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
                         error_count += 1
-                        are_isomorph_result = False
+                        are_isomorph_passed = False
                     else:
                         if console_pass:
                             passed("Graphs are not isomorph")
             else:
                 are_isomorph_expected = '-'
-                are_isomorph_result = '-'
+                are_isomorph_passed = '-'
                 amount_isomorph_expected = '-'
-                amount_isomorph_result = '-'
+                amount_isomorph_passed = '-'
 
             are_isomorph_time = round((end_isomorph - start_isomorph), 3)
             amount_isomorph_time = round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
@@ -122,8 +124,8 @@ for filepath in file_paths:
 
             if write_to_csv:
                 csv_graph_result = [filename, i, j,
-                                    are_isomorph_expected, are_isomorph_actual, are_isomorph_result, are_isomorph_time,
-                                    amount_isomorph_expected, amount_isomorph_actual, amount_isomorph_result, amount_isomorph_time]
+                                    are_isomorph_expected, are_isomorph_actual, are_isomorph_passed, are_isomorph_time,
+                                    amount_isomorph_expected, amount_isomorph_actual, amount_isomorph_passed, amount_isomorph_time]
                 write_csv_line(csv_filepath, csv_graph_result)
 
 if console_pass or console_fail:
