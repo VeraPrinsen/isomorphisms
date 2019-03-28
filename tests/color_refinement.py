@@ -69,17 +69,17 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 if (i, j) in solution_isomorphisms[i_file]:
                     if not is_balanced_or_bijected(G)[0]:
                         error_count += 1
-                        remark = filestr + "[FAIL] Coloring of graph should be balanced, this is not the case."
+                        remark = "[FAIL] Coloring of graph should be balanced, this is not the case."
                         if write_stdout_fail:
-                            fail(remark)
+                            fail(filestr + remark)
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(process_time), "{0}".format(remark)]
                             )
                     else:
-                        remark = filestr + "[PASS] Coloring of graph is balanced."
+                        remark = "[PASS] Coloring of graph is balanced."
                         if write_stdout_passed:
-                            passed(remark)
+                            passed(filestr + remark)
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(process_time), "{0}".format(remark)]
@@ -87,17 +87,17 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 else:
                     if is_balanced_or_bijected(G)[0]:
                         error_count += 1
-                        remark = filestr + "[FAIL] Coloring of graph should not be balanced, this is the case though."
+                        remark = "[FAIL] Coloring of graph should not be balanced, this is the case though."
                         if write_stdout_fail:
-                            fail(remark)
+                            fail(filestr + remark)
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(process_time), "{0}".format(remark)]
                             )
                     else:
-                        remark = filestr + "[PASS] Coloring of graph is not balanced."
+                        remark = "[PASS] Coloring of graph is not balanced."
                         if write_stdout_passed:
-                            passed(remark)
+                            passed(filestr + remark)
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(process_time), "{0}".format(remark)]
