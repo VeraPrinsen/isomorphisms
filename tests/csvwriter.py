@@ -12,7 +12,7 @@ import csv
 from input_output.sys_output import fail, passed
 
 file = 'colorref_smallexample_4_16'
-filename = 'test_graphs/color_refinement/' + file + '.grl'
+filename = '/test_graphs/color_refinement/' + file + '.grl'
 graphs = load_graph_list(filename)
 
 # Output csv creation
