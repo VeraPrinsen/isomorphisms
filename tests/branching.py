@@ -1,6 +1,8 @@
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
-from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
+from algorithms.branching import count_isomorphisms
+from algorithms.color_initialization import degree_color_initialization
+from algorithms.color_refinement import color_refinement
 from time import time
 
 

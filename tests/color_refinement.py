@@ -6,6 +6,7 @@ from input_output.file_output import load_graph_list, save_graph_as_dot, save_gr
     write_csv_line
 from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
+from algorithms.preprocessing import remove_twins
 from time import time
 
 """
