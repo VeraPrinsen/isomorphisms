@@ -111,9 +111,11 @@ for i_file in i_files:
             print('---------------------------')
 
             G_disjoint_union = G + H
+            # Create copy to use in one of the two methods to perform the tests on separate graphs
+            G_disjoint_union_copy = G_disjoint_union.copy()
 
             start_isomorph = time()
-            boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], False, color_refinement)
+            boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union_copy), [], [], False, color_refinement)
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
