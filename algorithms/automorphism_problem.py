@@ -24,11 +24,11 @@ def amount_of_automorphisms(G):
     G_disjoint_union = G.self_disjoint_union()
     save_graph_as_dot(G_disjoint_union, 'testGG')
 
-    permutations=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[], trivial_node=True)
+    permutation_vectors=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[])
     # Convert into objects
-    permutation_objects = []
-    print(permutations)
-    for raw_perm_group in permutations:
+    permutation_objects = list()
+
+    for raw_perm_group in permutation_vectors:
         # Contains tuple (D, I) of equal length
         cycle_list = []
         for i in range(0,len(raw_perm_group[0])):
@@ -38,13 +38,7 @@ def amount_of_automorphisms(G):
 
     print(permutation_objects)
 
-    # Set has been found. Now 2 problems remain:
-    # (lec4 slide 19)
-    # 1. Membership testing
-    # 2. Order computation
-
-    # Order computation of "H"
-    # Slide 21
+    # With these objects do order computation and return the number
     return order_computation(permutation_objects)
 
 
@@ -65,6 +59,7 @@ def order_computation(H: 'List[permutation]'):
     # Group always contains G and e
     # Now find subgroups (defined as coset) of equal size
     # https://www.youtube.com/watch?v=TCcSZEL_3CQ
+    # https://www.youtube.com/watch?v=AnJOjE8nVFY
     # Use left or right cosets.
     # Each subgroup should not include the unit element or any previous elements
 
@@ -76,224 +71,118 @@ def order_computation(H: 'List[permutation]'):
 
     return a
 
-def recursive_membership_testing(H: 'List[permutation]', a: permutation):
-    # ? what to do with this testing?
 
-def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node: 'Bool'):
+def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node=True):
     """
     It counts the number of isomorphisms of the graph (disjoint union of two graphs) if 'count_flag' is True.
     It checks if the graph (disjoint union of two graphs) has at least one isomorphism if 'count_flag' is False.
     :param G: The graph (disjoint union of two graphs) to check for isomorphisms
     :param D: The list of vertices in one of the graphs that is fixed
     :param I: The list of vertices in the other graph that is fixed
-    :param full_search: find_all, choice of finding all or any bijection(s).
+    :param trivial_node: This is a trivial node (default).
     :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
     isomorphism if 'count_flag' is False
     """
-
 
     # Do color refinement on the graph
     color_refinement(G)
 
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
-        # If the graph is unbalanced, the graph has no isomorphism
+        # If the graph is unbalanced, the evaluated graph has no automorphism
         return []
     if is_bijected:
-        # If the graph is balanced and bijected, the graph has exactly one isomorphism
-        #
-        # TODO: Figure out if f is not in the set of <X>
-        # This is the case when (D+x,D+x) is evaluated (slide 17)
-        # Remark to self: can start with the left leg calculation (D+x, D+x). or y=x (slide p 18)
-        # Objective: find all in x, find one in y.
-        # Do some clever calculations to generate the number of automorphisms.
-        #
-        # If the evaluation is in the right leg (D + x, D + y),
-        # then it is OK to jump back directly to the first trivial node
-        # A trivial node is the node where the left and right leg need to be compared.
-        #
-        # Create some sort of algorithm to create different branching behavior for x and y
-        #
-        #        O   (find all in x, find one in y)
-        #      /  \
-        # x   .     .  y
-        #    / \   / \
-        #   .   .  .  .
-        #  xx  xy yx  yy
-        return [(D,I,'bijected')]
-        #return [(D,I)]
+        return [(D, I)]
+    # Conclusion: the graph is balanced, continue refining partition...
 
-    colors, max_colornum = get_colors(G)
+    color_mapping, max_colornum = get_colors(G)
 
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
-    C_len = inf
-    for key in colors:
-        if 4 <= len(colors[key]) < C_len:
-            # Check firstly if Dx,Dx exists
-            color_c = key
-
-            # Choose the first occurring vertex with color C in the list of vertices of the first graph
-            for v in colors[color_c]:
+    color_map_length_max = inf
+    for color_key in color_mapping:
+        if 4 <= len(color_mapping[color_key]) < color_map_length_max:
+            for v in color_mapping[color_key]:
                 if v.graph_label == 1:
-                    x = v
-                    C_len = len(colors[key])
+                    v_Dx_g1 = v
+                    color_map_length_max = len(color_mapping[color_key])
+                    original_color_vertex_x0 = color_key
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
-    x.colornum = max_colornum + 1
-    D_copy = D.copy()
-    D_copy.append(x)
+    v_Dx_g1.colornum = max_colornum + 1
 
     # And branch in separate I = Ix
-    Ix = []
-    Iy = []
+    # First the comparison D + x and I + x
+    # Thereafter D + xn and I + yn
+    Ix = list()
+    Iy = list()
 
-    # Must visit Dx,Dx earlier then Dx,Dy
-    # Store list Ix and list Iy
-    for v in colors[color_c]:
-        # Look for Dx, Dx
-        if v.graph_label == 2 and x.coupling_label == v.coupling_label:
+    for v in color_mapping[original_color_vertex_x0]:
+        # Separate D + x, I + x if possible using the coupling_label property of v.
+        if v.graph_label == 2 and v.coupling_label == v_Dx_g1.coupling_label:
             Ix.append(v)
-        else:
-            # Create the Dx, Dy combinations
+        else:  # Create the D + x, I + y combinations
             Iy.append(v)
 
     # Look for permutations
-    permutations = []
+    permutation_vectors_DI_tuples = list()
 
     if trivial_node:
-        # Always do DXDX
-        # Call the left leg and wait for return (form: list with length 1 or more)
-        # No need to loop al the X (last lecture 3)
-        # Color the vertex
-        # By reference changes so copy the current value
+        # Look for D + X, I + X
         if len(Ix) == 0:
             print('Error no DxDx... This is not a trivial node')
-            return 0
+            return []
+        # Grab the reference to the vertex with graph_label = 2 in G
+        v_Dx_g2 = Ix[0]
 
-        I_copy = I.copy()
-        Ix_colornum_copy = Ix[0].colornum
-        Ix[0].colornum = x.colornum
-        I_copy.append(Ix[0]) # to store the actual vertex object, not reference as with append (?)
-        G_DxDx = G.copy()
-        # Restore the coloring in G
-        Ix[0].colornum = Ix_colornum_copy
-        # Changed by reference in G
-        # Calculate the left leg
-        # Below it will also be a trivial node
-        permutations = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy, trivial_node=True)
-
-    # allow to check again
-    # But DxDx is first (lecture)
-    if not trivial_node:
-        Iy = Ix+Iy
-
-    # Get the right leg to provide all results
-    for vDy in Iy:
-        I_copy = I.copy()
-        I_copy.append(vDy)
-        # Change color by reference in G
-        vDy_colornum_copy = vDy.colornum
-        vDy.colornum = x.colornum
-        # Copy graph
-        G_DxDy = G.copy()
-        # Revert colorchange in G after copy
-        vDy.colornum = vDy_colornum_copy
-
-        perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
-        if perm_right == []:
-            continue
-        else:
-            # Got it!
-            permutations += perm_right
-            break
-
-    return permutations
-
-    # if not find_all: #syn: if not findall
-    #     # Get the right leg
-    #     for vDy in Iy:
-    #         # Change color by reference in G
-    #         vDy_colornum_copy = vDy.colornum
-    #         vDy.colornum = x.colornum
-    #         # Copy graph
-    #         G_DxDy = G.copy()
-    #         # Revert colorchange in G after copy
-    #         vDy.colornum = vDy_colornum_copy
-    #
-    #         perm_right = generate_automorphism(G=G_DxDy, D=D.copy(), I=[vDy], find_all=False)
-    #         if perm_right == [0]:
-    #         if perm_right == [0]:
-    #             continue
-    #
-    #         if perm_right == [1]:
-    #             # Got it!
-    #             permutations.append(perm_right)
-    #             break
-
-    # Return trivial node conclusion
-
-
-
-
-
-
-    #
-    # TODO: check if y = x in (D+x, D+y)
-    # Flag for this if this is the case
-    # Try:
-    # with x == y (do this using x.label = (y.label + int(len(G.vertices)/2)) ?
-    #    <<Count isomorphisms call self recursion>> if possible otherwise raise
-    # except:
-    #   Return 0
-    #
-    # Remember the empty left leg, p. 16 slides
-    # Try:
-    #       for all other x=!y:
-    #       right leg, instruct: any hit is OK
-    #       Recursively call with flag count = false like..
-    # Catch: foundIT!
-    #   Return Do some calculations to generate number of automorphisms...
-    #           With X and Y puzzle together the number using some algebra
-
-    # Create branches for all the possible fixed pairs of vertices for the chosen color
-
-
-def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool'):
-    """
-    Creates branches of the graph (disjoint union of two graphs) and count the amount of isomorphisms for those graphs.
-    In one graph, one vertex of the color group is fixed. For each of the vertices in the other graph, a branch is
-    created fixing that vertex.
-    :param G: The graph (disjoint union of two graphs) to branch
-    :param colors: The colors present in the graph (disjoint union of two graphs) and its corresponding list of vertices
-    :param C: The chosen color group to create branches for
-    :param D: The list of vertices in one of the graphs that is fixed
-    :param I: The list of vertices in the other graph that is fixed
-    :param count_flag: Whether or not the amount of isomorphisms should be returned or whether or not the graph has an
-    isomorphism
-    :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
-    isomorphism if 'count_flag' is False
-    """
-    # Create the list of vertices in the other graph with color C
-    g1 = []
-    for v in colors[C]:
-        if v.graph_label == 2:
-            g1.append(v)
-
-    # For each of the vertices in the list of vertices with color C, fix the vertex and change its color to the new
-    # color and determine the amount of isomorphisms for the resulting graph
-    num_isomorphisms = 0
-    for y0 in g1:
-        G_copy = G.copy()
         D_copy = D.copy()
         I_copy = I.copy()
-        colors_copy, max_colornum = get_colors(G_copy)
-        for y in colors_copy[C]:
-            if y.graph_label == 2 and y.label == y0.label:
-                y.colornum = max_colornum
-                I_copy.append(y)
-                num_isomorphisms += count_isomorphisms(G_copy, D_copy, I_copy, count_flag)
-                if not count_flag and num_isomorphisms > 0:
-                    return True
-                break
-    return num_isomorphisms
+        D_copy.append(v_Dx_g1)
+        I_copy.append(v_Dx_g2)
+
+        # Now color the vertex in the second graph (I + X)
+        # Note: work in G because the vector references are pointing to G
+        original_X_color_in_G = v_Dx_g2.colornum
+        v_Dx_g2.colornum = v_Dx_g1.colornum
+
+        # Copy the colored graph
+        G_DxDx = G.copy()
+
+        # Revert changes in G
+        v_Dx_g2.colornum = original_X_color_in_G
+
+        # Following the algorithmic description, the next node should be either bijected or a trivial node
+        permutation_vectors_DI_tuples = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy)
+
+    if not trivial_node:
+        # Assemble with Ix as the first vector to evaluate
+        Iy = Ix+Iy
+
+    for v_Iy in Iy:
+        D_copy = D.copy()
+        I_copy = I.copy()
+        D_copy.append(v_Dx_g1)
+        I_copy.append(v_Iy)
+
+        # Now color the vertex in the second graph (I + Y)
+        # Note: work in G because the vector references are pointing to G
+        original_Y_color_in_G = v_Iy.colornum
+        v_Iy.colornum = v_Dx_g1.colornum
+
+        # Copy the colored graph
+        G_DxDy = G.copy()
+
+        # Revert changes in G
+        v_Iy.colornum = original_Y_color_in_G
+
+        perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
+
+        # Empty response is a dead end in the evaluation tree, pick next by continue
+        if not perm_right:
+            continue
+        else:
+            # A bijection, stop loop by break
+            permutation_vectors_DI_tuples += perm_right
+            break
+
+    return permutation_vectors_DI_tuples
