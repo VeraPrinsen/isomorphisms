@@ -114,7 +114,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 n_isomorphisms = amount_of_isomorphisms(G, H)
                 end_amount_isomorphisms = time()
 
-                filestr = '-> are_isomorph: ' + "{0:.3f}".format(start_isomorph - end_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms) + ' s ' + file + "-" + str(i) + "_" + str(j)
+                filestr = '-> are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + ' s ' + file + "-" + str(i) + "_" + str(j)
 
                 if (i, j) in solution_map:
                     if not boolean_isomorph:
@@ -124,7 +124,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), False,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         error_count += 1
@@ -133,8 +133,8 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), True,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph),
-                                               "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph),
+                                               "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         if write_stdout_passed:
@@ -148,7 +148,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), False,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         error_count += 1
@@ -157,8 +157,8 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), True,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph),
-                                               "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph),
+                                               "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         if write_stdout_passed:
@@ -171,7 +171,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), False,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph), "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         error_count += 1
@@ -180,8 +180,8 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                         if write_csv_any:
                             write_csv_line(
                                 csv_filepath, [file, str(i), str(j), True,
-                                               "{0:.3f}".format(start_isomorph - end_isomorph),
-                                               "{0:.3f}".format(start_amount_isomorphisms - end_amount_isomorphisms),
+                                               "{0:.3f}".format(end_isomorph - start_isomorph),
+                                               "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
                         if write_stdout_passed:
