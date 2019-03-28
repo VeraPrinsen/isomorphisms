@@ -11,35 +11,47 @@ To test if the fast_color_refinement works and if it is faster compared to color
 The correctness should be checked by yourself by looking at the graphs.
 """
 
-def unit_test():
-    test_name = 'fast_color_refinement'
-    csv_filepath = create_csv_file(test_name)
-    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
-    write_csv_line(csv_filepath, ['file', 'i', 'mode', 'Pass?', 'Time (s)'])
+def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+    test_name = 'fast_color_refinement'
+    if write_csv_any:
+        csv_filepath = create_csv_file(test_name)
+        print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
+
+        write_csv_line(csv_filepath, ['file', 'i', 'mode', 'Pass?', 'Time (s)'])
+    else:
+        print('<' + test_name + '>')
 
     """
     SETTINGS OF TEST
     """
     # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
+    # Test always writes graph to dot file.
     save_png = False
+    # Graph files to test. The latter list can be commented out for speed.
+    files = ['5', '10', '20', '40', '80', '160', '320', '640'] #+ ['1280', '2560', '5120', '10240']
+    # Do slow: also apply regular color_refinement to these graphs for comparison.
+    do_slow = [True, True, True, True, False, False, False, True] #+ [False, False, False, False]
 
     """
     DO NOT CHANGE ANYTHING BELOW HERE
     """
-    files = ['5', '10', '20', '40', '80', '160', '320', '640'] #+ ['1280', '2560', '5120', '10240']
-    do_slow = [True, True, True, True, False, False, False, True] #+ [False, False, False, False]
+    # There won't be any errors to detect algorithmically.
     error_count = 0
     total_tests = 0
     total_time = 0
 
+    # File loop
     for i_file in range(0, len(files)):
         file = files[i_file]
         filename = 'test_graphs/fast_color_refinement/threepaths' + file + '.gr'
         graphs = load_graph_list(filename)
 
         for i in range(0, len(graphs)):
+            # Graph test
+
             G_initialized = degree_color_initialization(graphs[i])
+
             if do_slow[i_file]:
                 total_tests += 1
                 start_color_refinement = time()
@@ -57,27 +69,31 @@ def unit_test():
             output_filename = 'threepaths' + file + '_' + str(i) + 'fast'
             save_graph_as_dot(G_colored_fast, output_filename)
 
-            #print('---------------------------')
-            #print("Statistics of threepaths" + file + "-" + str(i) + ":")
-            #print('---------------------------')
+            if write_stdout_pass or write_stdout_fail:
+                print('')
+                print("Statistics of threepaths" + file + "-" + str(i) + ":")
             if do_slow[i_file]:
-                #print("Processing time color_refinement: " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
+                if write_stdout_pass or write_stdout_fail:
+                    print("Processing time color_refinement:      " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
                 total_time += end_color_refinement - start_color_refinement
-                write_csv_line(csv_filepath, [file, str(i), 'slow', True, "{0:.3f}".format(end_color_refinement - start_color_refinement)])
-            #print("Processing time fast_color_refinement: " + str(round(end_fast_color_refinement - start_fast_color_refinement, 3)) + " s")
+                if write_csv_any:
+                    write_csv_line(csv_filepath, [file, str(i), 'slow', True, "{0:.3f}".format(end_color_refinement - start_color_refinement)])
+            else:
+                if write_stdout_pass or write_stdout_fail:
+                    print("Processing time color_refinement:      skipped")
+
+            if write_stdout_pass or write_stdout_fail:
+                print("Processing time fast_color_refinement: " + str(round(end_fast_color_refinement - start_fast_color_refinement, 3)) + " s")
+
             total_time += end_fast_color_refinement - start_fast_color_refinement
-            write_csv_line(csv_filepath, [file, str(i), 'fast', True, "{0:.3f}".format(end_fast_color_refinement - start_fast_color_refinement)])
-            #print('')
+            if write_csv_any:
+                write_csv_line(csv_filepath, [file, str(i), 'fast', True, "{0:.3f}".format(end_fast_color_refinement - start_fast_color_refinement)])
 
         if save_png:
             for i in range(0, len(graphs)):
                 output_filename = 'threepaths' + file + '_' + str(i)
                 save_graph_in_png(output_filename)
 
-    return determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time)
-
-
-def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time):
     # Determine test outcome
     test_pass_bool = False
     if error_count == 0:
@@ -102,11 +118,12 @@ def determine_test_outcome(csv_filepath, error_count, test_name, total_tests, to
                 test_name)
         )
     # Test summary
-    write_csv_line(csv_filepath, ['', '', '', ''])
-    write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
-    write_csv_line(csv_filepath, [str(total_tests), str(error_count), str(test_pass_bool),
+    if write_csv_any:
+        write_csv_line(csv_filepath, ['', '', '', ''])
+        write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
+        write_csv_line(csv_filepath, [str(total_tests), str(error_count), str(test_pass_bool),
                                   "{0:.3f}".format(total_time)])
-    print('</' + test_name + '>')
+        print('</' + test_name + '>')
     return test_pass_bool
 
 
