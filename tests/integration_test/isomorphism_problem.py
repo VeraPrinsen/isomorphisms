@@ -1,5 +1,5 @@
 from algorithms.preprocessing import fix_degrees
-from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, branching_method
+from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, apply_tree_algorithm, branching_method
 
 """
 With these methods, the graph isomorphism problem can be solved.
@@ -17,6 +17,10 @@ def are_isomorph(G: "Graph", H: "Graph"):
 
     G_disjoint_union, _ = apply_remove_twins(G, H)
 
+    problem_solved, is_isomorph = apply_tree_algorithm(G, H, False)
+    if problem_solved:
+        return is_isomorph
+
     return branching_method(G_disjoint_union, False)
 
 
@@ -32,5 +36,9 @@ def amount_of_isomorphisms(G: "Graph", H: "Graph"):
         return 0
 
     G_disjoint_union, factor = apply_remove_twins(G, H)
+
+    problem_solved, isomorph_count = apply_tree_algorithm(G, H, True)
+    if problem_solved:
+        return factor * isomorph_count
 
     return factor * branching_method(G_disjoint_union, True)

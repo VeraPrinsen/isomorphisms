@@ -1,6 +1,6 @@
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
-from algorithms.tree_isomorphisms import trees_are_isomorph, trees_count_isomorphisms
+from algorithms.tree_isomorphisms import trees_count_isomorphisms
 from time import time
 
 
@@ -9,7 +9,7 @@ def unit_test(create_csv, console_fail, console_pass):
         test_name = "isomorphisms_trees"
         csv_filepath = create_csv_file(test_name)
         print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
-        write_csv_line(csv_filepath, ['file', 'i', 'j', 'are_isomorph passed?', 'amount_of_isomorphisms passed?', 'Time (s)'])
+        write_csv_line(csv_filepath, ['file', 'i', 'j', 'are_isomorph passed?', 'are_isomorph time(s)', 'amount_of_isomorphisms passed?', 'amount_isomorphisms time (s)'])
 
     # TEST FILE
     files = ["bigtrees1.grl", "bigtrees3.grl"]
@@ -33,8 +33,12 @@ def unit_test(create_csv, console_fail, console_pass):
                 T2 = graphs[j]
 
                 start_are_isomorph = time()
-                are_isomorph_actual, amount_of_isomorphisms_actual = trees_count_isomorphisms(T1, T2)
+                are_isomorph_actual = trees_count_isomorphisms(T1, T2, False)
                 end_are_isomorph = time()
+
+                start_amount_isomorphisms = time()
+                amount_of_isomorphisms_actual = trees_count_isomorphisms(T1, T2, True)
+                end_amount_isomorphisms = time()
 
                 if console_fail or console_pass:
                     print('---------------------------')
@@ -44,6 +48,8 @@ def unit_test(create_csv, console_fail, console_pass):
                 are_isomorph_expected = (i, j) in solution[i_file]
                 if are_isomorph_expected:
                     amount_of_isomorphisms_expected = solution[i_file][(i, j)]
+                else:
+                    amount_of_isomorphisms_expected = 0
                 if are_isomorph_expected:
                     if not are_isomorph_actual:
                         if console_fail:
@@ -75,13 +81,14 @@ def unit_test(create_csv, console_fail, console_pass):
 
                 if console_pass or console_fail:
                     print("Processing time trees_are_isomorph:", round(end_are_isomorph - start_are_isomorph, 3), 's')
+                    print("Processing time trees_amount_isomorphisms:", round(end_amount_isomorphisms - start_amount_isomorphisms, 3), 's')
                     print("")
 
-                total_time += end_are_isomorph - start_are_isomorph
+                total_time += (end_are_isomorph - start_are_isomorph) + (end_amount_isomorphisms - start_amount_isomorphisms)
                 total_tests += 1
 
                 if create_csv:
-                    line = [file, str(i), str(j), are_isomorph_expected == are_isomorph_actual, False, "{0:.3f}".format(end_are_isomorph - start_are_isomorph)]
+                    line = [file, str(i), str(j), are_isomorph_expected == are_isomorph_actual, "{0:.3f}".format(end_are_isomorph - start_are_isomorph), amount_of_isomorphisms_expected == amount_of_isomorphisms_actual, "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms)]
                     write_csv_line(csv_filepath, line)
 
     determine_test_outcome(csv_filepath, error_count, test_name, total_tests, total_time)

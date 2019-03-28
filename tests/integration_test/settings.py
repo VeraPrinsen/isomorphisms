@@ -15,6 +15,7 @@ SETTINGS OF ALGORITHM
 # Choose which preprocessing steps you want to have by turning them to True
 preprocessing_simple_cases = True
 twin_removal = True
+tree_algorithm = True
 
 # Choose a color refinement algorithm
 # 1 - normal color refinement

@@ -57,7 +57,6 @@ for filepath in file_paths:
             print("Statistics of " + filename + "-" + str(i) + "_" + str(j) + ":")
             print('---------------------------')
 
-
             G_copy = G.copy()
             H_copy = H.copy()
             start_isomorph = time()
