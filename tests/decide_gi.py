@@ -28,7 +28,7 @@ def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected:
         return True
 
 
-def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'decide_gi'
 
     if write_csv_any:
@@ -103,7 +103,7 @@ def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True
 
                     t1 = time.time() - t0
                     pass_line = [file, str(j), str(i), str(is_balanced_or_bijected_test_result), "{0:.3f}".format(t1)]
-                    if write_stdout_pass:
+                    if write_stdout_passed:
                         print(*pass_line, sep='\t', end='')
                         passed('[PASS]')
                     if write_csv_any:

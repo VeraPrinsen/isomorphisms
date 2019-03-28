@@ -12,7 +12,7 @@ The correctness should be checked by yourself by looking at the graphs.
 """
 
 
-def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'fast_color_refinement'
     if write_csv_any:
         csv_filepath = create_csv_file(test_name)
@@ -69,20 +69,20 @@ def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True
             output_filename = 'threepaths' + file + '_' + str(i) + 'fast'
             save_graph_as_dot(G_colored_fast, output_filename)
 
-            if write_stdout_pass or write_stdout_fail:
+            if write_stdout_passed or write_stdout_fail:
                 print('')
                 print("Statistics of threepaths" + file + "-" + str(i) + ":")
             if do_slow[i_file]:
-                if write_stdout_pass or write_stdout_fail:
+                if write_stdout_passed or write_stdout_fail:
                     print("Processing time color_refinement:      " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
                 total_time += end_color_refinement - start_color_refinement
                 if write_csv_any:
                     write_csv_line(csv_filepath, [file, str(i), 'slow', True, "{0:.3f}".format(end_color_refinement - start_color_refinement)])
             else:
-                if write_stdout_pass or write_stdout_fail:
+                if write_stdout_passed or write_stdout_fail:
                     print("Processing time color_refinement:      skipped")
 
-            if write_stdout_pass or write_stdout_fail:
+            if write_stdout_passed or write_stdout_fail:
                 print("Processing time fast_color_refinement: " + str(round(end_fast_color_refinement - start_fast_color_refinement, 3)) + " s")
 
             total_time += end_fast_color_refinement - start_fast_color_refinement

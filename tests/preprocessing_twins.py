@@ -107,7 +107,7 @@ def test_remove_connected_twins():
            and factor == 12
 
 
-def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
     # Because this test does not show any intermediate results, the arguments are ignored.
     test_name = 'preprocessing_twins'
     print('<' + test_name + '>')

@@ -17,7 +17,7 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
 
-def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
+def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
     """
     SETTINGS OF TEST
     """
@@ -78,7 +78,7 @@ def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True
                             )
                     else:
                         remark = filestr + "[PASS] Coloring of graph is balanced."
-                        if write_stdout_pass:
+                        if write_stdout_passed:
                             passed(remark)
                         if write_csv_any:
                             write_csv_line(
@@ -96,7 +96,7 @@ def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True
                             )
                     else:
                         remark = filestr + "[PASS] Coloring of graph is not balanced."
-                        if write_stdout_pass:
+                        if write_stdout_passed:
                             passed(remark)
                         if write_csv_any:
                             write_csv_line(
