@@ -28,12 +28,15 @@ def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected:
         return True
 
 
-def unit_test():
+def unit_test(write_csv_any=True, write_stdout_pass=True, write_stdout_fail=True):
     test_name = 'decide_gi'
-    csv_filepath = create_csv_file(test_name)
-    print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
 
-    write_csv_line(csv_filepath, ['file', 'j', 'i', 'Pass?', 'Time (s)'])
+    if write_csv_any:
+        csv_filepath = create_csv_file(test_name)
+        print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
+        write_csv_line(csv_filepath, ['file', 'j', 'i', 'Pass?', 'Time (s)'])
+    else:
+        print('<' + test_name + '>')
 
     # Expected test results
     total_tests = 22
@@ -100,23 +103,26 @@ def unit_test():
 
                     t1 = time.time() - t0
                     pass_line = [file, str(j), str(i), str(is_balanced_or_bijected_test_result), "{0:.3f}".format(t1)]
-                    write_csv_line(csv_filepath, pass_line)
+                    if write_stdout_pass:
+                        print(*pass_line, sep='\t', end='')
+                        passed('[PASS]')
+                    if write_csv_any:
+                        write_csv_line(csv_filepath, pass_line)
 
                 except ValueError as err:
                     error_count += 1
 
                     t1 = time.time() - t0
                     fail_line = [file, str(j), str(i), False, "{0:.3f}".format(t1), "{0}".format(err)]
-                    write_csv_line(csv_filepath, fail_line)
-                    print(*fail_line, sep='\t', end='')
-                    fail('! Error #'+str(error_count))
+                    if write_csv_any:
+                        write_csv_line(csv_filepath, fail_line)
+
+                    if write_stdout_fail:
+                        print(*fail_line, sep='\t', end='')
+                        fail('! Error #'+str(error_count))
 
                 total_time += t1
 
-    return determine_test_outcome(csv_filepath, error_count, graph_count, test_name, total_tests, total_time)
-
-
-def determine_test_outcome(csv_filepath, error_count, graph_count, test_name, total_tests, total_time):
     # Determine test outcome
     test_pass_bool = False
     if error_count == 0 and total_tests == graph_count:
@@ -141,10 +147,11 @@ def determine_test_outcome(csv_filepath, error_count, graph_count, test_name, to
                                                                                              test_name)
         )
     # Test summary
-    write_csv_line(csv_filepath, ['', '', '', ''])
-    write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
-    write_csv_line(csv_filepath, [str(graph_count) + "/" + str(total_tests), str(error_count), str(test_pass_bool),
-                                  "{0:.3f}".format(total_time)])
+    if write_csv_any:
+        write_csv_line(csv_filepath, ['', '', '', ''])
+        write_csv_line(csv_filepath, ['#Tests', '#Fail', 'PASS?', 'Time (s)'])
+        write_csv_line(csv_filepath, [str(graph_count) + "/" + str(total_tests), str(error_count), str(test_pass_bool),
+                                      "{0:.3f}".format(total_time)])
     print('</' + test_name + '>')
     return test_pass_bool
 
