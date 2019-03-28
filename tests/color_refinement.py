@@ -1,12 +1,9 @@
-import sys
-
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png, create_csv_file, \
     write_csv_line
 from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
-from algorithms.preprocessing import remove_twins
 from time import time
 
 """
@@ -56,6 +53,8 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
         # file loop
         for i in range(0, len(graphs) - 1):
             for j in range(i + 1, len(graphs)):
+                # Graph test
+                
                 G = graphs[i] + graphs[j]
 
                 start = time()
