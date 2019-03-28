@@ -2,6 +2,7 @@ from input_output.file_output import load_graph_list, create_csv_file, write_csv
 from input_output.sys_output import fail, passed
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
+from algorithms.color_refinement import color_refinement
 from time import time
 
 
@@ -112,11 +113,11 @@ for i_file in i_files:
             G_disjoint_union = G + H
 
             start_isomorph = time()
-            boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], False)
+            boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], False, color_refinement)
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
-            n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+            n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
             end_amount_isomorphisms = time()
 
             are_isomorph_result = True
