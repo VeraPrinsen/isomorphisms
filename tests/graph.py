@@ -1,6 +1,5 @@
 from input_output.file_output import load_graph_list, write_csv_line, create_csv_file
 from input_output.sys_output import passed, fail
-from supporting_components.graph_io import *
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
 

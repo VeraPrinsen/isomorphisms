@@ -2,7 +2,6 @@ from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png, create_csv_file, \
     write_csv_line
-from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
 from time import time
 

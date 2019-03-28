@@ -17,7 +17,7 @@ If any False is detected in the list, the user is notified.
 
 # Global test settings
 write_csv_any = True
-write_stdout_passed = True
+write_stdout_passed = False
 write_stdout_fail = True
 
 result_boolean = list()
