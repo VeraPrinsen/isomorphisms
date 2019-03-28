@@ -10,6 +10,10 @@ from algorithms.branching import count_isomorphisms
 METHODS THAT PROVIDE ALL OPTIONS OF ALGORITHMS
 """
 def apply_could_be_isomorphic(G: "Graph", H: "Graph"):
+    """
+    If preprocessing_simple_cases is set to True, apply the simple cases algorithm to determine is graphs are
+    isomorphic using simple properties of the graphs.
+    """
     if preprocessing_simple_cases:
         if not could_be_isomorphic(G, H):
             return False
@@ -17,6 +21,12 @@ def apply_could_be_isomorphic(G: "Graph", H: "Graph"):
 
 
 def apply_remove_twins(G: "Graph", H: "Graph"):
+    """
+    If twin_removal is set to True, twin vertices are removed from both graphs. The factor with which the amount
+    of isomorphisms found with the reduced graphs should be multiplied with is returned.
+    Furthermore the graphs are colored based on the degrees before twins were removed, instead of the current
+    amount of degrees of vertices.
+    """
     if twin_removal:
         factor = remove_twins(G)
         remove_twins(H)
@@ -31,12 +41,19 @@ def apply_remove_twins(G: "Graph", H: "Graph"):
 
 
 def color_refinement_method():
+    """
+    This method returns the color_refinement method that is chosen in the settings.
+    """
     if color_refinement_algorithm == 1:
         return color_refinement
     elif color_refinement_algorithm == 2:
         return fast_color_refinement
 
 
-def branching_method(G: "Graph", count):
+def branching_method(G: "Graph", count_flag: "Bool"):
+    """
+    This method returns if the disjoint union graph G is isomorph or the amount of isomorphisms based on the value
+    of count_flag. Also the right color_refinement method is passed along here.
+    """
     if branching_algorithm == 1:
-        return count_isomorphisms(G, [], [], count, color_refinement_method())
+        return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
