@@ -26,12 +26,14 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     SETTINGS OF TEST
     """
     # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
-    # Test always writes graph to dot file.
+    # Save graph files?
+    save_dot = False
     save_png = False
+
     # Graph files to test. The latter list can be commented out for speed.
-    files = ['5', '10', '20', '40', '80', '160', '320', '640'] #+ ['1280', '2560', '5120', '10240']
+    files = ['5', '10', '20', '40', '80', '160', '320', '640'] + ['1280', '2560', '5120', '10240']
     # Do slow: also apply regular color_refinement to these graphs for comparison.
-    do_slow = [True, True, True, True, False, False, False, True] #+ [False, False, False, False]
+    do_slow = [True, True, True, True, False, False, False, False] + [False, False, False, False]
 
     """
     DO NOT CHANGE ANYTHING BELOW HERE
@@ -58,42 +60,48 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
             if do_slow[i_file]:
                 total_tests += 1
                 start_color_refinement = time()
-                G_colored = color_refinement(G_initialized.copy())
+                G_colored = color_refinement(G_initialized)
                 end_color_refinement = time()
 
                 output_filename = 'threepaths' + file + '_' + str(i)
                 save_graph_as_dot(G_colored, output_filename)
 
             total_tests += 1
+            start_copy_g_initialized = time()
             G_initialized_copy = G_initialized.copy()
+            end_copy_g_initialized = time()
 
             start_fast_color_refinement = time()
             G_colored_fast = fast_color_refinement(G_initialized_copy)
             end_fast_color_refinement = time()
 
-            output_filename = 'threepaths' + file + '_' + str(i) + 'fast'
-            save_graph_as_dot(G_colored_fast, output_filename)
+            if save_dot:
+                output_filename = 'threepaths' + file + '_' + str(i) + 'fast'
+                save_graph_as_dot(G_colored_fast, output_filename)
 
             if write_stdout_passed:
                 print('')
                 print("Statistics of threepaths" + file + "-" + str(i) + ":")
                 print("Processing time degree_color_initialization: " + str(round(end_degree_color_initialization - start_degree_color_initialization, 3)) + " s")
-                if write_csv_any:
-                    write_csv_line(csv_filepath, [file, str(i), 'c_init', True, "{0:.3f}".format(end_degree_color_initialization - start_degree_color_initialization)])
-                total_time += end_fast_color_refinement - start_fast_color_refinement
+                print("Processing time G_initialized.copy():        " + str(round(end_copy_g_initialized - start_copy_g_initialized, 3))+' s')
+
+            if write_csv_any:
+                write_csv_line(csv_filepath, [file, str(i), 'c_init', True, "{0:.3f}".format(end_degree_color_initialization - start_degree_color_initialization)])
+
+            total_time += end_degree_color_initialization - start_degree_color_initialization
 
             if do_slow[i_file]:
                 if write_stdout_passed:
-                    print("Processing time color_refinement:      " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
+                    print("Processing time color_refinement:            " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
                 total_time += end_color_refinement - start_color_refinement
                 if write_csv_any:
                     write_csv_line(csv_filepath, [file, str(i), 'slow', True, "{0:.3f}".format(end_color_refinement - start_color_refinement)])
             else:
                 if write_stdout_passed:
-                    print("Processing time color_refinement:      skipped")
+                    print("Processing time color_refinement:            skipped")
 
             if write_stdout_passed:
-                print("Processing time fast_color_refinement: " + str(round(end_fast_color_refinement - start_fast_color_refinement, 3)) + " s")
+                print("Processing time fast_color_refinement:       " + str(round(end_fast_color_refinement - start_fast_color_refinement, 3)) + " s")
 
             total_time += end_fast_color_refinement - start_fast_color_refinement
             if write_csv_any:

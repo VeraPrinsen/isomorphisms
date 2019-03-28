@@ -1,6 +1,6 @@
 from input_output.sys_output import passed, fail
-from tests import decide_gi, csvwriter, color_refinement, fast_color_refinement, graph, graph_del_vertex_edge, \
-    isomorphism_problem, preprocessing_twins
+from tests import branching, decide_gi, csvwriter, color_refinement, fast_color_refinement, graph, \
+    graph_del_vertex_edge, preprocessing_twins
 
 """
 All unit tests will be called in sequence.
@@ -17,11 +17,13 @@ If any False is detected in the list, the user is notified.
 
 # Global test settings
 write_csv_any = True
-write_stdout_passed = False
+write_stdout_passed = True
 write_stdout_fail = True
 
 result_boolean = list()
 
+result_boolean.append(branching.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
+print('')
 result_boolean.append(color_refinement.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
 result_boolean.append(csvwriter.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
@@ -33,8 +35,6 @@ print('')
 result_boolean.append(graph.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
 result_boolean.append(graph_del_vertex_edge.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
-print('')
-result_boolean.append(isomorphism_problem.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
 result_boolean.append(preprocessing_twins.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')

@@ -17,7 +17,7 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 
 
 def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
-    test_name = 'isomorphism_problem'
+    test_name = 'branching'
     if write_csv_any:
         csv_filepath = create_csv_file(test_name)
         print('<' + test_name + '> ' + 'Appending to CSV: ' + "file:///" + csv_filepath.replace('\\', '/') + '\nStart...')
