@@ -50,7 +50,10 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
         for i in range(0, len(graphs)):
             # Graph test
 
+            # Time degree step separately
+            start_degree_color_initialization = time()
             G_initialized = degree_color_initialization(graphs[i])
+            end_degree_color_initialization = time()
 
             if do_slow[i_file]:
                 total_tests += 1
@@ -62,8 +65,10 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 save_graph_as_dot(G_colored, output_filename)
 
             total_tests += 1
+            G_initialized_copy = G_initialized.copy()
+
             start_fast_color_refinement = time()
-            G_colored_fast = fast_color_refinement(G_initialized.copy())
+            G_colored_fast = fast_color_refinement(G_initialized_copy)
             end_fast_color_refinement = time()
 
             output_filename = 'threepaths' + file + '_' + str(i) + 'fast'
@@ -72,6 +77,11 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
             if write_stdout_passed:
                 print('')
                 print("Statistics of threepaths" + file + "-" + str(i) + ":")
+                print("Processing time degree_color_initialization: " + str(round(end_degree_color_initialization - start_degree_color_initialization, 3)) + " s")
+                if write_csv_any:
+                    write_csv_line(csv_filepath, [file, str(i), 'c_init', True, "{0:.3f}".format(end_degree_color_initialization - start_degree_color_initialization)])
+                total_time += end_fast_color_refinement - start_fast_color_refinement
+
             if do_slow[i_file]:
                 if write_stdout_passed:
                     print("Processing time color_refinement:      " + str(round(end_color_refinement - start_color_refinement, 3)) + " s")
