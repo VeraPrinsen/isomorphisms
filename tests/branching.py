@@ -97,7 +97,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     # For every file that needs to be evaluated, all combinations of graphs within that file are evaluated.
     for i_file in i_files:
         file = files[i_file]
-        filename = 'test_graphs/individualization_refinement/' + file + '.grl'
+        filename = '/test_graphs/individualization_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
         solution_map = solution_isomorphisms[i_file]
 
@@ -108,12 +108,16 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 G = graphs[i]
                 H = graphs[j]
 
+                G_disjoint_union = G + H
+                # Create copy to use in one of the two methods to perform the tests on separate graphs
+                G_disjoint_union_copy = G_disjoint_union.copy()
+
                 start_isomorph = time()
-                boolean_isomorph = are_isomorph(G, H)
+                boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union_copy), [], [], False, color_refinement)
                 end_isomorph = time()
 
                 start_amount_isomorphisms = time()
-                n_isomorphisms = amount_of_isomorphisms(G, H)
+                n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
                 end_amount_isomorphisms = time()
 
                 filestr = '-> are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + ' s ' + file + "-" + str(i) + "_" + str(j)
