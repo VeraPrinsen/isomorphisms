@@ -3,6 +3,10 @@ from math import factorial
 
 
 def is_tree(G: "Graph"):
+    """
+    Determines if graph G is a tree based on the Theorem that the amount of edges is one less than the amount of vertices
+    :return: Boolean if graph G is a tree or not
+    """
     return len(G.edges) == len(G.vertices) - 1
 
 
@@ -112,9 +116,8 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
 
 def __root_label(T: "Graph"):
     """
-    Root of tree T
-    :param T:
-    :return:
+    Determines the root of tree T by removing all leaves from the tree until there are 1 or 2 vertices left.
+    :return: A list of vertices of the roots of tree T
     """
     T_copy = T.copy()
 
@@ -139,11 +142,14 @@ def __root_label(T: "Graph"):
 
 
 def __assign_level(vertex: "Vertex", level, already_assigned: "List[Vertex]"):
+    """
+    Assumes that levels are assigned to tree from root to the leafs
+    :param vertex: Vertex that a level needs to be assigned to
+    :param level: The level that needs to be assigned
+    :param already_assigned: List of vertices with all vertices that already have assigned a level
+    """
     vertex.level = level
     already_assigned.append(vertex)
-    if vertex.degree == 1:
-        vertex.tree_label = 0
-    else:
-        for neighbour in vertex.neighbours:
-            if neighbour not in already_assigned:
-                __assign_level(neighbour, level + 1, already_assigned)
+    for neighbour in vertex.neighbours:
+        if neighbour not in already_assigned:
+            __assign_level(neighbour, level + 1, already_assigned)
