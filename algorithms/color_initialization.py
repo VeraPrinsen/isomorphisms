@@ -17,5 +17,5 @@ def twins_color_initialization(G: "Graph"):
     :return The graph with the initial coloring
     """
     for v in G.vertices:
-        v.colornum = v.twin_degree
+        v.colornum = v.degree_fixed
     return G

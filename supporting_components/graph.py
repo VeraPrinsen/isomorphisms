@@ -46,7 +46,7 @@ class Vertex(object):
         self.graph_label = graph_label
         self._incidence = {}
         self.colornum = None
-        self.twin_degree = None
+        self.degree_fixed = None
 
     def __repr__(self):
         """
@@ -369,10 +369,10 @@ class Graph(object):
 
         for v_before_union in self.vertices:
             vertex_reference_self[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=1)
-            vertex_reference_self[v_before_union].twin_degree = v_before_union.twin_degree
+            vertex_reference_self[v_before_union].degree_fixed = v_before_union.degree_fixed
         for v_before_union in other.vertices:
             vertex_reference_other[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=2)
-            vertex_reference_other[v_before_union].twin_degree = v_before_union.twin_degree
+            vertex_reference_other[v_before_union].degree_fixed = v_before_union.degree_fixed
 
         # Add edges
         # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
@@ -444,7 +444,7 @@ class Graph(object):
             vertices_old_to_new[v].label = v.label
             vertices_old_to_new[v].colornum = v.colornum
             vertices_old_to_new[v].graph_label = v.graph_label
-            vertices_old_to_new[v].twin_degree = v.twin_degree
+            vertices_old_to_new[v].degree_fixed = v.degree_fixed
 
         for e in self.edges:
             edge = Edge(vertices_old_to_new[e.tail], vertices_old_to_new[e.head])
@@ -469,7 +469,7 @@ class Graph(object):
                 return False
             for o in other_vertices:
                 if v.label == o.label:
-                    if v.graph_label != o.graph_label or v.colornum != o.colornum:
+                    if v.graph_label != o.graph_label or v.colornum != o.colornum or v.degree_fixed != o.degree_fixed:
                         return False
                     other_vertices.remove(o)
         return len(other_vertices) == 0

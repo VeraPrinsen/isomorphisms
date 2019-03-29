@@ -64,10 +64,13 @@ for filepath in file_paths:
             are_isomorph_actual = are_isomorph(G_copy, H_copy)
             end_isomorph = time()
 
+            G_copy = G.copy()
+            H_copy = H.copy()
             start_amount_isomorphisms = time()
-            amount_isomorph_actual = amount_of_isomorphisms(G, H)
+            amount_isomorph_actual = amount_of_isomorphisms(G_copy, H_copy)
             end_amount_isomorphisms = time()
 
+            test_failed = False
             # If solution of file is in solutions.py, check if solution is correct
             if bool(solution_map):
                 test_graph_count += 1
@@ -83,7 +86,7 @@ for filepath in file_paths:
                     if not are_isomorph_actual:
                         if console_fail:
                             fail("[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it")
-                        error_count += 1
+                        test_failed = True
                         are_isomorph_passed = False
                     else:
                         if console_pass:
@@ -94,7 +97,7 @@ for filepath in file_paths:
                         if amount_isomorph_actual != amount_isomorph_expected:
                             if console_fail:
                                 fail("[FAIL] Amount of isomorphisms should be " + str(amount_isomorph_expected) + ", not " + str(amount_isomorph_actual))
-                            error_count += 1
+                            test_failed = True
                             amount_isomorph_passed = False
                         else:
                             if console_pass:
@@ -104,7 +107,7 @@ for filepath in file_paths:
                     if are_isomorph_actual:
                         if console_fail:
                             fail("[FAIL] Graphs are not isomorph, is_isomorph determined they were")
-                        error_count += 1
+                        test_failed = True
                         are_isomorph_passed = False
                     else:
                         if console_pass:
@@ -116,6 +119,8 @@ for filepath in file_paths:
                 amount_isomorph_expected = '-'
                 amount_isomorph_passed = '-'
 
+            if test_failed:
+                error_count += 1
 
             are_isomorph_time = round((end_isomorph - start_isomorph), 3)
             amount_isomorph_time = round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
