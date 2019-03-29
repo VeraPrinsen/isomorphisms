@@ -58,7 +58,8 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
                 children_auto = {}
                 for n in v.neighbours:
                     if n.level > v.level:
-                        children_names.append(n.name)
+                        for _ in range(n.n_twins):
+                            children_names.append(n.name)
                         children_count[n.name] = children_count.setdefault(n.name, 0) + 1
                         children_auto[n.name] = children_auto.setdefault(n.name, 1) * n.auto
                 v_auto = 1
@@ -86,7 +87,8 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
                 children_auto = {}
                 for n in v.neighbours:
                     if n.level > v.level:
-                        children_names.append(n.name)
+                        for _ in range(n.n_twins):
+                            children_names.append(n.name)
                         children_count[n.name] = children_count.setdefault(n.name, 0) + 1
                         children_auto[n.name] = children_auto.setdefault(n.name, 1) * n.auto
                 v_auto = 1
