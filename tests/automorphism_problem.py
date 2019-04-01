@@ -122,7 +122,7 @@ create_csv = False
 
 # todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
-torus24 = False
+torus24 = True
 trees90 = False # does not work on trees apparently ? Do some sort of tree detection first !
 products72 = False
 cographs1 = False

@@ -25,35 +25,54 @@ def amount_of_automorphisms(G):
     save_graph_as_dot(G_disjoint_union, 'testGG')
 
     permutation_vectors=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[])
+    print('&&&&&&&&&&&&&')
     # Convert into objects
     permutation_objects = list()
+    #print(permutation_vectors)
 
-    for raw_perm_group in permutation_vectors:
+    # TODO: investigate why the last permutation (from trivial node = 0) fails
+    for groupid in range(0, len(permutation_vectors)):
+        raw_perm_group = permutation_vectors[groupid]
         # Contains tuple (D, I) of equal length
         cycle_list = []
         for i in range(0,len(raw_perm_group[0])):
-            cycle_list.append([raw_perm_group[0][i].coupling_label, (raw_perm_group[1][i].coupling_label)])
+            cycle_list.append([raw_perm_group[0][i].coupling_label, raw_perm_group[1][i].coupling_label])
+        print(groupid)
 
-        permutation_objects.append(permutation(len(G.vertices), cycle_list))
+        print(cycle_list)
+        # TODO: This fails for trees
+        p_test = permutation(len(G.vertices), cycle_list)
+        permutation_objects.append(p_test)
 
     print(permutation_objects)
-
     # With these objects do order computation and return the number
-    return order_computation(permutation_objects)
+    return order_computation(list(permutation_objects), permutation_objects)
 
 
-def order_computation(H: 'List[permutation]'):
+def order_computation(H_0: 'List[permutation]', H: 'List[permutation]'):
     """
     Based on slide 21 of lecture 4 and notes.
     TODO:
     :param H: Permutation group
     :return: int with the order of the list of permutations
     """
+    a = FindNonTrivialOrbit(H_0)
+    print('FindNonTrivialOrbit a={}'.format(a))
+    orb_a, transvO = Orbit(H_0, a, returntransversal=True)
+    print(transvO)
+    print('orb_a={}'.format(orb_a))
+    stab_a = Stabilizer(H_0, a)
+    print('stab_a={}'.format(stab_a))
+
+    if len(stab_a) == 0:
+        return len(orb_a) * 1  # As theorem (=1)
+
+    return len(orb_a) * order_computation(stab_a, H)
 
     # Choose a in V, |H| = |Ha| * |a^H| note: (numel(a^H) > 2)
     # Built in function basicpermutationgroup
     # Choose a with non trivial orbit a: 0^H yields |0^H|
-    a = FindNonTrivialOrbit(H) # ?a=0? slide 21 lec4
+    #a = FindNonTrivialOrbit(H) # ?a=0? slide 21 lec4
     # a is unit element
     # The numel(unit element) divides the group |H|
     # Group always contains G and e
@@ -64,12 +83,12 @@ def order_computation(H: 'List[permutation]'):
     # Each subgroup should not include the unit element or any previous elements
 
     # Orbit contains all elements reachable by applying all elements in <H> to a
-    orbit_a = Orbit(H, a)
+    #orbit_a = Orbit(H, a)
     # ? is orbit left coset ?
     # Stabilizer contains all elements that stay the same after applying all elements in <H> to a
-    stabilizer_a = Stabilizer(H, a)
+    #stabilizer_a = Stabilizer(H, a)
 
-    return a
+    #return a
 
 
 def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node=True):
@@ -84,16 +103,18 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     isomorphism if 'count_flag' is False
     """
 
+    #print(trivial_node)
     # Do color refinement on the graph
     color_refinement(G)
 
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the evaluated graph has no automorphism
-        return []
+        return ['unbalanced']
     if is_bijected:
         return [(D, I)]
-    # Conclusion: the graph is balanced, continue refining partition...
+
+    # The graph is balanced, continue refining partition...
 
     color_mapping, max_colornum = get_colors(G)
 
@@ -130,8 +151,8 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     if trivial_node:
         # Look for D + X, I + X
         if len(Ix) == 0:
-            print('Error no DxDx... This is not a trivial node')
-            return []
+            #print('Error no DxDx... This is not a trivial node')
+            return ['err']
         # Grab the reference to the vertex with graph_label = 2 in G
         v_Dx_g2 = Ix[0]
 
@@ -153,6 +174,10 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
         # Following the algorithmic description, the next node should be either bijected or a trivial node
         permutation_vectors_DI_tuples = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy)
+        #print(trivial_node)
+        #print(len(D))
+        # A trivial node has no need in investigating the D X + D X again
+        Iy.remove(v_Dx_g1)
 
     if not trivial_node:
         # Assemble with Ix as the first vector to evaluate
@@ -178,11 +203,11 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
 
         # Empty response is a dead end in the evaluation tree, pick next by continue
-        if not perm_right:
+        if perm_right == ['unbalanced']:
             continue
         else:
             # A bijection, stop loop by break
             permutation_vectors_DI_tuples += perm_right
-            break
+            return permutation_vectors_DI_tuples
 
-    return permutation_vectors_DI_tuples
+    return ['unbalanced']
