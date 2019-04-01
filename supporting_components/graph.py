@@ -4,7 +4,7 @@ This is a module for working with directed and undirected multigraphs.
 # version: 29-01-2015, Paul Bonsma
 # version: 01-02-2017, Pieter Bos, Tariq Bontekoe
 
-from typing import List, Union, Set
+from typing import List, Union, Set, Dict
 
 
 class GraphError(Exception):
@@ -473,6 +473,16 @@ class Graph(object):
                         return False
                     other_vertices.remove(o)
         return len(other_vertices) == 0
+
+    def backup(self):
+        color_list = {}
+        for v in self.vertices:
+            color_list[v.label] = v.colornum
+        return color_list
+
+    def revert(self, color_list: "Dict[int]"):
+        for v in self.vertices:
+            v.colornum = color_list[v.label]
 
 
 class UnsafeGraph(Graph):
