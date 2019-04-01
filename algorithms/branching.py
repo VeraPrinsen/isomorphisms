@@ -32,8 +32,8 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
             return True
         return 1
 
-    # Get the colors and its vertices and the maximum color number of the current graph
-    colors, unused = get_colors(G)
+    # Get the colors and its vertices of the current graph
+    colors = get_colors(G)
 
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
@@ -82,7 +82,7 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
     num_isomorphisms = 0
     for y in g1:
         # Make a copy of everything before creating a new branch
-        G_backup, max_colornum = G.backup()
+        G_backup, max_colornum_backup = G.backup()
         G.max_colornum += 1
         D_copy = D.copy()
         I_copy = I.copy()
@@ -91,7 +91,7 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
         num_isomorphisms += count_isomorphisms(G, D_copy, I_copy, count_flag, color_refinement_method)
         if not count_flag and num_isomorphisms > 0:
             return True
-        G.revert(G_backup, max_colornum)
+        G.revert(G_backup, max_colornum_backup)
     if not count_flag:
         return num_isomorphisms > 0
     else:
