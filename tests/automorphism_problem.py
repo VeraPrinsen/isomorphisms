@@ -1,4 +1,6 @@
 from algorithms.automorphism_problem import amount_of_automorphisms
+from algorithms.branching import count_isomorphisms
+from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line, save_graph_as_dot
 from input_output.sys_output import fail, passed
 from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
@@ -82,7 +84,15 @@ G.add_edge(Edge(v8, v5))
 #save_graph_as_dot(G, 'petersen')
 
 #permutations = amount_of_automorphisms(G)
+permutations = amount_of_automorphisms(G)
+G_disjoint_union = G+G
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
 
+print('0000000000000000000000000000000000000000000000000000000')
+
+print(permutations)
+print(permutations2)
+assert(permutations == permutations2)
 
 print('0000000000000000000000000000000000000000000000000000000')
 #print(permutations)
@@ -96,6 +106,12 @@ v0 = Vertex(G)
 v1 = Vertex(G)
 v2 = Vertex(G)
 v3 = Vertex(G)
+v1_1 = Vertex(G)
+v1_2 = Vertex(G)
+v2_1 = Vertex(G)
+v2_2 = Vertex(G)
+v3_1 = Vertex(G)
+v3_2 = Vertex(G)
 
 # The order in which edges are added has effect on the outcome
 # Symmetry (?) The following order matches the slides lec4-p.16:
@@ -103,13 +119,26 @@ G.add_edge(Edge(v0, v1))
 G.add_edge(Edge(v0, v2))
 G.add_edge(Edge(v0, v3))
 
+G.add_edge(Edge(v1, v1_1))
+G.add_edge(Edge(v1, v1_2))
+
+G.add_edge(Edge(v2, v2_1))
+G.add_edge(Edge(v2, v2_2))
+
+G.add_edge(Edge(v3, v3_1))
+G.add_edge(Edge(v3, v3_2))
+
 save_graph_as_dot(G, 'stargraph')
 
 permutations = amount_of_automorphisms(G)
+G_disjoint_union = G+G
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
 
 print('0000000000000000000000000000000000000000000000000000000')
 
 print(permutations)
+print(permutations2)
+assert(permutations == permutations2)
 
 
 """
