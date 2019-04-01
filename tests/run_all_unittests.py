@@ -26,7 +26,7 @@ result_boolean.append(branching.unit_test(write_csv_any, write_stdout_passed, wr
 print('')
 result_boolean.append(color_refinement.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
-result_boolean.append(csvwriter.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
+result_boolean.append(csvwriter.unit_test())
 print('')
 result_boolean.append(decide_gi.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
@@ -34,9 +34,9 @@ result_boolean.append(fast_color_refinement.unit_test(write_csv_any, write_stdou
 print('')
 result_boolean.append(graph.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
 print('')
-result_boolean.append(graph_del_vertex_edge.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
+result_boolean.append(graph_del_vertex_edge.unit_test())
 print('')
-result_boolean.append(preprocessing_twins.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
+result_boolean.append(preprocessing_twins.unit_test())
 print('')
 
 # Finally
