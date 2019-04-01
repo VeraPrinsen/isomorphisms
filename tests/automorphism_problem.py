@@ -1,5 +1,5 @@
 from algorithms.automorphism_problem import amount_of_automorphisms
-from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
+from input_output.file_output import load_graph_list, create_csv_file, write_csv_line, save_graph_as_dot
 from input_output.sys_output import fail, passed
 from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
@@ -37,9 +37,80 @@ G.add_edge(Edge(v2, v3))
 G.add_edge(Edge(v4, v6))
 G.add_edge(Edge(v5, v6))
 
+# permutations = amount_of_automorphisms(G)
+# print(permutations)
+
+print('0000000000000000000000000000000000000000000000000000000')
+
+# Lecture Graph
+G = Graph(False, 0)
+v0 = Vertex(G)
+v1 = Vertex(G)
+v2 = Vertex(G)
+v3 = Vertex(G)
+v4 = Vertex(G)
+v5 = Vertex(G)
+v6 = Vertex(G)
+v7 = Vertex(G)
+v8 = Vertex(G)
+v9 = Vertex(G)
+
+# The order in which edges are added has effect on the outcome
+# Symmetry (?) The following order matches the slides lec4-p.16:
+G.add_edge(Edge(v0, v1))
+G.add_edge(Edge(v0, v6))
+
+G.add_edge(Edge(v1, v2))
+G.add_edge(Edge(v1, v7))
+
+G.add_edge(Edge(v2, v3))
+G.add_edge(Edge(v2, v8))
+
+G.add_edge(Edge(v3, v4))
+G.add_edge(Edge(v3, v9))
+
+G.add_edge(Edge(v4, v0))
+G.add_edge(Edge(v4, v5))
+
+# inner star
+G.add_edge(Edge(v5, v7))
+G.add_edge(Edge(v7, v9))
+G.add_edge(Edge(v9, v6))
+G.add_edge(Edge(v6, v8))
+G.add_edge(Edge(v8, v5))
+
+#save_graph_as_dot(G, 'petersen')
+
+#permutations = amount_of_automorphisms(G)
+
+
+print('0000000000000000000000000000000000000000000000000000000')
+#print(permutations)
+
+
+print('0000000000000000000000000000000000000000000000000000000')
+
+# Lecture Graph
+G = Graph(False, 0)
+v0 = Vertex(G)
+v1 = Vertex(G)
+v2 = Vertex(G)
+v3 = Vertex(G)
+
+# The order in which edges are added has effect on the outcome
+# Symmetry (?) The following order matches the slides lec4-p.16:
+G.add_edge(Edge(v0, v1))
+G.add_edge(Edge(v0, v2))
+G.add_edge(Edge(v0, v3))
+
+save_graph_as_dot(G, 'stargraph')
+
 permutations = amount_of_automorphisms(G)
 
 print('0000000000000000000000000000000000000000000000000000000')
+
+print(permutations)
+
 
 """
 SETTING OF TEST
@@ -55,7 +126,7 @@ torus24 = False
 trees90 = False # does not work on trees apparently ? Do some sort of tree detection first !
 products72 = False
 cographs1 = False
-bigtrees1 = False
+bigtrees1 = True
 torus144 = False
 trees36 = False
 modulesC = False
