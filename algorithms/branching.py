@@ -33,8 +33,7 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
         return 1
 
     # Get the colors and its vertices and the maximum color number of the current graph
-    colors, max_colornum = get_colors(G)
-    max_colornum += 1
+    colors, unused = get_colors(G)
 
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
@@ -51,13 +50,13 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
             break
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
-    x.colornum = max_colornum
+    x.colornum = G.max_colornum + 1
     D.append(x)
     # Create branches for all the possible fixed pairs of vertices for the chosen color
-    return __branching(G, colors, max_colornum, C, D.copy(), I.copy(), count_flag, color_refinement_method)
+    return __branching(G, colors, C, D.copy(), I.copy(), count_flag, color_refinement_method)
 
 
-def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', max_colornum, C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
+def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
     """
     Creates branches of the graph (disjoint union of two graphs) and count the amount of isomorphisms for those graphs.
     In one graph, one vertex of the color group is fixed. For each of the vertices in the other graph, a branch is
@@ -83,15 +82,16 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', max_colornum, C: 
     num_isomorphisms = 0
     for y in g1:
         # Make a copy of everything before creating a new branch
-        G_backup = G.backup()
+        G_backup, max_colornum = G.backup()
+        G.max_colornum += 1
         D_copy = D.copy()
         I_copy = I.copy()
-        y.colornum = max_colornum
+        y.colornum = G.max_colornum
         I_copy.append(y)
         num_isomorphisms += count_isomorphisms(G, D_copy, I_copy, count_flag, color_refinement_method)
         if not count_flag and num_isomorphisms > 0:
             return True
-        G.revert(G_backup)
+        G.revert(G_backup, max_colornum)
     if not count_flag:
         return num_isomorphisms > 0
     else:

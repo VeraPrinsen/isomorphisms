@@ -11,7 +11,7 @@ def color_refinement(G: "Graph"):
     """
 
     # Get the current distribution of colors over the vertices and the maximum colornum in the graph
-    colors, max_colornum = get_colors(G)
+    colors, unused = get_colors(G)
 
     has_changed = True
     while has_changed:
@@ -20,8 +20,8 @@ def color_refinement(G: "Graph"):
             if len(vertices) == 1:
                 continue
 
-            max_colornum += 1
-            has_changed = __colorgroup_refinement(colors, colornum, vertices, max_colornum) or has_changed
+            G.max_colornum += 1
+            has_changed = __colorgroup_refinement(colors, colornum, vertices, G.max_colornum) or has_changed
     return G
 
 
@@ -44,7 +44,7 @@ def fast_color_refinement(G: "Graph"):
         # Get first color and remove that from the queue
         color = queue.pop(0)
         # Get the vertices of the graph in the color group currently investigated
-        colors, max_colornum = get_colors(G)
+        colors, unused = get_colors(G)
         vertices_in_color_group = colors[color]
         # Get the neighbours of the color group grouped by color
         neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group)
@@ -53,19 +53,19 @@ def fast_color_refinement(G: "Graph"):
             if len(color_group) == 0 or len(color_group) == len(colors[c]):
                 continue
             # Change the color of the vertices in neighbours_of_color_group
-            max_colornum = max_colornum + 1
+            G.max_colornum += 1
             for vertex in color_group:
-                vertex.colornum = max_colornum
+                vertex.colornum = G.max_colornum
             # Add the correct color to the queue
             if c in queue:
-                queue.append(max_colornum)
+                queue.append(G.max_colornum)
             else:
                 # Append the current color to the queue if the amount of vertices that did not change color is larger
                 # than the amount of vertices that did change color
                 if 2 * len(color_group) < len(colors[c]):
                     queue.append(c)
                 else:
-                    queue.append(max_colornum)
+                    queue.append(G.max_colornum)
     return G
 
 
@@ -145,7 +145,7 @@ def __initialize_queue(G: "Graph"):
     :param G: The graph to construct the queue for
     :return: The queue of the graph
     """
-    colors, max_colornum = get_colors(G)
+    colors, unused = get_colors(G)
     queue = list(colors.keys())
     largest_color_group_size = 0
     largest_color_group = 0

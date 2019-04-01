@@ -480,11 +480,12 @@ class Graph(object):
         color_list = {}
         for v in self.vertices:
             color_list[v.label] = v.colornum
-        return color_list
+        return color_list, self.max_colornum
 
-    def revert(self, color_list: "Dict[int]"):
+    def revert(self, color_list: "Dict[int]", max_colornum):
         for v in self.vertices:
             v.colornum = color_list[v.label]
+        self.max_colornum = max_colornum
 
 
 class UnsafeGraph(Graph):
