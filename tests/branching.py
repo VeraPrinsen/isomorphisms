@@ -122,6 +122,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
 
                 filestr = file + "-" + str(i) + "_" + str(j) + '\t->\t' + 'are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + 's '+ '\t'
 
+                error_adder = 0
                 if (i, j) in solution_map:
                     if not boolean_isomorph:
                         remark = "[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it"
@@ -134,7 +135,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                                                "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
-                        error_count += 1
+                        error_adder = 1
                     else:
                         remark = "[PASS] Graphs are isomorph"
                         if write_csv_any:
@@ -160,7 +161,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                                                "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
-                        error_count += 1
+                        error_adder = 1
                     else:
                         remark = "[PASS] Amount of isomorphisms is: " + str(n_isomorphisms)
                         if write_csv_any:
@@ -184,7 +185,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                                                "{0:.3f}".format(end_isomorph - start_isomorph), "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms),
                                                "{0}".format(remark)]
                             )
-                        error_count += 1
+                        error_adder = 1
                     else:
                         remark = "[PASS] Graphs are not isomorph"
                         if write_csv_any:
@@ -197,6 +198,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                         if write_stdout_passed:
                             passed(filestr + remark)
 
+                error_count += error_adder
                 total_time += (end_isomorph - start_isomorph) + (end_amount_isomorphisms - start_amount_isomorphisms)
 
     # Determine test outcome
