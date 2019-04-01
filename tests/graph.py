@@ -14,7 +14,7 @@ def test_copy(graph):
     return copy.is_equal(graph)
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'graph'
     if write_csv_any:
         csv_filepath = create_csv_file(test_name)
@@ -45,15 +45,15 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 if not is_equal:
                     error_count += 1
                     if write_stdout_fail:
-                        fail('---------------------------')
-                        fail("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                        print('---------------------------')
+                        print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
                         fail("Is NOT copy equal to graph: " + str(is_equal))
                     if write_csv_any:
                         write_csv_line(csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(0)])
                 else:
                     if write_stdout_passed:
-                        passed('---------------------------')
-                        passed("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                        print('---------------------------')
+                        print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
                         passed("Is copy equal to graph: " + str(is_equal))
                     if write_csv_any:
                         write_csv_line(csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(0)])

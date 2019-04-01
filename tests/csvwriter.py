@@ -12,7 +12,7 @@ from input_output.sys_output import fail, passed
 # The result of the test are written to CSV in the folder output_files/csv/
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test():
     # Because this test does not show any intermediate results, the arguments are ignored.
     test_name = 'csv_writer'
     file = 'colorref_smallexample_4_16'

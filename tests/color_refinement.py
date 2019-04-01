@@ -15,7 +15,7 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     """
     SETTINGS OF TEST
     """

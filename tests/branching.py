@@ -16,7 +16,7 @@ filename-0_1 = Graph of the disjoint union of Graph 0 and 1 of that file
 """
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'branching'
     if write_csv_any:
         csv_filepath = create_csv_file(test_name)
@@ -33,11 +33,11 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     # Change here which files you want to evaluate
     torus24 = True
     trees90 = False
-    products72 = False
+    products72 = True
     cographs1 = False
     bigtrees1 = False
     torus144 = False
-    trees36 = False
+    trees36 = True
     modulesC = False
     cubes5 = False
     bigtrees3 = False
@@ -120,12 +120,13 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                 n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
                 end_amount_isomorphisms = time()
 
-                filestr = '-> are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + ' s ' + file + "-" + str(i) + "_" + str(j)
+                filestr = file + "-" + str(i) + "_" + str(j) + '\t->\t' + 'are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + 's '+ '\t'
 
                 if (i, j) in solution_map:
                     if not boolean_isomorph:
                         remark = "[FAIL] Graphs are isomorph, is_isomorph(G, H) did not detect it"
                         if write_stdout_fail:
+                            print('')
                             fail(filestr + remark)
                         if write_csv_any:
                             write_csv_line(
@@ -144,12 +145,14 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                                                "{0}".format(remark)]
                             )
                         if write_stdout_passed:
+                            print('')
                             passed(filestr + remark)
 
                     if n_isomorphisms != solution_map[(i, j)]:
                         remark = "[FAIL] Amount of isomorphisms should be " + str(solution_map[(i, j)]) + ", not " + str(n_isomorphisms)
                         if write_stdout_fail:
                             fail(filestr + remark)
+                            print('')
 
                         if write_csv_any:
                             write_csv_line(
@@ -169,6 +172,7 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                             )
                         if write_stdout_passed:
                             passed(filestr + remark)
+                            print('')
                 else:
                     if boolean_isomorph:
                         remark = "[FAIL] Graphs are not isomorph, is_isomorph determined they were"
@@ -194,10 +198,6 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
                             passed(filestr + remark)
 
                 total_time += (end_isomorph - start_isomorph) + (end_amount_isomorphisms - start_amount_isomorphisms)
-                if write_stdout_passed:
-                    print("Processing time is_isomorph(G, H): " + str(round((end_isomorph - start_isomorph) * 1000, 3)) + " ms")
-                    print("Processing time amount_of_isomorphisms(G, H): " + str(round((end_amount_isomorphisms - start_amount_isomorphisms) * 1000, 3)) + " ms")
-                    print('')
 
     # Determine test outcome
     test_pass_bool = False

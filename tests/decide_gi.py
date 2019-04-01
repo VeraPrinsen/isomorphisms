@@ -28,7 +28,7 @@ def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected:
         return True
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'decide_gi'
 
     if write_csv_any:

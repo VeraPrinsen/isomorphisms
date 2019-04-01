@@ -11,7 +11,7 @@ The correctness should be checked by yourself by looking at the graphs.
 """
 
 
-def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=True):
+def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'fast_color_refinement'
     if write_csv_any:
         csv_filepath = create_csv_file(test_name)
@@ -25,7 +25,6 @@ def unit_test(write_csv_any=True, write_stdout_passed=True, write_stdout_fail=Tr
     SETTINGS OF TEST
     """
     # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
-    # Save graph files?
     save_dot = False
     save_png = False
 
