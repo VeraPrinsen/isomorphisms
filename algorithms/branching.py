@@ -33,7 +33,7 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
         return 1
 
     # Get the colors and its vertices of the current graph
-    colors = get_colors(G)
+    colors = G.colors
 
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
@@ -51,12 +51,15 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
 
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
     x.colornum = G.max_colornum + 1
+    # Update colors of graph
+    colors[C].remove(x)
+    colors.setdefault(G.max_colornum + 1, list()).append(x)
     D.append(x)
     # Create branches for all the possible fixed pairs of vertices for the chosen color
-    return __branching(G, colors, C, D.copy(), I.copy(), count_flag, color_refinement_method)
+    return __branching(G, C, D.copy(), I.copy(), count_flag, color_refinement_method)
 
 
-def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
+def __branching(G: 'Graph', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', count_flag: 'Bool', color_refinement_method: Callable[[Graph], None]):
     """
     Creates branches of the graph (disjoint union of two graphs) and count the amount of isomorphisms for those graphs.
     In one graph, one vertex of the color group is fixed. For each of the vertices in the other graph, a branch is
@@ -73,7 +76,7 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
     """
     # Create the list of vertices in the other graph with color C
     g1 = []
-    for v in colors[C]:
+    for v in G.colors[C]:
         if v.graph_label == 2:
             g1.append(v)
 
@@ -82,16 +85,19 @@ def __branching(G: 'Graph', colors: 'Dict[Int, List[Vertex]]', C: 'Int', D: 'Lis
     num_isomorphisms = 0
     for y in g1:
         # Make a copy of everything before creating a new branch
-        G_backup, max_colornum_backup = G.backup()
+        G_backup, max_colornum_backup, colors_backup = G.backup()
         G.max_colornum += 1
         D_copy = D.copy()
         I_copy = I.copy()
         y.colornum = G.max_colornum
+        # Update colors of graph
+        G.colors[C].remove(y)
+        G.colors.setdefault(G.max_colornum, list()).append(y)
         I_copy.append(y)
         num_isomorphisms += count_isomorphisms(G, D_copy, I_copy, count_flag, color_refinement_method)
         if not count_flag and num_isomorphisms > 0:
             return True
-        G.revert(G_backup, max_colornum_backup)
+        G.revert(G_backup, max_colornum_backup, colors_backup)
     if not count_flag:
         return num_isomorphisms > 0
     else:

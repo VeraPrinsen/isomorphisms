@@ -11,7 +11,7 @@ def color_refinement(G: "Graph"):
     """
 
     # Get the current distribution of colors over the vertices
-    colors = get_colors(G)
+    colors = G.colors
 
     has_changed = True
     while has_changed:
@@ -44,7 +44,7 @@ def fast_color_refinement(G: "Graph"):
         # Get first color and remove that from the queue
         color = queue.pop(0)
         # Get the vertices of the graph in the color group currently investigated
-        colors = get_colors(G)
+        colors = G.colors
         vertices_in_color_group = colors[color]
         # Get the neighbours of the color group grouped by color
         neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group)
@@ -56,6 +56,9 @@ def fast_color_refinement(G: "Graph"):
             G.max_colornum += 1
             for vertex in color_group:
                 vertex.colornum = G.max_colornum
+                # Update colors of graph
+                colors[c].remove(vertex)
+                colors.setdefault(G.max_colornum, list()).append(vertex)
             # Add the correct color to the queue
             if c in queue:
                 queue.append(G.max_colornum)
@@ -142,7 +145,7 @@ def __initialize_queue(G: "Graph"):
     :param G: The graph to construct the queue for
     :return: The queue of the graph
     """
-    colors = get_colors(G)
+    colors = G.colors
     queue = list(colors.keys())
     largest_color_group_size = 0
     largest_color_group = 0
