@@ -21,7 +21,6 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
 
     # TEST FILE
     files = ["bigtrees1", "bigtrees3"]
-    location = "/test_graphs/individualization_refinement/"
     solution = [
         {(0, 2): 442368, (1, 3): 5308416},
         {(0, 2): 2772351862699137701073289910157312, (1, 3): 462058643783189616845548318359552}
@@ -37,7 +36,6 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
         file = files[i_file]
         filename = '/test_graphs/individualization_refinement/' + file + '.grl'
         graphs = load_graph_list(filename)
-        solution_map = solution[i_file]
 
         for i in range(0, len(graphs) - 1):
             for j in range(i + 1, len(graphs)):
