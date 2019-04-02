@@ -22,20 +22,6 @@ root.withdraw()
 file_paths = filedialog.askopenfilenames()
 
 """
-FILE OUTPUT
-"""
-# TODO: ADAPT TO TOURNAMENT
-# If csv must be created, create an empty file here
-if tournament_write_to_csv:
-    csv_filepath = create_csv_file("tournament")
-    # Write first row with column names
-    csv_column_names = ['file', 'graph1', 'graph2',
-                        'are_isomorph expected result', 'are_isomorph actual result', 'passed', 'are_isomorph processing time (s)',
-                        'amount_of_isomorphisms expected result', 'amount_of_isomorphisms actual result', 'passed', 'amount_of_isomorphisms processing time (s)']
-    write_csv_line(csv_filepath, csv_column_names)
-
-
-"""
 RUN TOURNAMENT
 """
 for filepath in file_paths:
@@ -44,9 +30,10 @@ for filepath in file_paths:
 
     passed("Starting evaluating " + filename)
 
-    isomorphisms = []
-    iso_count = {}
+    isomorphisms = []       # Data structure that saves all isomorphic pairs (or more than 2, if that is the case)
+    iso_count = {}          # Data structure that saves for each graph the amount of automorphisms
     total_time = 0
+    # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
             G = graphs[i]
@@ -59,9 +46,9 @@ for filepath in file_paths:
             end_isomorph = time()
             total_time += round((end_isomorph - start_isomorph), 3)
 
-            # Every combination should be checked
+            # Only save results if the combination of graphs is isomorphic, unless you have to know the automorphisms
+            # of each graph, then save each graph in de isomorphisms data structure.
             if are_isomorph_actual:
-                # Only save results if the combination of graphs is isomorphic
                 # If one of the two graphs is already in a isomorphic pair, the other graph belongs to it too
                 already_in_results = -1
                 for pair in isomorphisms:
@@ -78,7 +65,8 @@ for filepath in file_paths:
                     isomorphisms.append([i, j])
             else:
                 if problem == 3:
-                    # Also save if graphs are not isomorphic
+                    # If graphs are not isomorphic, check for each one if it is already in the isomorphic data structure
+                    # If not, add it
                     i_in_result = False
                     j_in_result = False
                     for pair in isomorphisms:
@@ -89,8 +77,10 @@ for filepath in file_paths:
                     if not j_in_result:
                         isomorphisms.append([j])
 
+    # For each set of isomorphisms, calculate the amount of automorphisms of the first graph. This can be done
+    # because the graphs are isomorphic and the amount of isomorphisms are equal to the amount of automorphisms of the
+    # independent graphs
     if problem == 2 or problem == 3:
-        # For each set of isomorphisms, calculate the amount of automorphisms of the first graph
         for pair in isomorphisms:
             G_copy1 = graphs[pair[0]].copy()
             G_copy2 = graphs[pair[0]].copy()
@@ -98,9 +88,13 @@ for filepath in file_paths:
             amount_isomorph_actual = amount_of_isomorphisms(G_copy1, G_copy2)
             end_amount_isomorphisms = time()
             total_time += round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
+            # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
                 iso_count[graph] = amount_isomorph_actual
 
+    """
+    CONSOLE OUTPUT
+    """
     print("-------------------------------")
     print("Results " + filename)
     print("-------------------------------")
@@ -124,10 +118,38 @@ for filepath in file_paths:
     print("Total processing time: " + str(round(total_time, 3)) + " s")
     print("")
 
-    # if write_to_csv:
-    #     csv_graph_result = [filename, i, j,
-    #                         are_isomorph_expected, are_isomorph_actual, are_isomorph_passed, are_isomorph_time,
-    #                         amount_isomorph_expected, amount_isomorph_actual, amount_isomorph_passed, amount_isomorph_time]
-    #     write_csv_line(csv_filepath, csv_graph_result)
+    """
+    FILE OUTPUT
+    """
+    if tournament_write_to_csv:
+        # Create empty file
+        csv_filename = 'tournament'
+        if problem == 1:
+            csv_filename += '-gi_problem'
+            csv_column_names = ["Sets of isomorphic graphs"]
+        elif problem == 2:
+            csv_filename += '-gi_count'
+            csv_column_names = ["Sets of isomorphic graphs", "Number of isomorphisms"]
+        elif problem == 3:
+            csv_filename += '-automorphisms'
+            csv_column_names = ["Graph", "Automorphisms"]
+        csv_filename += '-' + filename
 
+        csv_filepath = create_csv_file(csv_filename)
+        write_csv_line(csv_filepath, csv_column_names)
 
+        if problem == 1 or problem == 2:
+            for pair in isomorphisms:
+                if problem == 1:
+                    csv_graph_line = [str(pair)]
+                elif problem == 2:
+                    csv_graph_line = [str(pair), str(iso_count[pair[0]])]
+                write_csv_line(csv_filepath, csv_graph_line)
+        elif problem == 3:
+            for g in sorted(iso_count):
+                csv_graph_line = [str(g), str(iso_count[g])]
+                write_csv_line(csv_filepath, csv_graph_line)
+
+        write_csv_line(csv_filepath, [])
+        csv_time = ["Total processing time:", str(round(total_time, 3)) + " s"]
+        write_csv_line(csv_filepath, csv_time)
