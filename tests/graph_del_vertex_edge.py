@@ -28,13 +28,28 @@ def test_graph_del_vertex():
     return test_result and v1 not in G.vertices and v2 in G.vertices and e1 not in G.edges and v1 not in v2.neighbours
 
 
+def unit_test():
+    # Because this test does not show any intermediate results, the arguments are ignored.
+    test_name = 'graph_del_vertex_edge'
+    print('<' + test_name + '>')
+    pass_bool = True
 
-if test_graph_del_edge():
-    passed("test_graph_del_edge: TEST PASSED")
-else:
-    fail("test_graph_del_edge: TEST FAILED")
+    if not test_graph_del_edge():
+        fail("test_graph_del_edge: TEST FAILED")
+        pass_bool = False
 
-if test_graph_del_vertex():
-    passed("test_graph_del_vertex: TEST PASSED")
-else:
-    fail("test_graph_del_vertex: TEST FAILED")
+    if not test_graph_del_vertex():
+        fail("test_graph_del_vertex: TEST FAILED")
+        pass_bool = False
+
+    if pass_bool:
+        passed('' + test_name + ' PASS')
+
+    print('</' + test_name + '>')
+
+    return pass_bool
+
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()

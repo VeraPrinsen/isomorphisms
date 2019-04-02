@@ -107,12 +107,27 @@ def test_remove_connected_twins():
            and factor == 12
 
 
-if test_remove_unconnected_twins():
-    passed("test_graph_del_edge: TEST PASSED")
-else:
-    fail("test_graph_del_edge: TEST FAILED")
+def unit_test():
+    # Because this test does not show any intermediate results, the arguments are ignored.
+    test_name = 'preprocessing_twins'
+    print('<' + test_name + '>')
+    pass_bool = True
+    if not test_remove_unconnected_twins():
+        fail("test_remove_unconnected_twins: TEST FAILED")
+        pass_bool = False
 
-if test_remove_connected_twins():
-    passed("test_graph_del_edge: TEST PASSED")
-else:
-    fail("test_graph_del_edge: TEST FAILED")
+    if not test_remove_connected_twins():
+        fail("test_remove_connected_twins: TEST FAILED")
+        pass_bool = False
+
+    if pass_bool:
+        passed('' + test_name + ' PASS')
+
+    print('</' + test_name + '>')
+
+    return pass_bool
+
+
+if __name__ == '__main__':
+    # Run the unit test if file is called
+    unit_test()
