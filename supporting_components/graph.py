@@ -225,6 +225,7 @@ class Graph(object):
         self._simple = simple
         self._directed = directed
         self._next_label_value = 0
+        self.max_colornum = 0
 
         for i in range(n):
             self.add_vertex(Vertex(self))
@@ -437,6 +438,7 @@ class Graph(object):
         :return: The copy of the graph.
         """
         copy = Graph(self.directed)
+        copy.max_colornum = self.max_colornum
         vertices_old_to_new = {}
 
         for v in self.vertices:
@@ -478,11 +480,12 @@ class Graph(object):
         color_list = {}
         for v in self.vertices:
             color_list[v.label] = v.colornum
-        return color_list
+        return color_list, self.max_colornum
 
-    def revert(self, color_list: "Dict[int]"):
+    def revert(self, color_list: "Dict[int]", max_colornum):
         for v in self.vertices:
             v.colornum = color_list[v.label]
+        self.max_colornum = max_colornum
 
 
 class UnsafeGraph(Graph):
