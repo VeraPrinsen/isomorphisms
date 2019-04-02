@@ -1,7 +1,7 @@
 from tests.integration_test.settings import preprocessing_simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm
 from supporting_components.graph import Graph
 from algorithms.preprocessing import could_be_isomorphic, remove_twins
-from algorithms.tree_isomorphisms import is_tree, trees_count_isomorphisms
+from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization, twins_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from algorithms.branching import count_isomorphisms
