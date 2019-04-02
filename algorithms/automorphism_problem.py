@@ -36,7 +36,14 @@ def amount_of_automorphisms(G):
         # Contains tuple (D, I) of equal length
         cycle_list = []
         for i in range(0,len(raw_perm_group[0])):
-            cycle_list.append([raw_perm_group[0][i].coupling_label, raw_perm_group[1][i].coupling_label])
+            dX = raw_perm_group[0][i].coupling_label
+            dY = raw_perm_group[1][i].coupling_label
+            #if dX >= dY:
+            #    cycle_list.append([dX, dY])
+            #else:
+            #    cycle_list.append([dY, dX])
+            cycle_list.append([dY, dX])
+
         print(groupid)
 
         print(cycle_list)
@@ -44,12 +51,14 @@ def amount_of_automorphisms(G):
         p_test = permutation(len(G.vertices), cycle_list)
         permutation_objects.append(p_test)
 
+
+    print(permutation_objects)
     print(permutation_objects)
     # With these objects do order computation and return the number
-    return order_computation(list(permutation_objects), permutation_objects)
+    return order_computation(permutation_objects)
 
 
-def order_computation(H_0: 'List[permutation]', H: 'List[permutation]'):
+def order_computation(H_0: 'List[permutation]'):
     """
     Based on slide 21 of lecture 4 and notes.
     TODO:
@@ -57,17 +66,18 @@ def order_computation(H_0: 'List[permutation]', H: 'List[permutation]'):
     :return: int with the order of the list of permutations
     """
     a = FindNonTrivialOrbit(H_0)
-    print('FindNonTrivialOrbit a={}'.format(a))
+    #print('FindNonTrivialOrbit a={}'.format(a))
     orb_a, transvO = Orbit(H_0, a, returntransversal=True)
-    print(transvO)
-    print('orb_a={}'.format(orb_a))
+    #print(transvO)
+    #print('orb_a={}'.format(orb_a))
     stab_a = Stabilizer(H_0, a)
-    print('stab_a={}'.format(stab_a))
+    #print('stab_a={}'.format(stab_a))
 
-    if len(stab_a) == 0:
+    if len(H_0) == 1:
+        print('hey ={}'.format(len(H_0)))
         return len(orb_a) * 1  # As theorem (=1)
 
-    return len(orb_a) * order_computation(stab_a, H)
+    return len(orb_a) * order_computation(stab_a)
 
     # Choose a in V, |H| = |Ha| * |a^H| note: (numel(a^H) > 2)
     # Built in function basicpermutationgroup
@@ -110,7 +120,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the evaluated graph has no automorphism
-        return ['unbalanced']
+        return [(['unbalanced']),(['unbalanced'])]
     if is_bijected:
         return [(D, I)]
 
@@ -175,13 +185,22 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         # Following the algorithmic description, the next node should be either bijected or a trivial node
         permutation_vectors_DI_tuples = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy)
         #print(trivial_node)
-        #print(len(D))
+        #print(len(D_copy))
         # A trivial node has no need in investigating the D X + D X again
-        Iy.remove(v_Dx_g1)
+        #print(permutation_vectors_DI_tuples[0][0])
+        #print(permutation_vectors_DI_tuples[0][1])
+
+        D+=permutation_vectors_DI_tuples[0][0]
+        I+=permutation_vectors_DI_tuples[0][1]
+
+        print(D)
 
     if not trivial_node:
         # Assemble with Ix as the first vector to evaluate
         Iy = Ix+Iy
+        vD = D.pop(0)
+        vI = I.pop(0)
+        #print(Iy)
 
     for v_Iy in Iy:
         D_copy = D.copy()
@@ -199,11 +218,13 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
         # Revert changes in G
         v_Iy.colornum = original_Y_color_in_G
+        #print(D_copy)
 
         perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
 
+
         # Empty response is a dead end in the evaluation tree, pick next by continue
-        if perm_right == ['unbalanced']:
+        if perm_right == [(['unbalanced']),(['unbalanced'])]:
             continue
         else:
             # A bijection, stop loop by break

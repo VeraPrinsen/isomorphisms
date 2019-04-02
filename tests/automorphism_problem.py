@@ -39,8 +39,15 @@ G.add_edge(Edge(v2, v3))
 G.add_edge(Edge(v4, v6))
 G.add_edge(Edge(v5, v6))
 
-# permutations = amount_of_automorphisms(G)
-# print(permutations)
+permutations = amount_of_automorphisms(G)
+G_disjoint_union = G+G
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+
+print('0000000000000000000000000000000000000000000000000000000')
+
+print(permutations)
+print(permutations2)
+assert(permutations == permutations2)
 
 print('0000000000000000000000000000000000000000000000000000000')
 
@@ -92,7 +99,7 @@ print('0000000000000000000000000000000000000000000000000000000')
 
 print(permutations)
 print(permutations2)
-assert(permutations == permutations2)
+#assert(permutations == permutations2)
 
 print('0000000000000000000000000000000000000000000000000000000')
 #print(permutations)
@@ -138,7 +145,7 @@ print('0000000000000000000000000000000000000000000000000000000')
 
 print(permutations)
 print(permutations2)
-assert(permutations == permutations2)
+#assert(permutations == permutations2)
 
 
 """
@@ -152,7 +159,7 @@ create_csv = False
 # todo: Add more test files? How can we do this easily so we can do it the 10th of April fast?
 # Change here which files you want to evaluate
 torus24 = True
-trees90 = False # does not work on trees apparently ? Do some sort of tree detection first !
+trees90 = True # does not work on trees apparently ? Do some sort of tree detection first !
 products72 = False
 cographs1 = False
 bigtrees1 = True
