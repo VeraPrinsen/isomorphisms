@@ -31,19 +31,16 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
             return True
         return 1
 
-    # Get the colors and its vertices of the current graph
-    colors = G.colors
-
     # Choose the color class C with at least 4 vertices of that color in the graph
     # Choose color class with smallest amount of vertices
     C_len = inf
-    for key in colors:
-        if len(colors[key]) >= 4 and len(colors[key]) < C_len:
+    for key in G.colors:
+        if len(G.colors[key]) >= 4 and len(G.colors[key]) < C_len:
             C = key
-            C_len = len(colors[key])
+            C_len = len(G.colors[key])
 
     # Choose the first occurring vertex with color C in the list of vertices of the first graph
-    for v in colors[C]:
+    for v in G.colors[C]:
         if v.graph_label == 1:
             x = v
             break
@@ -51,8 +48,8 @@ def count_isomorphisms(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', count_f
     # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
     x.colornum = G.max_colornum + 1
     # Update colors of graph
-    colors[C].remove(x)
-    colors.setdefault(G.max_colornum + 1, list()).append(x)
+    G.colors[C].remove(x)
+    G.colors.setdefault(G.max_colornum + 1, list()).append(x)
     D.append(x)
     # Create branches for all the possible fixed pairs of vertices for the chosen color
     return __branching(G, C, D.copy(), I.copy(), count_flag, color_refinement_method)
@@ -84,7 +81,7 @@ def __branching(G: 'Graph', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', coun
     num_isomorphisms = 0
     for y in g1:
         # Make a copy of everything before creating a new branch
-        G_backup, max_colornum_backup, colors_backup = G.backup()
+        color_list_backup, max_colornum_backup, colors_backup = G.backup()
         G.max_colornum += 1
         D_copy = D.copy()
         I_copy = I.copy()
@@ -96,7 +93,7 @@ def __branching(G: 'Graph', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', coun
         num_isomorphisms += count_isomorphisms(G, D_copy, I_copy, count_flag, color_refinement_method)
         if not count_flag and num_isomorphisms > 0:
             return True
-        G.revert(G_backup, max_colornum_backup, colors_backup)
+        G.revert(color_list_backup, max_colornum_backup, colors_backup)
     if not count_flag:
         return num_isomorphisms > 0
     else:

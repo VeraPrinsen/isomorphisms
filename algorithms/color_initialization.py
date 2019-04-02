@@ -7,14 +7,13 @@ def degree_color_initialization(G: "Graph"):
     :return The graph with the initial coloring
     """
     max_colornum = 0
-    colors = {}
+    G.colors = {}
     for v in G.vertices:
         v.colornum = v.degree
-        colors.setdefault(v.colornum, list()).append(v)
+        G.colors.setdefault(v.colornum, list()).append(v)
         if v.colornum > max_colornum:
             max_colornum = v.colornum
     G.max_colornum = max_colornum
-    G.colors = colors
     return G
 
 
@@ -28,12 +27,11 @@ def twins_color_initialization(G: "Graph"):
     :return The graph with the initial coloring
     """
     max_colornum = 0
-    colors = {}
+    G.colors = {}
     for v in G.vertices:
         v.colornum = v.degree_fixed
-        colors.setdefault(v.colornum, list()).append(v)
+        G.colors.setdefault(v.colornum, list()).append(v)
         if v.colornum > max_colornum:
             max_colornum = v.colornum
     G.max_colornum = max_colornum
-    G.colors = colors
     return G
