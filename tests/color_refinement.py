@@ -1,7 +1,6 @@
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
-from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png, create_csv_file, \
-    write_csv_line
+from input_output.file_output import load_graph_list, save_graph_as_dot, create_csv_file, write_csv_line
 from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
 from time import time
@@ -26,9 +25,6 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
         write_csv_line(csv_filepath, ['file', 'i', 'j', 'Pass?', 'Time (s)'])
     else:
         print('<' + test_name + '>')
-
-    # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
-    save_png = False
 
     # files to test
     files = ['colorref_smallexample_4_7', 'colorref_smallexample_6_15', 'colorref_smallexample_2_49']
@@ -105,12 +101,6 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
 
                 total_time += end - start
                 total_tests += 1
-
-        if save_png:
-            for i in range(0, len(graphs) - 1):
-                for j in range(i + 1, len(graphs)):
-                    output_filename = file + '_' + str(i) + '_' + str(j)
-                    save_graph_in_png(output_filename)
 
     # Determine test outcome
     test_pass_bool = False

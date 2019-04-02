@@ -1,7 +1,6 @@
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
-from input_output.file_output import load_graph_list, save_graph_as_dot, save_graph_in_png, create_csv_file, \
-    write_csv_line
+from input_output.file_output import load_graph_list, save_graph_as_dot, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
 from time import time
 
@@ -9,7 +8,6 @@ from time import time
 To test if the fast_color_refinement works and if it is faster compared to color_refinement. 
 The correctness should be checked by yourself by looking at the graphs.
 """
-
 
 def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'fast_color_refinement'
@@ -24,9 +22,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
     """
     SETTINGS OF TEST
     """
-    # Enable this flag if you want to save png files of the final coloring of the disjoint union of the graph combinations
     save_dot = False
-    save_png = False
 
     # Graph files to test. The latter list can be commented out for speed.
     files = ['5', '10', '20', '40', '80', '160', '320', '640'] + ['1280', '2560', '5120', '10240']
@@ -104,11 +100,6 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
             total_time += end_fast_color_refinement - start_fast_color_refinement
             if write_csv_any:
                 write_csv_line(csv_filepath, [file, str(i), 'fast', True, "{0:.3f}".format(end_fast_color_refinement - start_fast_color_refinement)])
-
-        if save_png:
-            for i in range(0, len(graphs)):
-                output_filename = 'threepaths' + file + '_' + str(i)
-                save_graph_in_png(output_filename)
 
     # Determine test outcome
     test_pass_bool = False
