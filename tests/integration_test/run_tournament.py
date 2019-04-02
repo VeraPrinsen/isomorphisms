@@ -33,11 +33,16 @@ for filepath in file_paths:
     isomorphisms = []       # Data structure that saves all isomorphic pairs (or more than 2, if that is the case)
     iso_count = {}          # Data structure that saves for each graph the amount of automorphisms
     total_time = 0
+    skip = [False for _ in range(len(graphs))]  # Check if the pair of graphs is already in the result, it they are, they can be skipped
+
     # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
             G = graphs[i]
             H = graphs[j]
+
+            if skip[i] and skip[j]:
+                continue
 
             G_copy = G.copy()
             H_copy = H.copy()
@@ -50,32 +55,29 @@ for filepath in file_paths:
             # of each graph, then save each graph in de isomorphisms data structure.
             if are_isomorph_actual:
                 # If one of the two graphs is already in a isomorphic pair, the other graph belongs to it too
-                already_in_results = -1
-                for pair in isomorphisms:
-                    if i in pair:
-                        pair.append(j)
-                        already_in_results = i
-                        break
-                    elif j in pair:
-                        pair.append(i)
-                        already_in_results = j
-                        break
-                # Otherwise a new pair of isomorphisms should be added to the list
-                if already_in_results < 0:
-                    isomorphisms.append([i, j])
-            else:
-                if problem == 3:
-                    # If graphs are not isomorphic, check for each one if it is already in the isomorphic data structure
-                    # If not, add it
-                    i_in_result = False
-                    j_in_result = False
+                if skip[i] or skip[j]:
                     for pair in isomorphisms:
-                        i_in_result = i_in_result or i in pair
-                        j_in_result = j_in_result or j in pair
-                    if not i_in_result:
-                        isomorphisms.append([i])
-                    if not j_in_result:
-                        isomorphisms.append([j])
+                        if i in pair:
+                            pair.append(j)
+                            skip[j] = True
+                            break
+                        elif j in pair:
+                            pair.append(i)
+                            skip[i] = True
+                            break
+                # Otherwise a new pair of isomorphisms should be added to the list
+                else:
+                    isomorphisms.append([i, j])
+                    skip[i] = True
+                    skip[j] = True
+
+    # If the problem to be resolved is the #Automorphism problem, all graphs need to be in de result, also those
+    # that are not an isomorphism with any other graph. Those graphs will be added to the isomorphism result as
+    # singular isomorphism groups
+    if problem == 3:
+        for i in range(len(skip)):
+            if not skip[i]:
+                isomorphisms.append([i])
 
     # For each set of isomorphisms, calculate the amount of automorphisms of the first graph. This can be done
     # because the graphs are isomorphic and the amount of isomorphisms are equal to the amount of automorphisms of the
