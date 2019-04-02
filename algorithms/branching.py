@@ -1,5 +1,4 @@
 from supporting_components.graph import Graph, Vertex
-from algorithms.color_refinement import get_colors
 from algorithms.decide_gi import is_balanced_or_bijected
 from typing import List, Dict, Callable
 from math import inf

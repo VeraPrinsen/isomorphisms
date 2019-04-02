@@ -72,19 +72,6 @@ def fast_color_refinement(G: "Graph"):
     return G
 
 
-def get_colors(G: "Graph"):
-    """
-    Returns a map with the colors of the graph as keys and a list of all the vertices in the graph with that color as
-    values.
-    :param G: The graph
-    :return: The color map
-    """
-    colors = {}
-    for v in G.vertices:
-        colors.setdefault(v.colornum, []).append(v)
-    return colors
-
-
 def __colorgroup_refinement(colors, colornum, vertices: List["Vertex"], next_colornum):
     """
     For vertices with property colornum = 'colornum', define which vertices have equal neighbours and which do not
