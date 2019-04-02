@@ -44,48 +44,62 @@ for filepath in file_paths:
 
     passed("Starting evaluating " + filename)
 
-    # Dependent on problem to be solved, create loop for first graph
-    if problem == 1 or problem == 2:
-        i_loop = range(len(graphs)-1)
-    else:
-        i_loop = range(len(graphs))
-
-    if problem == 1:
-        results = []
-    elif problem == 2 or problem == 3:
-        results = {}
+    isomorphisms = []
+    iso_count = {}
     total_time = 0
-    for i in i_loop:
-        # Dependent on problem to be solved, create loop for second graph
-        if problem == 1 or problem == 2:
-            j_loop = range(i + 1, len(graphs))
-        else:
-            j_loop = [i]
-        for j in j_loop:
+    for i in range(len(graphs) - 1):
+        for j in range(i + 1, len(graphs)):
             G = graphs[i]
             H = graphs[j]
 
-            if problem == 1 or problem == 2:
-                G_copy = G.copy()
-                H_copy = H.copy()
-                start_isomorph = time()
-                are_isomorph_actual = are_isomorph(G_copy, H_copy)
-                end_isomorph = time()
-                total_time += round((end_isomorph - start_isomorph), 3)
-                if problem == 1 and are_isomorph_actual:
-                    results.append((i, j))
+            G_copy = G.copy()
+            H_copy = H.copy()
+            start_isomorph = time()
+            are_isomorph_actual = are_isomorph(G_copy, H_copy)
+            end_isomorph = time()
+            total_time += round((end_isomorph - start_isomorph), 3)
 
-            if problem == 2 or problem == 3:
-                G_copy = G.copy()
-                H_copy = H.copy()
-                start_amount_isomorphisms = time()
-                amount_isomorph_actual = amount_of_isomorphisms(G_copy, H_copy)
-                end_amount_isomorphisms = time()
-                total_time += round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
-                if problem == 2 and are_isomorph_actual:
-                    results[(i, j)] = amount_isomorph_actual
+            # Every combination should be checked
+            if are_isomorph_actual:
+                # Only save results if the combination of graphs is isomorphic
+                # If one of the two graphs is already in a isomorphic pair, the other graph belongs to it too
+                already_in_results = -1
+                for pair in isomorphisms:
+                    if i in pair:
+                        pair.append(j)
+                        already_in_results = i
+                        break
+                    elif j in pair:
+                        pair.append(i)
+                        already_in_results = j
+                        break
+                # Otherwise a new pair of isomorphisms should be added to the list
+                if already_in_results < 0:
+                    isomorphisms.append([i, j])
+            else:
                 if problem == 3:
-                    results[i] = amount_isomorph_actual
+                    # Also save if graphs are not isomorphic
+                    i_in_result = False
+                    j_in_result = False
+                    for pair in isomorphisms:
+                        i_in_result = i_in_result or i in pair
+                        j_in_result = j_in_result or j in pair
+                    if not i_in_result:
+                        isomorphisms.append([i])
+                    if not j_in_result:
+                        isomorphisms.append([j])
+
+    if problem == 2 or problem == 3:
+        # For each set of isomorphisms, calculate the amount of automorphisms of the first graph
+        for pair in isomorphisms:
+            G_copy1 = graphs[pair[0]].copy()
+            G_copy2 = graphs[pair[0]].copy()
+            start_amount_isomorphisms = time()
+            amount_isomorph_actual = amount_of_isomorphisms(G_copy1, G_copy2)
+            end_amount_isomorphisms = time()
+            total_time += round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
+            for graph in pair:
+                iso_count[graph] = amount_isomorph_actual
 
     print("-------------------------------")
     print("Results " + filename)
@@ -96,13 +110,18 @@ for filepath in file_paths:
         title("Sets of isomorphic graphs:   Number of isomorphisms:")
     elif problem == 3:
         title("Graph:   Number of automorphisms:")
-    for key in results:
-        if problem == 1:
-            print(str(key))
-        elif problem == 2:
-            print(str(key) + "                       " + str(results[key]))
-        elif problem == 3:
-            print(str(key) + "        " + str(results[key]))
+
+    if problem == 1 or problem == 2:
+        for pair in isomorphisms:
+            if problem == 1:
+                print(str(pair))
+            elif problem == 2:
+                print(str(pair) + "                       " + str(iso_count[pair[0]]))
+    elif problem == 3:
+        for g in sorted(iso_count):
+            print(str(g) + "        " + str(iso_count[g]))
+
+    print("Total processing time: " + str(round(total_time, 3)) + " s")
     print("")
 
     # if write_to_csv:
