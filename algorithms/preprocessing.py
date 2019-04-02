@@ -65,6 +65,7 @@ def remove_twins(G: 'Graph'):
         # In general, for all n vertices that have the same neighbours, if only one is kept. The factor
         # should be multiplied by n!.
         factor *= factorial(len(twin_list) + 1)
+        v0.n_twins += len(twin_list)
         for twin in twin_list:
             # delete all twins from the graph G
             G.del_vertex(twin)

@@ -1,6 +1,7 @@
-from tests.integration_test.settings import preprocessing_simple_cases, twin_removal, color_refinement_algorithm, branching_algorithm
+from tests.integration_test.settings import preprocessing_simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm
 from supporting_components.graph import Graph
 from algorithms.preprocessing import could_be_isomorphic, remove_twins
+from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization, twins_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from algorithms.branching import count_isomorphisms
@@ -38,6 +39,18 @@ def apply_remove_twins(G: "Graph", H: "Graph"):
         degree_color_initialization(G_disjoint_union)
 
     return G_disjoint_union, factor
+
+
+def apply_tree_algorithm(G: "Graph", H: "Graph", count_isomorphisms: "Bool"):
+    """
+    If the tree algorithm must be used, this method checks if G and H are trees.
+    If they are the isomorphism problem is resolved using the tree isomorphism method.
+    """
+    if tree_algorithm:
+        if is_tree(G) and is_tree(H):
+            return True, trees_count_isomorphisms(G, H, count_isomorphisms)
+
+    return False, None
 
 
 def color_refinement_method():
