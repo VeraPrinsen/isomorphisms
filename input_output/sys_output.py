@@ -34,7 +34,7 @@ WHITE_BG= '47'
 
 FAIL_COLOR = START + BOLD + DELIMITER + RED_FONT + END
 PASS_COLOR = START + BOLD + DELIMITER + GREEN_FONT + END
-
+TOURNAMENT_TITLE = START + BOLD + DELIMITER + BLUE_FONT + END
 
 def fail(string):
     print(FAIL_COLOR + string + RESET)
@@ -42,3 +42,7 @@ def fail(string):
 
 def passed(string):
     print(PASS_COLOR + string + RESET)
+
+
+def title(string):
+    print(TOURNAMENT_TITLE + string + RESET)
