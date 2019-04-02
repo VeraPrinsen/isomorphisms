@@ -448,7 +448,7 @@ class Graph(object):
             vertices_old_to_new[v].colornum = v.colornum
             vertices_old_to_new[v].graph_label = v.graph_label
             vertices_old_to_new[v].degree_fixed = v.degree_fixed
-            colors.setdefault(v.colornum, list()).append(v)
+            colors.setdefault(v.colornum, list()).append(vertices_old_to_new[v])
 
         for e in self.edges:
             edge = Edge(vertices_old_to_new[e.tail], vertices_old_to_new[e.head])
