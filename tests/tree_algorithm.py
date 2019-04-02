@@ -1,6 +1,7 @@
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
 from algorithms.tree_algorithm import trees_count_isomorphisms
+from algorithms.preprocessing import fix_degrees
 from time import time
 
 
@@ -43,6 +44,9 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                 total_tests += 1
                 T1 = graphs[i]
                 T2 = graphs[j]
+
+                fix_degrees(T1)
+                fix_degrees(T2)
 
                 start_isomorph = time()
                 are_isomorph_actual = trees_count_isomorphisms(T1, T2, False)

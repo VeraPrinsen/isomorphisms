@@ -31,8 +31,7 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
     # of roots to each other. Because the maximum amount of roots is 2, all roots of T1 are mapped to one root of T2.
     # Root levels are overwritten in the second cycle.
     total_isomorphisms = 0
-    # for i_root in range(len(root_T1)):
-    for i_root in [0]:
+    for i_root in range(len(root_T1)):
         root1 = root_T1[i_root]
         root2 = root_T2[0]
 
@@ -42,83 +41,24 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
 
         # Assign all vertices to level number lists
         L1 = {}
-        for v in T1:
+        for v in T1.vertices:
             L1.setdefault(v.level, []).append(v)
         L2 = {}
-        for v in T2:
+        for v in T2.vertices:
             L2.setdefault(v.level, []).append(v)
 
         # The number of levels of each tree should be equal, otherwise not isomorphic
         h1, h2 = max(L1.keys()), max(L2.keys())
-        if max(L1.keys()) != max(L2.keys()):
+        if h1 != h2:
             continue
         h = h1
 
         # From the bottom level up, assign names to the vertices
-        # If the vertex is a leaf, the name 'lr' is assigned
-        # The name of all other vertices is a sorted collection of the names of its children
-        # At the same time, remember how many automorphisms the subtree of that vertex has
-        are_isomorphic = True    # For each level it is checked if the trees still can be isomoprhic, if not, the loop can be stopped
+        are_isomorphic = True    # For each level it is checked if the trees still can be isomoprhic, if not, the loop is stopped
         for i in range(h, -1, -1):
-            # Name the vertices of tree T1
-            H1 = []
-            for v in L1[i]:
-                if v.degree_fixed == 1:
-                    v.name = 'lr'
-                    v.auto = 1
-                else:
-                    # For each vertex, get the set of string assigned to its children
-                    children_names = []
-                    children_count = {}
-                    children_auto = {}
-                    for n in v.neighbours:
-                        if n.level > v.level:
-                            for _ in range(n.n_twins):
-                                children_names.append(n.name)
-                            children_count[n.name] = children_count.setdefault(n.name, 0) + 1
-                            children_auto[n.name] = children_auto.setdefault(n.name, 1) * n.auto
-                    v_auto = 1
-                    for child_name in set(children_names):
-                        v_auto *= factorial(children_count[child_name]) * children_auto[child_name]
-                    v.auto = v_auto
-
-                    children_names.sort()
-                    v_name = 'l'
-                    for child_name in children_names:
-                        v_name += child_name
-                    v_name += 'r'
-                    v.name = v_name
-                H1.append(v.name)
-
-            # Name the vertices of tree T2
-            H2 = []
-            for v in L2[i]:
-                if v.degree_fixed == 1:
-                    v.name = 'lr'
-                    v.auto = 1
-                else:
-                    # For each vertex, get the set of string assigned to its children
-                    children_names = []
-                    children_count = {}
-                    children_auto = {}
-                    for n in v.neighbours:
-                        if n.level > v.level:
-                            for _ in range(n.n_twins):
-                                children_names.append(n.name)
-                            children_count[n.name] = children_count.setdefault(n.name, 0) + 1
-                            children_auto[n.name] = children_auto.setdefault(n.name, 1) * n.auto
-                    v_auto = 1
-                    for child_name in set(children_names):
-                        v_auto *= factorial(children_count[child_name]) * children_auto[child_name]
-                    v.auto = v_auto
-
-                    children_names.sort()
-                    v_name = 'l'
-                    for child_name in children_names:
-                        v_name += child_name
-                    v_name += 'r'
-                    v.name = v_name
-                H2.append(v.name)
+            # Name the vertices of tree T1 an tree T2
+            H1 = __name_vertices(L1[i])
+            H2 = __name_vertices(L2[i])
 
             # On each level, the collections of names should be equal for the two trees for them to be isomorphic
             H1.sort()
@@ -128,15 +68,16 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
                 break
 
         # Only if the previous for-loop is fully done, the trees are isomorphic
-        # If count_flag is False, True is immediately returned
-        # If the amount of isomorphisms are counted, all other root combination should be taken into account
         if are_isomorphic:
+            # If count_flag is False, True is immediately returned
+            # If the amount of isomorphisms are counted, all other root combination should be taken into account and the
+            # amount is added to the total
             if count_flag:
                 total_isomorphisms += L1[0][0].auto
             else:
                 return True
 
-    # If count_flag is True, the amount of isomorphisms is returned
+    # If count_flag is True, the amount of isomorphisms is returned, because all combinations of roots have been evaluated
     # If count_flag is False, if the trees are isomorphic, the method should have already returned True,
     # so the trees are not isomorphic
     if count_flag:
@@ -185,3 +126,56 @@ def __assign_level(vertex: "Vertex", level, already_assigned: "List[Vertex]"):
     for neighbour in vertex.neighbours:
         if neighbour not in already_assigned:
             __assign_level(neighbour, level + 1, already_assigned)
+
+def __name_vertices(vertices: "List[Vertex]"):
+    """
+    This method names one level of vertices
+    :param vertices: The vertices of a level of a tree to be named
+    :return: A list of all names of the vertices in 'vertices'
+    """
+    # In H all names of vertices are saved
+    H = []
+    for v in vertices:
+        # If the vertex is a leaf, the name 'lr' is assigned
+        # The amount of automorphisms of the subtree of the leaf, with the leaf as root, is equal to 1
+        if v.degree_fixed == 1:
+            v.name = 'lr'
+            v.auto = 1
+        else:
+            # The name of all other vertices is a sorted collection of the names of its children
+            # At the same time, remember how many automorphisms the subtree of that vertex has, with that vertex as root
+            children_names = []
+            children_count = {}
+            children_auto = {}
+            for n in v.neighbours:
+                # The neighbour of a vertex is a child if the level of that neighbour is larger than the level of the vertex
+                if n.level > v.level:
+                    # If twins are removed, add the name also for each of the removed twins
+                    for _ in range(n.n_twins):
+                        children_names.append(n.name)
+                    children_count[n.name] = children_count.setdefault(n.name, 0) + 1
+                    # The amount of isomorphisms of the subtree with 'v' as its root is all combinations of isomorphisms
+                    # of all children of 'v' combined, so the amount of isomorphisms of the children must be multiplied
+                    # with each other
+                    children_auto[n.name] = children_auto.setdefault(n.name, 1) * n.auto
+
+            # If children of 'v' could be mapped to each other, the amount of isomorphisms is increased by all
+            # combinations of children that could be swapped. So for each set of children that could be mapped to each
+            # other the amount of isomorphisms should be multiplied with factorial(amount of children that can be
+            # mapped to each other)
+            v_auto = 1
+            for child_name in set(children_names):
+                v_auto *= factorial(children_count[child_name]) * children_auto[child_name]
+            v.auto = v_auto
+
+            # To be able to compare the names of vertices, make sure the collection of children names is sorted
+            # and than concatenate them to one string
+            children_names.sort()
+            v_name = 'l'
+            for child_name in children_names:
+                v_name += child_name
+            v_name += 'r'
+            v.name = v_name
+        H.append(v.name)
+
+    return H
