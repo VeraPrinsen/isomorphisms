@@ -1,6 +1,7 @@
 # Util imports
 from input_output.file_output import load_graph_list_from_filepath
 from input_output.sys_output import passed, fail
+import sys
 import tkinter as tk
 from tkinter import filedialog
 from time import time
@@ -32,17 +33,20 @@ for file_path in file_paths:
     graphs = load_graph_list_from_filepath(file_path)
     filename = (file_path.split("/")[-1]).split(".")[0]
 
-    passed("Started evaluating " + filename + "...")
-
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
     iso_count = {}          # Dictionary that saves for each graph the amount of automorphisms
-    total_time = 0
+    total_time = 0          # Total processing time of the graphs of this file
     skip = [False for _ in range(len(graphs))]  # To check if you can skip a cycle
 
     # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
+            s = "Started evaluating " + filename + "... "
+            s += "[" + str(i) + "," + str(j) + "]"
+            s += " / " + str(len(graphs) - 1)
+            sys.stdout.write('\r' + s)
+
             G = graphs[i]
             H = graphs[j]
 
@@ -76,6 +80,7 @@ for file_path in file_paths:
                     isomorphisms.append([i, j])
                     skip[i] = True
                     skip[j] = True
+    print('')
 
     # If the problem to be resolved is the #Automorphism problem, all graphs need to be in de result, also those
     # that are not an isomorphism with any other graph. Those graphs will be added to the isomorphism result as

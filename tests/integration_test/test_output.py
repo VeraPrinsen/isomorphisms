@@ -82,7 +82,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
 
             # Retrieve expected and test values
             if problem == 1 or problem == 2:
-                are_isomorph_expected = [i, j] in iso_solution
+                are_isomorph_expected = (i, j) in iso_solution
                 are_isomorph_test = [i, j] in iso_test_result
                 are_isomorph_passed = are_isomorph_expected == are_isomorph_test
 
