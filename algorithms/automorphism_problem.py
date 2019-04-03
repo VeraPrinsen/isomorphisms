@@ -134,101 +134,104 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     for color_key in color_mapping:
         if 4 <= len(color_mapping[color_key]) < color_map_length_max:
             for v in color_mapping[color_key]:
-                if v.graph_label == 1:
-                    v_Dx_g1 = v
                     color_map_length_max = len(color_mapping[color_key])
                     original_color_vertex_x0 = color_key
-
-    # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
-    v_Dx_g1.colornum = max_colornum + 1
 
     # And branch in separate I = Ix
     # First the comparison D + x and I + x
     # Thereafter D + xn and I + yn
-    Ix = list()
-    Iy = list()
+
+    Ix = list()  # vector of graph 2 == X of graph 1
+    Iy = list()  # vectors of Iy in graph 2
+    # Change the color of this vertex to a new color and append it to the list of fixed vertices for the first graph
 
     for v in color_mapping[original_color_vertex_x0]:
-        # Separate D + x, I + x if possible using the coupling_label property of v.
-        if v.graph_label == 2 and v.coupling_label == v_Dx_g1.coupling_label:
+        if v.graph_label == 1:
             Ix.append(v)
-        else:  # Create the D + x, I + y combinations
+        if v.graph_label == 2:
             Iy.append(v)
 
     # Look for permutations
     permutation_vectors_DI_tuples = list()
 
+    # Color
+
     if trivial_node:
         # Look for D + X, I + X
-        if len(Ix) == 0:
-            #print('Error no DxDx... This is not a trivial node')
-            return ['err']
         # Grab the reference to the vertex with graph_label = 2 in G
-        v_Dx_g2 = Ix[0]
 
-        D_copy = D.copy()
-        I_copy = I.copy()
+        for vy in Iy:
+            for vx in Ix:
+                if vx.coupling_label == vy.coupling_label:
+                    v_Dx_g1 = vx
+                    v_Dx_g2 = vy
+                    break
+
+        D_copy = list(D)
+        I_copy = list(I)
         D_copy.append(v_Dx_g1)
         I_copy.append(v_Dx_g2)
 
         # Now color the vertex in the second graph (I + X)
         # Note: work in G because the vector references are pointing to G
-        original_X_color_in_G = v_Dx_g2.colornum
+        # color
+        v_Dx_g1.colornum = max_colornum + 1
+
+        original_g2_color_in_G = v_Dx_g2.colornum
         v_Dx_g2.colornum = v_Dx_g1.colornum
 
         # Copy the colored graph
         G_DxDx = G.copy()
 
         # Revert changes in G
-        v_Dx_g2.colornum = original_X_color_in_G
+        v_Dx_g2.colornum = original_g2_color_in_G
 
         # Following the algorithmic description, the next node should be either bijected or a trivial node
         permutation_vectors_DI_tuples = generate_automorphism(G=G_DxDx, D=D_copy, I=I_copy)
-        #print(trivial_node)
-        #print(len(D_copy))
-        # A trivial node has no need in investigating the D X + D X again
-        #print(permutation_vectors_DI_tuples[0][0])
-        #print(permutation_vectors_DI_tuples[0][1])
-
-        D+=permutation_vectors_DI_tuples[0][0]
-        I+=permutation_vectors_DI_tuples[0][1]
 
         print(D)
 
-    if not trivial_node:
-        # Assemble with Ix as the first vector to evaluate
-        Iy = Ix+Iy
-        vD = D.pop(0)
-        vI = I.pop(0)
-        #print(Iy)
+    for v_Ix in Ix:
+        if trivial_node:
+            if v_Ix.coupling_label != v_Dx_g1.coupling_label:
+                continue
 
-    for v_Iy in Iy:
-        D_copy = D.copy()
-        I_copy = I.copy()
-        D_copy.append(v_Dx_g1)
-        I_copy.append(v_Iy)
+        D_copy = list(D)
+        I_copy = list(I)
 
-        # Now color the vertex in the second graph (I + Y)
-        # Note: work in G because the vector references are pointing to G
-        original_Y_color_in_G = v_Iy.colornum
-        v_Iy.colornum = v_Dx_g1.colornum
+        D_copy.append(v_Ix.coupling_label)
+        original_X_color_in_G = v_Ix.colornum
+        v_Ix.colornum = max_colornum + 1
 
-        # Copy the colored graph
-        G_DxDy = G.copy()
+        for v_Iy in Iy:
 
-        # Revert changes in G
-        v_Iy.colornum = original_Y_color_in_G
-        #print(D_copy)
+            if trivial_node:
+                if v_Iy.coupling_label == v_Ix.coupling_label == v_Dx_g1.coupling_label:
+                    continue
 
-        perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
+            I_copy.append(v_Iy)
+
+            # Now color the vertex in the second graph (I + Y)
+            # Note: work in G because the vector references are pointing to G
+            original_Y_color_in_G = v_Iy.colornum
+            v_Iy.colornum = v_Ix.colornum
+
+            # Copy the colored graph
+            G_DxDy = G.copy()
+
+            # Revert changes in G
+            v_Ix.colornum = original_X_color_in_G
+            v_Iy.colornum = original_Y_color_in_G
 
 
-        # Empty response is a dead end in the evaluation tree, pick next by continue
-        if perm_right == [(['unbalanced']),(['unbalanced'])]:
-            continue
-        else:
-            # A bijection, stop loop by break
-            permutation_vectors_DI_tuples += perm_right
-            return permutation_vectors_DI_tuples
+            perm_right = generate_automorphism(G=G_DxDy, D=D_copy, I=I_copy, trivial_node=False)
+
+            # Empty response is a dead end in the evaluation tree, pick next by continue
+            if perm_right == [(['unbalanced']),(['unbalanced'])]:
+                continue
+            else:
+                # A bijection, stop loop by break
+                permutation_vectors_DI_tuples += perm_right
+                return permutation_vectors_DI_tuples
 
     return ['unbalanced']

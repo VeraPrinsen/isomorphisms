@@ -24,14 +24,16 @@ v5 = Vertex(G)
 v6 = Vertex(G)
 
 # The order in which edges are added has effect on the outcome
-# Symmetry (?) The following order matches the slides lec4-p.16:
-G.add_edge(Edge(v0, v5))
-G.add_edge(Edge(v0, v6))
-G.add_edge(Edge(v0, v4))
+# Symmetry (?) The following order matches the slides lec4-p.16
 
 G.add_edge(Edge(v0, v1))
-G.add_edge(Edge(v0, v3))
 G.add_edge(Edge(v0, v2))
+G.add_edge(Edge(v0, v3))
+
+G.add_edge(Edge(v0, v4))
+G.add_edge(Edge(v0, v5))
+G.add_edge(Edge(v0, v6))
+
 
 G.add_edge(Edge(v1, v3))
 G.add_edge(Edge(v2, v3))
