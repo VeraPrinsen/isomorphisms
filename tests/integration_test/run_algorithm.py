@@ -32,8 +32,8 @@ for filepath in file_paths:
 
     passed("Starting evaluating " + filename)
 
-    isomorphisms = []       # Data structure that saves all isomorphic pairs (or more than 2, if that is the case)
-    iso_count = {}          # Data structure that saves for each graph the amount of automorphisms
+    isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
+    iso_count = {}          # Dictionary that saves for each graph the amount of automorphisms
     total_time = 0
     skip = [False for _ in range(len(graphs))]  # Check if the pair of graphs is already in the result, if they are, they can be skipped
 
@@ -43,9 +43,11 @@ for filepath in file_paths:
             G = graphs[i]
             H = graphs[j]
 
+            # If both graphs are already in the result structure, they can be skipped
             if skip[i] and skip[j]:
                 continue
 
+            # Determine if the two graphs are isomorphic
             G_copy = G.copy()
             H_copy = H.copy()
             start_isomorph = time()
@@ -99,4 +101,4 @@ for filepath in file_paths:
     if run_tournament:
         tournament_output(filename, total_time, isomorphisms, iso_count)
     else:
-        t
+        test_output(filename, len(graphs), total_time, isomorphisms, iso_count)
