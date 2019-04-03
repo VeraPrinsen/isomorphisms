@@ -33,7 +33,7 @@ for filepath in file_paths:
     isomorphisms = []       # Data structure that saves all isomorphic pairs (or more than 2, if that is the case)
     iso_count = {}          # Data structure that saves for each graph the amount of automorphisms
     total_time = 0
-    skip = [False for _ in range(len(graphs))]  # Check if the pair of graphs is already in the result, it they are, they can be skipped
+    skip = [False for _ in range(len(graphs))]  # Check if the pair of graphs is already in the result, if they are, they can be skipped
 
     # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
