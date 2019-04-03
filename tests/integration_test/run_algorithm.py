@@ -1,6 +1,6 @@
 # Util imports
 from input_output.file_output import load_graph_list_from_filepath
-from input_output.sys_output import passed
+from input_output.sys_output import passed, fail
 import tkinter as tk
 from tkinter import filedialog
 from time import time
@@ -24,18 +24,22 @@ root.withdraw()
 file_paths = filedialog.askopenfilenames()
 
 """
-RUN TOURNAMENT
+RUN ALGORITHM
 """
-for filepath in file_paths:
-    graphs = load_graph_list_from_filepath(filepath)
-    filename = (filepath.split("/")[-1]).split(".")[0]
+if run_mode == 1:
+    error_count = 0
+for file_path in file_paths:
+    graphs = load_graph_list_from_filepath(file_path)
+    filename = (file_path.split("/")[-1]).split(".")[0]
 
-    passed("Starting evaluating " + filename)
+    passed("Started evaluating " + filename + "...")
 
+    # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
     iso_count = {}          # Dictionary that saves for each graph the amount of automorphisms
     total_time = 0
     skip = [False for _ in range(len(graphs))]  # To check if you can skip a cycle
+
     # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
@@ -54,8 +58,7 @@ for filepath in file_paths:
             end_isomorph = time()
             total_time += round((end_isomorph - start_isomorph), 3)
 
-            # Only save results if the combination of graphs is isomorphic, unless you have to know the automorphisms
-            # of each graph, then save each graph in de isomorphisms data structure.
+            # Only save results if the combination of graphs is isomorphic
             if are_isomorph_actual:
                 # If one of the two graphs is already in a isomorphic pair, the other graph belongs to it too
                 if skip[i] or skip[j]:
@@ -98,9 +101,16 @@ for filepath in file_paths:
                 iso_count[graph] = amount_isomorph_actual
 
     if run_mode == 1:
-        test_output(filename, len(graphs), total_time, isomorphisms, iso_count)
+        error_count += test_output(filename, len(graphs), total_time, isomorphisms, iso_count)
     elif run_mode == 2:
         tournament_output(filename, total_time, isomorphisms, iso_count)
     else:
         print("RUN MODE NOT RECOGNIZED, PROGRAM WILL TERMINATE")
         break
+
+print("")
+if run_mode == 1:
+    if error_count > 0:
+        fail("INTEGRATION TEST FAILED - " + str(error_count) + " tests failed.")
+    elif error_count == 0:
+        passed("INTEGRATION TEST PASSED")

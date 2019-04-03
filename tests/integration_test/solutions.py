@@ -1,4 +1,6 @@
+# Data structure that holds all solutions for the GI problem
 isomorphism_solution = {}
+# Data structure that holds all solutions for the count iso- and automorphism problem
 automorphism_solution = {}
 
 # Color-refinement test graphs

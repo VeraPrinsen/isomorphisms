@@ -5,10 +5,14 @@ from input_output.sys_output import fail, passed, title
 from input_output.file_output import create_csv_file, write_csv_line
 
 
-def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
+def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_test_result):
     # Get results from solution file
-    iso_solution = isomorphism_solution[filename]
-    count_solution = automorphism_solution[filename]
+    iso_solution = []
+    count_solution = {}
+    if filename in isomorphism_solution:
+        iso_solution = isomorphism_solution[filename]
+    if filename in automorphism_solution:
+        count_solution = automorphism_solution[filename]
 
     # Dependent on the solutions that are available, print test results or not
     solution_exists = True
@@ -23,14 +27,15 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
             solution_exists = False
 
     if not solution_exists:
-        result_output(filename, n_graphs, processing_time, isomorphisms, iso_count)
-        return
+        result_output(filename, n_graphs, processing_time, iso_test_result, iso_count_test_result)
+        return -1
 
-    # If the right solutions are available, begin comparing expected and test values
+    # If the right solutions are available, compare expected and tested values
     title("-------------------------------")
     title("Test results " + filename)
     title("-------------------------------")
 
+    # When writing result to csv file, the file with corresponding column names is created here
     if write_to_csv:
         if problem == 1:
             csv_filepath = create_csv_file(filename + "-isomorphism-problem-test")
@@ -48,9 +53,18 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
         # Write first row with column names
         write_csv_line(csv_filepath, csv_column_names)
 
+    # For each (combination of) graph(s) the results are compared
+    # Amount of graphs tested and amount of tests failed are saved
     n_test_graphs = 0
     error_count = 0
-    for i in range(n_graphs-1):
+
+    # Dependent on problem adapt the i loop
+    if problem == 1 or problem == 2:
+        i_loop = range(n_graphs - 1)
+    elif problem == 3:
+        i_loop = range(n_graphs)
+
+    for i in i_loop:
         # Dependent on problem adapt the j loop
         if problem == 1 or problem == 2:
             j_loop = range(i + 1, n_graphs)
@@ -64,12 +78,12 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
             if problem == 1 or problem == 2:
                 print("[" + str(i) + "," + str(j) + "] ", end='')
             if problem == 3:
-                print("Graph " + str(i) + " ", end='')
+                print("[" + str(i) + "] ", end='')
 
             # Retrieve expected and test values
             if problem == 1 or problem == 2:
                 are_isomorph_expected = [i, j] in iso_solution
-                are_isomorph_test = [i, j] in isomorphisms
+                are_isomorph_test = [i, j] in iso_test_result
                 are_isomorph_passed = are_isomorph_expected == are_isomorph_test
 
                 if problem == 2:
@@ -78,16 +92,17 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
                     else:
                         amount_isomorph_expected = 0
                     if are_isomorph_test:
-                        amount_isomorph_test = iso_count[i]
+                        amount_isomorph_test = iso_count_test_result[i]
                     else:
                         amount_isomorph_test = 0
                     amount_isomorph_passed = amount_isomorph_expected == amount_isomorph_test
 
             if problem == 3:
                 amount_automorph_expected = count_solution[i]
-                amount_automorph_test = iso_count[i]
+                amount_automorph_test = iso_count_test_result[i]
                 amount_automorph_passes = amount_automorph_expected == amount_automorph_test
 
+            # When writing to csv, dependent on the problem to be solved, a line of results is written here
             if write_to_csv:
                 if problem == 1:
                     csv_line = [i, j, are_isomorph_expected, are_isomorph_test, are_isomorph_passed]
@@ -98,7 +113,7 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
                     csv_line = [i, amount_automorph_expected, amount_automorph_test, amount_automorph_passes]
                 write_csv_line(csv_filepath, csv_line)
 
-            # Check if solution is correct for GI problem 1 and 2) Isomorphisms between two different graphs
+            # Write on console the results of the GI problem 1 and 2: isomorphisms between two different graphs
             if problem == 1 or problem == 2:
                 if are_isomorph_expected:
                     if are_isomorph_passed:
@@ -123,7 +138,7 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
                         fail("[FAIL] Graphs are not isomorphic, are_isomorph() detected they were")
                         test_failed = True
 
-            # Check if solution is correct for GI problem 3) Amount of automorphisms of one graph
+            # Write on console the results of the GI problem 3) Amount of automorphisms of one graph
             if problem == 3:
                 if amount_automorph_passes:
                     if console_pass:
@@ -133,19 +148,21 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
                         amount_automorph_test))
                     test_failed = True
 
+            # If test failed at one of the test cases, increase error_count
             if test_failed:
                 error_count += 1
 
+    # Write summary of the test in csv file
     if write_to_csv:
         write_csv_line(csv_filepath, ["Amount of combinations of graphs tested:", n_test_graphs])
-        write_csv_line(csv_filepath, ["Amount of tests failed:", error_count])
         if error_count > 0:
             write_csv_line(csv_filepath, ["Amount of tests failed:", error_count, "TEST FAILED"])
         else:
             write_csv_line(csv_filepath, ["Amount of tests failed:", error_count, "TEST PASSED"])
         write_csv_line(csv_filepath, ["Total processing time (s):", processing_time])
 
-    print("Amount of graphs tested: " + str(n_test_graphs))
+    # Print summary of the test to console
+    print("Amount of combinations of graphs tested: " + str(n_test_graphs))
     print("Amount of tested graphs with failed results: " + str(error_count))
     print('')
     if error_count > 0:
@@ -155,3 +172,5 @@ def test_output(filename, n_graphs, processing_time, isomorphisms, iso_count):
     print('')
     print("Total processing time of " + filename + ": " + str(processing_time) + " s")
     print('')
+
+    return error_count
