@@ -115,7 +115,9 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
     #print(trivial_node)
     # Do color refinement on the graph
+
     color_refinement(G)
+    # TODO always color vertices x1-y1 x2-y2 in the initial graph ! don't continue with the previous graph (slide 12)
 
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
