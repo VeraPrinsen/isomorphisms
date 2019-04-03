@@ -1,4 +1,4 @@
-from tests.integration_test.settings import problem, tournament_write_to_csv
+from tests.integration_test.settings import problem, write_to_csv
 from input_output.sys_output import title
 from input_output.file_output import create_csv_file, write_csv_line
 
@@ -33,7 +33,7 @@ def tournament_output(filename, total_time, isomorphisms, iso_count):
     """
     FILE OUTPUT
     """
-    if tournament_write_to_csv:
+    if write_to_csv:
         # Create empty file
         csv_filename = 'tournament'
         if problem == 1:
