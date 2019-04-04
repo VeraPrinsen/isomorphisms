@@ -1,8 +1,8 @@
 from tests.integration_test.settings import simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm, complement
 from supporting_components.graph import Graph
-from algorithms.preprocessing import could_be_isomorphic, remove_twins, use_complement
+from algorithms.preprocessing import remove_twins, use_complement
+from algorithms.simple_cases import could_be_isomorphic
 from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
-from algorithms.color_initialization import degree_color_initialization, twins_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from algorithms.branching import count_isomorphisms
 
@@ -21,7 +21,7 @@ def apply_could_be_isomorphic(G: "Graph", H: "Graph"):
     return True
 
 
-def apply_remove_twins(G: "Graph", H: "Graph"):
+def apply_remove_twins(G: "Graph"):
     """
     If twin_removal is set to True, twin vertices are removed from both graphs. The factor with which the amount
     of isomorphisms found with the reduced graphs should be multiplied with is returned.
@@ -30,15 +30,10 @@ def apply_remove_twins(G: "Graph", H: "Graph"):
     """
     if twin_removal:
         factor = remove_twins(G)
-        remove_twins(H)
-        G_disjoint_union = G + H
-        twins_color_initialization(G_disjoint_union)
     else:
         factor = 1
-        G_disjoint_union = G + H
-        degree_color_initialization(G_disjoint_union)
 
-    return G_disjoint_union, factor
+    return factor
 
 
 def apply_tree_algorithm(G: "Graph", H: "Graph", count_isomorphisms: "Bool"):

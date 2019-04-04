@@ -9,7 +9,7 @@ from tests.integration_test.tournament_output import tournament_output
 from tests.integration_test.test_output import test_output
 # Algorithm imports
 from tests.integration_test.settings import *
-from tests.integration_test.isomorphism_problem import are_isomorph, amount_of_isomorphisms
+from tests.integration_test.isomorphism_problem import preprocessing, are_isomorph, amount_of_isomorphisms
 
 """
 General integration test for the Graph Isomorphisms problem.
@@ -33,6 +33,17 @@ for file_path in file_paths:
     graphs = load_graph_list_from_filepath(file_path)
     filename = (file_path.split("/")[-1]).split(".")[0]
 
+    # Preprocessing that should be done once per graph
+    # Twin removal
+    multiplication_factor = [1 for _ in range(len(graphs))]
+    complement = [None for _ in range(len(graphs))]
+    for i in range(len(graphs)):
+        G_complement, factor = preprocessing(graphs[i])
+        # If complement was applied, G_complement is the graph you should determine isomorphisms with
+        complement[i] = G_complement
+        # If twin removal was applied, a factor > 1 could be returned
+        multiplication_factor[i] = factor
+
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
     automorphisms = {}      # Dictionary that saves for each graph the amount of automorphisms
@@ -45,18 +56,13 @@ for file_path in file_paths:
             s = filename + ": Determining if [" + str(i) + "," + str(j) + "] are isomorphic (out of " + str(len(graphs) - 1) + " graphs)"
             sys.stdout.write('\r' + s)
 
-            G = graphs[i]
-            H = graphs[j]
-
             # If both graphs are already in the result structure, they can be skipped
             if skip[i] and skip[j]:
                 continue
 
             # Determine if the two graphs are isomorphic
-            G_copy = G.copy()
-            H_copy = H.copy()
             start_isomorph = time()
-            are_isomorph_actual = are_isomorph(G_copy, H_copy)
+            are_isomorph_actual = are_isomorph(complement[i], complement[j])
             end_isomorph = time()
             total_time += end_isomorph - start_isomorph
 
@@ -96,6 +102,7 @@ for file_path in file_paths:
             group_count += 1
             s = filename + ": Calculating amount of isomorphisms of isomorphic group " + str(pair) + " (" + str(group_count) + " out of " + str(len(isomorphisms)) + " groups)"
             sys.stdout.write('\r' + s)
+
             G_copy1 = graphs[pair[0]].copy()
             G_copy2 = graphs[pair[0]].copy()
             start_amount_automorphisms = time()
