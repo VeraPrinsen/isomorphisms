@@ -14,6 +14,35 @@ def test_copy(graph):
     return copy.is_equal(graph)
 
 
+def test_complement(G: "Graph"):
+    """
+    Tests the complement method of the graph.
+    :param G: The graph
+    :return: Whether or not the complement is correctly
+    """
+    complement = G.complement()
+    max_edges = (len(G.vertices) * (len(G.vertices) - 1)) / 2
+    return len(complement.edges) + len(G.edges) == max_edges and test_incidence_complement(G, complement)
+
+
+def test_incidence_complement(G: "Graph", complement: "Graph"):
+    """
+    Tests whether or not the incidences of the vertices in the graphs are completely different.
+    :param G: The graph
+    :param complement: The complement of the graph
+    :return: Whether or not the incidences of the vertices are completely different
+    """
+    # Loop over both lists of vertices
+    for v in G.vertices:
+        for w in complement.vertices:
+            if v.label == w.label:
+                # If the labels of the vertices are the same (so they resemble the same vertex)
+                for i in v.incidence:
+                    if i in w.incidence:
+                        return False
+    return True
+
+
 def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=True):
     test_name = 'graph'
     if write_csv_any:
@@ -42,6 +71,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                 graph = graphs[i] + graphs[j]
                 color_refinement(degree_color_initialization(graph))
                 is_equal = test_copy(graph)
+                is_correct_complement = test_complement(graph)
                 if not is_equal:
                     error_count += 1
                     if write_stdout_fail:
@@ -50,11 +80,19 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                         fail("Is NOT copy equal to graph: " + str(is_equal))
                     if write_csv_any:
                         write_csv_line(csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(0)])
+                if not is_correct_complement:
+                    error_count += 1
+                    if write_stdout_fail:
+                        print('---------------------------')
+                        print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
+                        fail("Is complement constructed correctly: " + str(is_correct_complement))
+                    if write_csv_any:
+                        write_csv_line(csv_filepath, [file, str(i), str(j), False, "{0:.3f}".format(0)])
                 else:
                     if write_stdout_passed:
                         print('---------------------------')
                         print("Statistics of " + file + "-" + str(i) + "_" + str(j) + ":")
-                        passed("Is copy equal to graph: " + str(is_equal))
+                        passed("Is copy equal to graph and complement constructed correctly: " + str(is_equal) + " and " + str(is_correct_complement))
                     if write_csv_any:
                         write_csv_line(csv_filepath, [file, str(i), str(j), True, "{0:.3f}".format(0)])
 

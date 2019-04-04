@@ -81,7 +81,7 @@ def __branching(G: 'Graph', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', coun
     num_isomorphisms = 0
     for y in g1:
         # Make a copy of everything before creating a new branch
-        color_list_backup, max_colornum_backup, colors_backup = G.backup()
+        max_colornum_backup, colors_backup = G.backup()
         G.max_colornum += 1
         D_copy = D.copy()
         I_copy = I.copy()
@@ -93,7 +93,7 @@ def __branching(G: 'Graph', C: 'Int', D: 'List[Vertex]', I: 'List[Vertex]', coun
         num_isomorphisms += count_isomorphisms(G, D_copy, I_copy, count_flag, color_refinement_method)
         if not count_flag and num_isomorphisms > 0:
             return True
-        G.revert(color_list_backup, max_colornum_backup, colors_backup)
+        G.revert(max_colornum_backup, colors_backup)
     if not count_flag:
         return num_isomorphisms > 0
     else:

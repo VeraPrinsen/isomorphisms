@@ -100,3 +100,16 @@ def neighbours_equal(v0_neighbours: "List[Vertex]", v1_neighbours: "List[Vertex]
         else:
             return False
     return len(v1_neighbours) == 0
+
+
+def use_complement(G: "Graph"):
+    """
+    Whether or not the graph has more edges than half of the maximal number of edges for the graph.
+    If this is true, further processing with the complement of G will likely be faster.
+    :param G: The graph
+    :return: Whether or not the complement should be used for further processing
+    """
+    number_of_vertices = len(G.vertices)
+    number_of_edges = len(G.edges)
+    max_edges = (number_of_vertices * (number_of_vertices - 1)) / 2
+    return number_of_edges > (max_edges/2)

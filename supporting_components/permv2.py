@@ -11,20 +11,21 @@ Remark: composition / multiplication is reversed compared to the earlier version
 # Paul Bonsma, 18-03-2015.
 
 testvalidity=True	
-	# Check whether permutations are initialized correctly
-	# (Whether they are bijections to 0..n-1, etc).
-	# Set to <False> for slightly faster, but possibly error prone initialization.
+# Check whether permutations are initialized correctly
+# (Whether they are bijections to 0..n-1, etc).
+# Set to <False> for slightly faster, but possibly error prone initialization.
 safeInit=True
-	# If <True>, then permutations are initialized safely, avoiding "shared reference" 
-	# errors. Set to <False> for slightly faster, but possibly error prone initialization.
+# If <True>, then permutations are initialized safely, avoiding "shared reference"
+# errors. Set to <False> for slightly faster, but possibly error prone initialization.
 UseReadableOutput=True
-	# If True: prints permutations always using nicely readable 
-	# cycle notations.
-	# If False: print(P) gives nice representation, but
-	# repr(P) gives technical representation (following Python style conventions).
+# If True: prints permutations always using nicely readable
+# cycle notations.
+# If False: print(P) gives nice representation, but
+# repr(P) gives technical representation (following Python style conventions).
+
 
 class permutation():
-	def __init__(self,n,cycles=None,mapping=None):
+	def __init__(self, n, cycles=None, mapping=None):
 		"""
 		A permutation P on n elements can be initialized in various ways:
 		
@@ -60,7 +61,7 @@ class permutation():
 			self.P=[i for i in range(n)]
 			for cycle in cycles:
 				for i in range(len(cycle)):
-					assert self.P[cycle[i]]==cycle[i]
+					assert self.P[cycle[i]] == cycle[i]
 					#if self.P[cycle[i]]!=cycle[i]:
 					#	raise permError
 					self.P[cycle[i]]=cycle[(i+1)%len(cycle)]

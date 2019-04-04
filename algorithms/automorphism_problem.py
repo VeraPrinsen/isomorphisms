@@ -78,21 +78,33 @@ def tester():
     assert (a==96)
 
 
-def order_computation(H_0: 'List[permutation]'):
+def order_computation(H: 'List[permutation]'):
     """
+    Recursively computes the order of a list of permutations.
     Based on slide 21 of lecture 4 and notes.
-    TODO:
     :param H: Permutation group
     :return: int with the order of the list of permutations
     """
-    a = FindNonTrivialOrbit(H_0)
-    orb_a, transvO = Orbit(H_0, a, returntransversal=True)
-    stab_a = Stabilizer(H_0, a)
+    # Choose a with nontrivial orbit
+    a = FindNonTrivialOrbit(H)
+    # Determine orbit of a (list of vertices 'a' can be mapped to)
+    O_H = Orbit(H, a)
 
-    if len(H_0) == 1:
-        return len(orb_a) * 1  # As theorem (=1)
+    # If length of the list of permutation H is equal to 1 (which is the stabilizer of the previous recursive call):
+    # Length of orbit = length of elements in the permutation in H
+    # Stabilizer = empty set, because there is no permutation that leaves an element untouched
+    # And the order is equal to the orbit that is determined using the previous stabilizer
+    if len(H) == 1:
+        return len(O_H)
 
-    return len(orb_a) * order_computation(stab_a)
+    # Determine stabilizer of a (list of permutations that leave 'a' untouched)
+    H_0 = Stabilizer(H, a)
+
+    # Order of list of permutation H = |H|
+    # Order of stabilizer (which is a list of permutations) H_0 = |H_0|
+    # Length of orbit (which is a list of vertices labels) O_H = |O_H|
+    # Orbit-Stabilizer-theorem:     |H| = |H_0| * |O_H|
+    return order_computation(H_0) * len(O_H)
 
 
 def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', trivial_node=True):
@@ -236,3 +248,4 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
                 return DI_permutations
 
     return [(['unbalanced']),(['unbalanced'])]
+
