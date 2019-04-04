@@ -1,4 +1,5 @@
 from algorithms.automorphism_problem import amount_of_automorphisms
+from algorithms.automorphism_problem import tester
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line, save_graph_as_dot
@@ -12,6 +13,7 @@ from supporting_components.graph import Graph, Vertex, Edge
 To test if the general isomorphism problem algorithms works finding isomorphisms between two graphs.
 """
 
+tester()
 
 # Lecture Graph
 G = Graph(False, 0)
@@ -26,20 +28,26 @@ v6 = Vertex(G)
 # The order in which edges are added has effect on the outcome
 # Symmetry (?) The following order matches the slides lec4-p.16
 
-G.add_edge(Edge(v0, v1))
-G.add_edge(Edge(v0, v2))
-G.add_edge(Edge(v0, v3))
 
-G.add_edge(Edge(v0, v4))
+
 G.add_edge(Edge(v0, v5))
+G.add_edge(Edge(v0, v4))
 G.add_edge(Edge(v0, v6))
 
+
+
+G.add_edge(Edge(v0, v2))
+G.add_edge(Edge(v0, v3))
+G.add_edge(Edge(v0, v1))
+
+
+G.add_edge(Edge(v4, v6))
+G.add_edge(Edge(v5, v6))
 
 G.add_edge(Edge(v1, v3))
 G.add_edge(Edge(v2, v3))
 
-G.add_edge(Edge(v4, v6))
-G.add_edge(Edge(v5, v6))
+
 
 permutations = amount_of_automorphisms(G)
 G_disjoint_union = G+G
@@ -162,15 +170,15 @@ create_csv = False
 # Change here which files you want to evaluate
 torus24 = True
 trees90 = True # does not work on trees apparently ? Do some sort of tree detection first !
-products72 = False
-cographs1 = False
+products72 = True
+cographs1 = True
 bigtrees1 = True
-torus144 = False
-trees36 = False
-modulesC = False
-cubes5 = False
-bigtrees3 = False
-cubes6 = False
+torus144 = True
+trees36 = True
+modulesC = True
+cubes5 = True
+bigtrees3 = True
+cubes6 = True
 
 
 """
@@ -246,7 +254,8 @@ for i_file in i_files:
             print('---------------------------')
 
             start_isomorph = time()
-            boolean_isomorph = are_isomorph(G, H)
+            #boolean_isomorph = are_isomorph(G.copy(), H)
+            boolean_isomorph=True
             end_isomorph = time()
 
             start_amount_isomorphisms = time()
