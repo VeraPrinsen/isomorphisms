@@ -82,5 +82,5 @@ def apply_complement(G: "Graph"):
     """
     if complement:
         if use_complement(G):
-            return G.complement()
-    return G
+            return True, G.complement()
+    return False, G

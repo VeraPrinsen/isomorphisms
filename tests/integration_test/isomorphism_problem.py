@@ -9,19 +9,28 @@ def preprocessing(G: "Graph"):
     In this method all pre-processing is done that need to be done only one time. This method is called before any
     other computations are done.
     :param G: The graph to be preprocessed
-    :return G_complement: If complement needed to be calculated, this is the complement of G, otherwise it is G itself
-    :return factor: Factor the amount of automorphisms need to be multiplied with to get the right result
+    :return : A dictionary with preprocessed data:
+                factor: the factor the amount of automorphisms need to be multiplied with
+                complement: If it needed to be determined, this is a graph, otherwise this is None
     """
-    G_preprocessed = apply_complement(G)
+    preprocessed_data = {}
 
     fix_degrees(G)
-    fix_degrees(G_preprocessed)
+
+    # Determine complement
+    complement_applied, G_preprocessed = apply_complement(G)
+    if complement_applied:
+        fix_degrees(G_preprocessed)
+        apply_remove_twins(G_preprocessed)
+        preprocessed_data['complement'] = G_preprocessed
+    else:
+        preprocessed_data['complement'] = None
 
     # Twin removal
     factor = apply_remove_twins(G)
-    apply_remove_twins(G_preprocessed)
+    preprocessed_data['factor'] = factor
 
-    return G_preprocessed, factor
+    return preprocessed_data
 
 
 def are_isomorph(G: "Graph", H: "Graph"):

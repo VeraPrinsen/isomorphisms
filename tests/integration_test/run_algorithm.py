@@ -40,12 +40,12 @@ for file_path in file_paths:
     multiplication_factor = [1 for _ in range(len(graphs))]
     preprocessed_graphs = {}
     for i in range(len(graphs)):
-        G_complement, factor = preprocessing(graphs[i])
-        # If complement was applied, G_complement is the graph you should determine isomorphisms with
-        preprocessed_graphs[i] = G_complement
+        preprocessed_data = preprocessing(graphs[i])
+        # If complement was applied, the value of key 'complement' is the complement graph, otherwise it is None
+        preprocessed_graphs[i] = preprocessed_data['complement']
         # If twin removal was applied, a factor > 1 could be returned and the amount of automorphisms should be
         # multiplied with it
-        multiplication_factor[i] = factor
+        multiplication_factor[i] = preprocessed_data['factor']
 
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
@@ -63,7 +63,15 @@ for file_path in file_paths:
                 continue
 
             # Determine if the two graphs are isomorphic
-            are_isomorph_actual = are_isomorph(preprocessed_graphs[i], preprocessed_graphs[j])
+            if bool(preprocessed_graphs[i]):
+                G = preprocessed_graphs[i]
+            else:
+                G = graphs[i]
+            if bool(preprocessed_graphs[j]):
+                H = preprocessed_graphs[j]
+            else:
+                H = graphs[j]
+            are_isomorph_actual = are_isomorph(G, H)
 
             # Only save results if the combination of graphs is isomorphic
             if are_isomorph_actual:
