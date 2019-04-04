@@ -29,7 +29,6 @@ def amount_of_automorphisms(G):
     # Convert into objects
     permutation_objects = list()
     print(permutation_vectors)
-    print('lenG={}'.format(len(G.vertices)))
 
     # TODO: investigate why the last permutation (from trivial node = 0) fails
     for groupid in range(0, len(permutation_vectors)):
@@ -107,14 +106,12 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     :return: The number of isomorphisms if 'count_flag' is True or whether or not the graph has at least one
     isomorphism if 'count_flag' is False
     """
-    print('vertices:')
-    print(G.vertices)
     color_refinement(G)
 
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the evaluated graph has no automorphism
-        return [(['unbalanced']),(['unbalanced'])]
+        return [(['unbalanced']), (['unbalanced'])]
     if is_bijected:
         print([D,I])
         return [(D, I)]
@@ -143,6 +140,11 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     # Look for permutations
     DI_permutations = list()
 
+    # Branching non-trivial (g1(X) - g2(Y))
+    # optimize to reduce the search space... X - Y and Y - X not necessary due to symmetry
+    # Make a copy of everything before creating a new branch
+    color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX = G.backup()
+
     # Branching trivial (g1(X) g2(X))
 
     if trivial_node:
@@ -165,9 +167,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         G.colors.setdefault(G.max_colornum + 1, list()).append(x1)
 
         # Make a copy of everything before creating a new branch
-        color_list_backup, max_colornum_backup, colors_backup = G.backup()
         G.max_colornum += 1
-
         # Add to the visited nodes in g1
         D_copy.append(x1.coupling_label)
 
@@ -181,46 +181,31 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
         DI_permutations = generate_automorphism(G=G, D=D_copy, I=I_copy)
 
-        # Restore the graph for re-use in the other trivial node branch
-        G.revert(color_list_backup, max_colornum_backup, colors_backup)
-
-        # Clear D and I
-        # D=list()
-        # I=list()
-
         # Reduce options after first trivial node branch iteration
-        print('is this true?'.format(x1 in G.colors[C])
-        Ix = [x1]
+        Ix.remove(x1)
+        Ix = [x1] + Ix
         Iy.remove(x2)
 
-    print(trivial_node)
-
-    # Branching non-trivial (g1(X) - g2(Y))
-    # optimize to reduce the search space... X - Y and Y - X not necessary due to symmetry
-    # Make a copy of everything before creating a new branch
-    color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX = G.backup()
+    # Branching, check all
 
     for x1 in Ix:
-        D_copy = list(D)
-        D_copy.append(x1.coupling_label)
-
-        # Color x1
-        # Update colors of graph 1
-        x1.colornum = G.max_colornum + 1
-
-        for v_temp in G.colors[C]:
-            if v_temp.label == x1.label:
-                x1 = v_temp
-
-        G.colors[C].remove(x1)
-        G.colors.setdefault(G.max_colornum + 1, list()).append(x1)
-
-        # Make a copy of everything before creating a new branch
-        G.max_colornum += 1
-        D_copy.append(x1.coupling_label)
-        color_list_backup_preY, max_colornum_backup_preY, colors_backup_preY = G.backup()
+        G.revert(color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX)
 
         for y2 in Iy:
+
+            D_copy = list(D)
+
+            # Color x1
+            # Update colors of graph 1
+            x1.colornum = G.max_colornum + 1
+
+            G.colors[C].remove(x1)
+            G.colors.setdefault(G.max_colornum + 1, list()).append(x1)
+
+            # Make a copy of everything before creating a new branch
+            G.max_colornum += 1
+            D_copy.append(x1.coupling_label)
+
             I_copy = list(I)
             # Update colors of graph 2
             y2.colornum = G.max_colornum
@@ -230,17 +215,17 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
             # Add to the visited nodes in g2
             I_copy.append(y2.coupling_label)
 
-            # Permutation
-            cycles = []
-            for d, i in zip(D_copy, I_copy):
-                cycles.append([d, i])
-            try:
-                permutation(len(G.vertices), cycles)
-            except AssertionError:
-                continue
+            # Permutation "validity checker"
+            # Uncomment om permutaties te checken op geldigheid volgens de library
+            # cycles = []
+            # for d, i in zip(D_copy, I_copy):
+            #     cycles.append([d, i])
+            # try:
+            #     permutation(len(G.vertices), cycles)
+            # except AssertionError:
+            #     continue
 
             perm_right = generate_automorphism(G=G, D=D_copy, I=I_copy, trivial_node=False)
-            #print(perm_right)
             # Empty response is a dead end in the evaluation tree, pick next by continue
             if perm_right == [(['unbalanced']),(['unbalanced'])]:
                 continue
@@ -248,13 +233,6 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
                 # A bijection, stop loop by break
                 DI_permutations += perm_right
 
-                #print('perm_tuples')
-                #print(permutation_vectors_DI_tuples)
-
                 return DI_permutations
-
-        G.revert(color_list_backup_preY, max_colornum_backup_preY, colors_backup_preY)
-
-    G.revert(color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX)
 
     return [(['unbalanced']),(['unbalanced'])]

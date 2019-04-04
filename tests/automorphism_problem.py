@@ -1,10 +1,10 @@
+from algorithms.color_refinement import color_refinement
 from algorithms.automorphism_problem import amount_of_automorphisms
 from algorithms.automorphism_problem import tester
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import load_graph_list, create_csv_file, write_csv_line, save_graph_as_dot
 from input_output.sys_output import fail, passed
-from algorithms.isomorphism_problem import are_isomorph, amount_of_isomorphisms
 from time import time
 from supporting_components.graph import Graph, Vertex, Edge
 
@@ -13,7 +13,7 @@ from supporting_components.graph import Graph, Vertex, Edge
 To test if the general isomorphism problem algorithms works finding isomorphisms between two graphs.
 """
 
-tester()
+#tester()
 
 # Lecture Graph
 G = Graph(False, 0)
@@ -30,28 +30,31 @@ v6 = Vertex(G)
 
 
 
+
+
+
+
+G.add_edge(Edge(v0, v3))
+G.add_edge(Edge(v0, v1))
+G.add_edge(Edge(v0, v2))
+
+
 G.add_edge(Edge(v0, v5))
 G.add_edge(Edge(v0, v4))
 G.add_edge(Edge(v0, v6))
 
 
-
-G.add_edge(Edge(v0, v2))
-G.add_edge(Edge(v0, v3))
-G.add_edge(Edge(v0, v1))
+G.add_edge(Edge(v1, v3))
+G.add_edge(Edge(v2, v3))
 
 
 G.add_edge(Edge(v4, v6))
 G.add_edge(Edge(v5, v6))
 
-G.add_edge(Edge(v1, v3))
-G.add_edge(Edge(v2, v3))
-
-
 
 permutations = amount_of_automorphisms(G)
 G_disjoint_union = G+G
-permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
 
 print('0000000000000000000000000000000000000000000000000000000')
 
@@ -103,7 +106,7 @@ G.add_edge(Edge(v8, v5))
 #permutations = amount_of_automorphisms(G)
 permutations = amount_of_automorphisms(G)
 G_disjoint_union = G+G
-permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
 
 print('0000000000000000000000000000000000000000000000000000000')
 
@@ -145,11 +148,11 @@ G.add_edge(Edge(v2, v2_2))
 G.add_edge(Edge(v3, v3_1))
 G.add_edge(Edge(v3, v3_2))
 
-save_graph_as_dot(G, 'stargraph')
+#save_graph_as_dot(G, 'stargraph')
 
 permutations = amount_of_automorphisms(G)
 G_disjoint_union = G+G
-permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True)
+permutations2 = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
 
 print('0000000000000000000000000000000000000000000000000000000')
 

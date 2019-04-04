@@ -13,7 +13,6 @@ def color_refinement(G: "Graph"):
     has_changed = True
     while has_changed:
         has_changed = False
-        print(G.colors)
         for colornum, vertices in G.colors.copy().items():
             if len(vertices) <= 1:
                 continue
