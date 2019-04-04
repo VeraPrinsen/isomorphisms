@@ -1,5 +1,5 @@
 from algorithms.preprocessing import fix_degrees
-from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, apply_tree_algorithm, branching_method
+from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, apply_tree_algorithm, branching_method, apply_complement
 
 """
 With these methods, the graph isomorphism problem can be solved.
@@ -14,6 +14,9 @@ def are_isomorph(G: "Graph", H: "Graph"):
 
     if not apply_could_be_isomorphic(G, H):
         return False
+
+    G = apply_complement(G)
+    H = apply_complement(H)
 
     G_disjoint_union, _ = apply_remove_twins(G, H)
 
