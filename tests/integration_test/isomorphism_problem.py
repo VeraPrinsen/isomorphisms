@@ -1,6 +1,7 @@
 from algorithms.preprocessing import fix_degrees
 from tests.integration_test.algorithm_options import apply_could_be_isomorphic, apply_remove_twins, apply_tree_algorithm, branching_method, apply_complement
 from algorithms.color_initialization import degree_color_initialization
+from supporting_components.graph import Graph
 
 
 def preprocessing(G: "Graph"):
@@ -32,7 +33,7 @@ def are_isomorph(G: "Graph", H: "Graph"):
         return False
 
     # If graph is a tree, use this algorithm to solve the GI problem
-    problem_solved, is_isomorph = apply_tree_algorithm(G, H, False)
+    problem_solved, is_isomorph = apply_tree_algorithm(G, H)
     if problem_solved:
         return is_isomorph
 
@@ -43,23 +44,19 @@ def are_isomorph(G: "Graph", H: "Graph"):
     return branching_method(G_disjoint_union, False)
 
 
-def amount_of_isomorphisms(G: "Graph", H: "Graph"):
+def amount_of_automorphisms(G: "Graph"):
     """
     This method calculates the amount of isomorphisms there are between graph G and H.
     :param G, H: The two graphs of which the amount of isomorphisms must be determined.
     :return: Amount of isomorphisms graph G and H have.
     """
-    # Test if graphs are isomorphic using simple properties of the graphs
-    if not apply_could_be_isomorphic(G, H):
-        return 0
-
     # If graph is a tree, use this algorithm to solve the GI problem
-    problem_solved, isomorph_count = apply_tree_algorithm(G, H, True)
+    problem_solved, isomorph_count = apply_tree_algorithm(G)
     if problem_solved:
         return isomorph_count
 
-    # If GI problem is not solved, make a disjoint union of the graphs, color it and do branching
-    G_disjoint_union = G + H
+    # If GI problem is not solved, make a disjoint union of itself, color it and do branching
+    G_disjoint_union = G.self_disjoint_union()
     degree_color_initialization(G_disjoint_union)
 
     return branching_method(G_disjoint_union, True)

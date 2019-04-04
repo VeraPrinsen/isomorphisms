@@ -2,7 +2,7 @@ from tests.integration_test.settings import simple_cases, twin_removal, tree_alg
 from supporting_components.graph import Graph
 from algorithms.preprocessing import remove_twins, use_complement
 from algorithms.simple_cases import could_be_isomorphic
-from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
+from algorithms.tree_algorithm import is_tree, trees_are_isomorph, trees_automorphisms
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from algorithms.branching import count_isomorphisms
 
@@ -36,14 +36,18 @@ def apply_remove_twins(G: "Graph"):
     return factor
 
 
-def apply_tree_algorithm(G: "Graph", H: "Graph", count_isomorphisms: "Bool"):
+def apply_tree_algorithm(G: "Graph", H: "Graph" = None):
     """
-    If the tree algorithm must be used, this method checks if G and H are trees.
+    If the tree algorithm must be used, this method checks if G (and H) are trees.
     If they are the isomorphism problem is resolved using the tree isomorphism method.
     """
     if tree_algorithm:
-        if is_tree(G) and is_tree(H):
-            return True, trees_count_isomorphisms(G, H, count_isomorphisms)
+        if H is None and is_tree(G):
+            # Count automorphism problem
+            return True, trees_automorphisms(G)
+        elif is_tree(G) and is_tree(H):
+            # Check if G and H are isomorph
+            return True, trees_are_isomorph(G, H)
 
     return False, None
 

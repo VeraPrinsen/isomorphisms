@@ -9,7 +9,7 @@ from tests.integration_test.tournament_output import tournament_output
 from tests.integration_test.test_output import test_output
 # Algorithm imports
 from tests.integration_test.settings import *
-from tests.integration_test.isomorphism_problem import preprocessing, are_isomorph, amount_of_isomorphisms
+from tests.integration_test.isomorphism_problem import preprocessing, are_isomorph, amount_of_automorphisms
 
 """
 General integration test for the Graph Isomorphisms problem.
@@ -102,13 +102,10 @@ for file_path in file_paths:
             group_count += 1
             s = filename + ": Calculating amount of isomorphisms of isomorphic group " + str(pair) + " (" + str(group_count) + " out of " + str(len(isomorphisms)) + " groups)"
             sys.stdout.write('\r' + s)
-
-            G_copy1 = graphs[pair[0]].copy()
-            G_copy2 = graphs[pair[0]].copy()
-            start_amount_automorphisms = time()
-            amount_automorphisms_actual = amount_of_isomorphisms(G_copy1, G_copy2)
-            end_amount_automorphisms = time()
-            total_time += end_amount_automorphisms - start_amount_automorphisms
+            start_amount_isomorphisms = time()
+            amount_automorphisms_actual = multiplication_factor[pair[0]] * amount_of_automorphisms(graphs[pair[0]])
+            end_amount_isomorphisms = time()
+            total_time += end_amount_isomorphisms - start_amount_isomorphisms
             # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
                 automorphisms[graph] = amount_automorphisms_actual

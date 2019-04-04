@@ -10,21 +10,18 @@ def is_tree(G: "Graph"):
     return len(G.edges) == len(G.vertices) - 1
 
 
-def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
+def trees_are_isomorph(T1: "Graph", T2: "Graph"):
     """
     :param T1, T2: Graphs that are trees (so is_tree(T1) and is_tree(T2) return True)
-    :param count_flag: Flag that determines what return argument is
-    :return: If count_flag is False, the return argument is a boolean indicating if T1 and T2 are isomorphic or not
-    If count_flag is True, the return argument is the amount of isomorphisms between T1 and T2
+    :return: Boolean if T1 and T2 are isomorph. If they are, T1 and T2 have a property 'automorphisms' with
+    the amount of automorphisms they both have
     """
     # Determine the root of both trees
-    root_T1 = __root_label(T1)
-    root_T2 = __root_label(T2)
+    root_T1 = __root(T1)
+    root_T2 = __root(T2)
 
     # Tree can have one or two roots, if amount of roots is not equal, not isomorphic
     if len(root_T1) != len(root_T2):
-        if count_flag:
-            return 0
         return False
 
     # If there are two roots, the amount of isomorphisms is the addition of isomorphisms from the two mappings
@@ -69,23 +66,60 @@ def trees_count_isomorphisms(T1: "Graph", T2: "Graph", count_flag: "Bool"):
 
         # Only if the previous for-loop is fully done, the trees are isomorphic
         if are_isomorphic:
-            # If count_flag is False, True is immediately returned
-            # If the amount of isomorphisms are counted, all other root combination should be taken into account and the
-            # amount is added to the total
-            if count_flag:
-                total_isomorphisms += L1[0][0].auto
-            else:
-                return True
+            total_isomorphisms += L1[0][0].auto
+        else:
+            return False
 
-    # If count_flag is True, the amount of isomorphisms is returned, because all combinations of roots have been evaluated
-    # If count_flag is False, if the trees are isomorphic, the method should have already returned True,
-    # so the trees are not isomorphic
-    if count_flag:
-        return total_isomorphisms
-    return False
+    # If the trees are not isomorphic, this method should have already returned false, so the trees are isomorphic
+    # Automorphisms of each tree are saved and True is returned
+    T1.automorphisms = total_isomorphisms
+    T2.automorphisms = total_isomorphisms
+    return True
 
 
-def __root_label(T: "Graph"):
+def trees_automorphisms(T: "Graph"):
+    """
+    :param T: Graph that are trees (so is_tree(T1) and is_tree(T2) return True)
+    :return: Boolean if T1 and T2 are isomorph. If they are, T1 and T2 have a property 'automorphisms' with
+    the amount of automorphisms they both have
+    """
+    # If the tree T already has the property 'automorphisms', return that value
+    if hasattr(T, 'automorphisms'):
+        return T.automorphisms
+
+    # Otherwise, calculate it
+
+    # Determine the root of the tree
+    root_T = __root(T)
+
+    # If there are two roots, the amount of isomorphisms is the addition of isomorphisms from the two roots
+    # If there are two roots, root levels are overwritten in the second cycle.
+    total_isomorphisms = 0
+    for i_root in range(len(root_T)):
+        root = root_T[i_root]
+
+        # Assign level numbers to all nodes
+        __assign_level(root, 0, [])
+
+        # Assign all vertices to level number lists
+        L = {}
+        for v in T.vertices:
+            L.setdefault(v.level, []).append(v)
+
+        # The number of levels of each tree should be equal, otherwise not isomorphic
+        h = max(L.keys())
+
+        # From the bottom level up, assign names to the vertices
+        for i in range(h, -1, -1):
+            # Name the vertices of tree T1 an tree T2
+            H = __name_vertices(L[i])
+
+        total_isomorphisms += L[0][0].auto
+
+    return total_isomorphisms
+
+
+def __root(T: "Graph"):
     """
     Determines the root of tree T by removing all leaves from the tree until there are 1 or 2 vertices left.
     :return: A list of vertices of the roots of tree T

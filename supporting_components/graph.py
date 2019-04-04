@@ -28,7 +28,7 @@ class Vertex(object):
     except for `__str__`.
     """
 
-    def __init__(self, graph: "Graph", label=None, graph_label=None):
+    def __init__(self, graph: "Graph", label=None, graph_label=None, coupling_label=None):
         """
         Creates a vertex, part of `graph`, with optional label `label`.
         (Labels of different vertices may be chosen the same; this does
@@ -44,6 +44,7 @@ class Vertex(object):
         self._graph = graph
         self.label = label
         self.graph_label = graph_label
+        self.coupling_label = coupling_label
         self._incidence = {}
         self.colornum = None
         self.degree_fixed = None
@@ -389,6 +390,52 @@ class Graph(object):
                 )
             )
         for e_before_union in other.edges:
+            disjoint_union_graph.add_edge(
+                Edge(
+                    vertex_reference_other[e_before_union.tail],
+                    vertex_reference_other[e_before_union.head]
+                )
+            )
+
+        return disjoint_union_graph
+
+    def self_disjoint_union(self):
+        """
+        Make a disjoint union of this graph.
+        A unique coupling value is given to tie nodes back together when comparing.
+        A dictionary is used with the self and other graph's vertices as key.
+        A graph_label property is added to distinguish between the original graphs.
+        The value of the dictionary (dict) is a new vertex in the disjoint union.
+        The new vertex labelled using the property `graph_label` of Vertex.
+        Vertices originating from self are graph_label = True, the other graph_label = False.
+        :param other: Graph to add to `self'.
+        :return: New undirected graph which is a disjoint union of `self' and `other'.
+        """
+        disjoint_union_graph = Graph(directed=False)
+
+        vertex_reference_self = dict()
+        vertex_reference_other = dict()
+
+        for v_before_union in self.vertices:
+            vertex_reference_self[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=1, coupling_label=v_before_union.label)
+            vertex_reference_self[v_before_union].degree_fixed = v_before_union.degree_fixed
+            vertex_reference_self[v_before_union].n_twins = v_before_union.n_twins
+
+        for v_before_union in self.vertices:
+            vertex_reference_other[v_before_union] = Vertex(graph=disjoint_union_graph, graph_label=2, coupling_label=v_before_union.label)
+            vertex_reference_other[v_before_union].degree_fixed = v_before_union.degree_fixed
+            vertex_reference_other[v_before_union].n_twins = v_before_union.n_twins
+
+        # Add edges
+        # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
+        for e_before_union in self.edges:
+            disjoint_union_graph.add_edge(
+                Edge(
+                    vertex_reference_self[e_before_union.tail],
+                    vertex_reference_self[e_before_union.head]
+                )
+            )
+        for e_before_union in self.edges:
             disjoint_union_graph.add_edge(
                 Edge(
                     vertex_reference_other[e_before_union.tail],
