@@ -3,6 +3,7 @@ from algorithms.color_refinement import color_refinement
 from algorithms.color_initialization import degree_color_initialization
 from input_output.file_output import write_csv_line
 from input_output.file_output import create_csv_file
+from algorithms.preprocessing import fix_degrees
 import time
 import csv
 from input_output.sys_output import fail, passed
@@ -33,6 +34,8 @@ def unit_test():
     # mocked test loop
     for i in range(0, len(graphs)):
         outputfilename = 'output_files/main/' + file + '_' + str(i) + '.dot'
+
+        fix_degrees(graphs[i])
 
         start_time = time.time()
         save_graph_as_dot(color_refinement(degree_color_initialization(graphs[i])), outputfilename)

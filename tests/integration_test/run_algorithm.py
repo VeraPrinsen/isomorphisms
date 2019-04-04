@@ -34,14 +34,14 @@ for file_path in file_paths:
     filename = (file_path.split("/")[-1]).split(".")[0]
 
     # Preprocessing that should be done once per graph
-    # Twin removal
+    # Twin removal - Complement
     multiplication_factor = [1 for _ in range(len(graphs))]
     complement = [None for _ in range(len(graphs))]
     for i in range(len(graphs)):
         G_complement, factor = preprocessing(graphs[i])
         # If complement was applied, G_complement is the graph you should determine isomorphisms with
         complement[i] = G_complement
-        # If twin removal was applied, a factor > 1 could be returned
+        # If twin removal was applied, a factor > 1 could be returned and the amount of automorphisms should be multiplied with it
         multiplication_factor[i] = factor
 
     # Some data structures that are used to determine if graphs are isomorphic more efficiently

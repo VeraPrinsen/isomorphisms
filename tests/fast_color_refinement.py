@@ -2,6 +2,7 @@ from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, create_csv_file, write_csv_line
 from input_output.sys_output import fail, passed
+from algorithms.preprocessing import fix_degrees
 from time import time
 
 """
@@ -45,6 +46,7 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
 
         for i in range(0, len(graphs)):
             # Graph test
+            fix_degrees(graphs[i])
 
             # Time degree step separately
             start_degree_color_initialization = time()

@@ -67,14 +67,16 @@ def trees_are_isomorph(T1: "Graph", T2: "Graph"):
         # Only if the previous for-loop is fully done, the trees are isomorphic
         if are_isomorphic:
             total_isomorphisms += L1[0][0].auto
-        else:
-            return False
 
-    # If the trees are not isomorphic, this method should have already returned false, so the trees are isomorphic
-    # Automorphisms of each tree are saved and True is returned
-    T1.automorphisms = total_isomorphisms
-    T2.automorphisms = total_isomorphisms
-    return True
+    # If the trees are not isomorphic, no isomorphisms are counted
+    # If total_isomorphisms is greater than 0 , the trees are isomorphic and the amount of automorphisms of each
+    # tree are saved and True is returned
+    if total_isomorphisms == 0:
+        return False
+    else:
+        T1.automorphisms = total_isomorphisms
+        T2.automorphisms = total_isomorphisms
+        return True
 
 
 def trees_automorphisms(T: "Graph"):

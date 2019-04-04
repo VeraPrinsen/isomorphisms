@@ -3,6 +3,7 @@ from algorithms.color_refinement import color_refinement
 from input_output.file_output import load_graph_list, save_graph_as_dot, create_csv_file, write_csv_line
 from algorithms.decide_gi import is_balanced_or_bijected
 from input_output.sys_output import fail, passed
+from algorithms.preprocessing import fix_degrees
 from time import time
 
 """
@@ -50,7 +51,10 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
         for i in range(0, len(graphs) - 1):
             for j in range(i + 1, len(graphs)):
                 # Graph test
-                
+
+                fix_degrees(graphs[i])
+                fix_degrees(graphs[j])
+
                 G = graphs[i] + graphs[j]
 
                 start = time()
