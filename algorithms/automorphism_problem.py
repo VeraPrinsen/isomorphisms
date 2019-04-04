@@ -159,6 +159,8 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     # Make a copy of everything before creating a new branch
     max_colornum_backup_preX, colors_backup_preX = G.backup()
 
+    print(max_colornum_backup_preX)
+
     # Branching trivial (g1(X) g2(X))
 
     if trivial_node:
@@ -203,16 +205,22 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
     # Branching, check all
 
+    print('in')
     for x1 in Ix:
-        G.revert(max_colornum_backup_preX, colors_backup_preX)
-
         for y2 in Iy:
+            print(x1)
+            print(y2)
+            print(G.colors[C])
+            G.revert(max_colornum_backup_preX, colors_backup_preX)
+            print(G.colors[C])
 
             D_copy = list(D)
 
             # Color x1
             # Update colors of graph 1
             x1.colornum = G.max_colornum + 1
+            #print(G.colors[C])
+            #print(x1)
 
             G.colors[C].remove(x1)
             G.colors.setdefault(G.max_colornum + 1, list()).append(x1)
@@ -232,13 +240,13 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
 
             # Permutation "validity checker"
             # Uncomment om permutaties te checken op geldigheid volgens de library
-            # cycles = []
-            # for d, i in zip(D_copy, I_copy):
-            #     cycles.append([d, i])
-            # try:
-            #     permutation(len(G.vertices), cycles)
-            # except AssertionError:
-            #     continue
+            cycles = []
+            for d, i in zip(D_copy, I_copy):
+                cycles.append([d, i])
+            try:
+                permutation(len(G.vertices), cycles)
+            except AssertionError:
+                continue
 
             perm_right = generate_automorphism(G=G, D=D_copy, I=I_copy, trivial_node=False)
             # Empty response is a dead end in the evaluation tree, pick next by continue
