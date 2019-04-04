@@ -9,7 +9,8 @@ def preprocessing(G: "Graph"):
     In this method all pre-processing is done that need to be done only one time. This method is called before any
     other computations are done.
     :param G: The graph to be preprocessed
-    :return: Factor the amount of automorphisms need to be multiplied with to get the right result
+    :return G_complement: If complement needed to be calculated, this is the complement of G, otherwise it is G itself
+    :return factor: Factor the amount of automorphisms need to be multiplied with to get the right result
     """
     G_complement = apply_complement(G)
 

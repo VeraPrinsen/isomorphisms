@@ -38,7 +38,7 @@ for file_path in file_paths:
     # Preprocessing that should be done once per graph
     # Twin removal - Complement
     multiplication_factor = [1 for _ in range(len(graphs))]
-    complement = [None for _ in range(len(graphs))]
+    complement = {}
     for i in range(len(graphs)):
         G_complement, factor = preprocessing(graphs[i])
         # If complement was applied, G_complement is the graph you should determine isomorphisms with
