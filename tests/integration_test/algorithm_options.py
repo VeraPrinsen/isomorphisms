@@ -23,10 +23,8 @@ def apply_could_be_isomorphic(G: "Graph", H: "Graph"):
 
 def apply_remove_twins(G: "Graph"):
     """
-    If twin_removal is set to True, twin vertices are removed from both graphs. The factor with which the amount
-    of isomorphisms found with the reduced graphs should be multiplied with is returned.
-    Furthermore the graphs are colored based on the degrees before twins were removed, instead of the current
-    amount of degrees of vertices.
+    If twin_removal is set to True, twin vertices are removed from the graph. The amount of automorphisms found with
+    the reduced graph should be multiplied with the factor that is returned by this method.
     """
     if twin_removal:
         factor = remove_twins(G)
@@ -40,6 +38,9 @@ def apply_tree_algorithm(G: "Graph", H: "Graph" = None):
     """
     If the tree algorithm must be used, this method checks if G (and H) are trees.
     If they are the isomorphism problem is resolved using the tree isomorphism method.
+    :return: Boolean that tells if the GI problem is solved
+    :return: If True, the second return variable is a Boolean that tells if G and H are isomorphic, if H is a Graph
+                   or the second return variable is the amount of automorphisms of tree G
     """
     if tree_algorithm:
         if H is None and is_tree(G):

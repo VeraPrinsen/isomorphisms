@@ -12,15 +12,16 @@ def preprocessing(G: "Graph"):
     :return G_complement: If complement needed to be calculated, this is the complement of G, otherwise it is G itself
     :return factor: Factor the amount of automorphisms need to be multiplied with to get the right result
     """
-    G_complement = apply_complement(G)
+    G_preprocessed = apply_complement(G)
 
     fix_degrees(G)
-    fix_degrees(G_complement)
+    fix_degrees(G_preprocessed)
 
     # Twin removal
     factor = apply_remove_twins(G)
+    apply_remove_twins(G_preprocessed)
 
-    return G_complement, factor
+    return G_preprocessed, factor
 
 
 def are_isomorph(G: "Graph", H: "Graph"):

@@ -401,15 +401,10 @@ class Graph(object):
 
     def self_disjoint_union(self):
         """
-        Make a disjoint union of this graph.
+        Make a disjoint union with itself.
         A unique coupling value is given to tie nodes back together when comparing.
-        A dictionary is used with the self and other graph's vertices as key.
         A graph_label property is added to distinguish between the original graphs.
-        The value of the dictionary (dict) is a new vertex in the disjoint union.
-        The new vertex labelled using the property `graph_label` of Vertex.
-        Vertices originating from self are graph_label = True, the other graph_label = False.
-        :param other: Graph to add to `self'.
-        :return: New undirected graph which is a disjoint union of `self' and `other'.
+        :return: New undirected graph which is a disjoint union of itself.
         """
         disjoint_union_graph = Graph(directed=False)
 
