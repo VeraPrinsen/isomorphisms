@@ -3,6 +3,7 @@ from input_output.sys_output import fail, passed
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
+from algorithms.preprocessing import fix_degrees
 from time import time
 
 
@@ -107,6 +108,9 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                 total_tests += 1
                 G = graphs[i]
                 H = graphs[j]
+
+                fix_degrees(G)
+                fix_degrees(H)
 
                 G_disjoint_union = G + H
                 # Create copy to use in one of the two methods to perform the tests on separate graphs

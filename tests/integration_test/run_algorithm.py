@@ -9,7 +9,7 @@ from tests.integration_test.tournament_output import tournament_output
 from tests.integration_test.test_output import test_output
 # Algorithm imports
 from tests.integration_test.settings import *
-from tests.integration_test.isomorphism_problem import are_isomorph, amount_of_isomorphisms
+from tests.integration_test.isomorphism_problem import preprocessing, are_isomorph, amount_of_automorphisms
 
 """
 General integration test for the Graph Isomorphisms problem.
@@ -30,13 +30,26 @@ RUN ALGORITHM
 if run_mode == 1:
     error_count = 0
 for file_path in file_paths:
+    start_time = time()
+
     graphs = load_graph_list_from_filepath(file_path)
     filename = (file_path.split("/")[-1]).split(".")[0]
+
+    # Preprocessing that should be done once per graph
+    # Twin removal - Complement
+    multiplication_factor = [1 for _ in range(len(graphs))]
+    preprocessed_graphs = {}
+    for i in range(len(graphs)):
+        preprocessed_data = preprocessing(graphs[i])
+        # If complement was applied, the value of key 'complement' is the complement graph, otherwise it is None
+        preprocessed_graphs[i] = preprocessed_data['complement']
+        # If twin removal was applied, a factor > 1 could be returned and the amount of automorphisms should be
+        # multiplied with it
+        multiplication_factor[i] = preprocessed_data['factor']
 
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
     automorphisms = {}      # Dictionary that saves for each graph the amount of automorphisms
-    total_time = 0          # Total processing time of the graphs of this file
     skip = [False for _ in range(len(graphs))]  # To check if you can skip a cycle
 
     # In this first loop, for each combination, it is determined if they are isomorphic or not
@@ -45,20 +58,20 @@ for file_path in file_paths:
             s = filename + ": Determining if [" + str(i) + "," + str(j) + "] are isomorphic (out of " + str(len(graphs) - 1) + " graphs)"
             sys.stdout.write('\r' + s)
 
-            G = graphs[i]
-            H = graphs[j]
-
             # If both graphs are already in the result structure, they can be skipped
             if skip[i] and skip[j]:
                 continue
 
             # Determine if the two graphs are isomorphic
-            G_copy = G.copy()
-            H_copy = H.copy()
-            start_isomorph = time()
-            are_isomorph_actual = are_isomorph(G_copy, H_copy)
-            end_isomorph = time()
-            total_time += end_isomorph - start_isomorph
+            if bool(preprocessed_graphs[i]):
+                G = preprocessed_graphs[i]
+            else:
+                G = graphs[i]
+            if bool(preprocessed_graphs[j]):
+                H = preprocessed_graphs[j]
+            else:
+                H = graphs[j]
+            are_isomorph_actual = are_isomorph(G, H)
 
             # Only save results if the combination of graphs is isomorphic
             if are_isomorph_actual:
@@ -96,17 +109,15 @@ for file_path in file_paths:
             group_count += 1
             s = filename + ": Calculating amount of isomorphisms of isomorphic group " + str(pair) + " (" + str(group_count) + " out of " + str(len(isomorphisms)) + " groups)"
             sys.stdout.write('\r' + s)
-            G_copy1 = graphs[pair[0]].copy()
-            G_copy2 = graphs[pair[0]].copy()
-            start_amount_automorphisms = time()
-            amount_automorphisms_actual = amount_of_isomorphisms(G_copy1, G_copy2)
-            end_amount_automorphisms = time()
-            total_time += end_amount_automorphisms - start_amount_automorphisms
+            amount_automorphisms_actual = multiplication_factor[pair[0]] * amount_of_automorphisms(graphs[pair[0]])
             # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
                 automorphisms[graph] = amount_automorphisms_actual
     sys.stdout.write('\r' + "Done evaluating " + filename)
     print('')
+
+    end_time = time()
+    total_time = end_time - start_time
 
     if run_mode == 1:
         error_count += test_output(filename, len(graphs), total_time, isomorphisms, automorphisms)

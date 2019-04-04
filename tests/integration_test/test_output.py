@@ -126,7 +126,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
                                 if console_pass:
                                     passed("      [PASS] Amount of isomorphisms is " + str(amount_isomorph_expected))
                             else:
-                                fail("[      FAIL] Amount of isomorphisms should be " + str(
+                                fail("      [FAIL] Amount of isomorphisms should be " + str(
                                     amount_isomorph_expected) + " not " + str(amount_isomorph_test))
                                 test_failed = True
                     else:

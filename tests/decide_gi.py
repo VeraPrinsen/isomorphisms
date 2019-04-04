@@ -7,6 +7,7 @@ from supporting_components.graph_io import *
 from algorithms.decide_gi import is_balanced_or_bijected
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
+from algorithms.preprocessing import fix_degrees
 
 
 def _test_balanced_or_bijected(graph: 'Graph', is_balanced: 'Bool', is_bijected: 'Bool'):
@@ -89,6 +90,9 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
             for j in range(0, i):
 
                 graph_count += 1
+
+                fix_degrees(graphs[i])
+                fix_degrees(graphs[j])
 
                 # Create disjoint union
                 graph = graphs[i] + graphs[j]

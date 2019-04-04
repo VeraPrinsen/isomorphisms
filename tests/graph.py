@@ -2,6 +2,7 @@ from input_output.file_output import load_graph_list, write_csv_line, create_csv
 from input_output.sys_output import passed, fail
 from algorithms.color_initialization import degree_color_initialization
 from algorithms.color_refinement import color_refinement
+from algorithms.preprocessing import fix_degrees
 
 
 def test_copy(graph):
@@ -68,6 +69,9 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
             for j in range(i + 1, len(graphs)):
                 # Graph test
                 total_tests += 1
+
+                fix_degrees(graphs[i])
+                fix_degrees(graphs[j])
                 graph = graphs[i] + graphs[j]
                 color_refinement(degree_color_initialization(graph))
                 is_equal = test_copy(graph)
