@@ -1,4 +1,4 @@
-from tests.integration_test.settings import preprocessing_simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm
+from tests.integration_test.settings import simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm
 from supporting_components.graph import Graph
 from algorithms.preprocessing import could_be_isomorphic, remove_twins
 from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
@@ -15,7 +15,7 @@ def apply_could_be_isomorphic(G: "Graph", H: "Graph"):
     If preprocessing_simple_cases is set to True, apply the simple cases algorithm to determine is graphs are
     isomorphic using simple properties of the graphs.
     """
-    if preprocessing_simple_cases:
+    if simple_cases:
         if not could_be_isomorphic(G, H):
             return False
     return True
