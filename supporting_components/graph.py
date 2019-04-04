@@ -520,6 +520,7 @@ class Graph(object):
         for v in self.vertices:
             vertices_original_to_complement[v] = Vertex(complement)
             vertices_original_to_complement[v].label = v.label
+            vertices_original_to_complement[v].degree_fixed = v.degree_fixed
         # Add edge to complement graph only if the edge does not exist in the original graph and no undirected edge is
         # already present in the complement graph between those two vertices
         for v in self.vertices:
