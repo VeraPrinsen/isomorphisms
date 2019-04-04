@@ -1,5 +1,40 @@
 from supporting_components.graph import Graph, Vertex
+from algorithms.color_initialization import degree_color_initialization
+from algorithms.decide_gi import is_balanced
 from math import factorial
+from typing import List
+
+
+def fix_degrees(G: "Graph"):
+    """
+    Because the property 'degree' of vertices changes when the neighbours change, a property degree_fixed is added
+    to vertices to fix the degree of the vertex at this moment.
+    :param G:
+    :return:
+    """
+    for v in G.vertices:
+        v.degree_fixed = v.degree
+
+
+def could_be_isomorphic(G: 'Graph', H: 'Graph'):
+    """
+    Based on properties of the graphs a few simple comparisons are made to determine if the graphs could be isomorphic.
+    :param G, H: The graphs of which it should be determined if they could be isomorphic.
+    :return: Boolean that indicates if the two graphs could be isomorphic or not.
+    """
+    # Isomorphic graphs should have the same amount of vertices
+    if len(G.vertices) != len(H.vertices):
+        return False
+    # Isomorphic graphs should have the same amount of edges
+    if len(G.edges) != len(H.edges):
+        return False
+    # Isomorphic graphs should have the same amount of vertices with a specific degree
+    G_disjoint_union = G + H
+    degree_color_initialization(G_disjoint_union)
+    if not is_balanced(G_disjoint_union)[0]:
+        return False
+
+    return True
 
 
 def remove_twins(G: 'Graph'):
@@ -10,6 +45,7 @@ def remove_twins(G: 'Graph'):
     :return factor: To find the right amount of isomorphisms, the amount of isomorphisms found with the remaining
     graph should be multiplied by this factor.
     """
+    # Put all vertices in a queue for evaluation
     queue = []
     for v in G.vertices:
         queue.append(v)
@@ -29,6 +65,7 @@ def remove_twins(G: 'Graph'):
         # In general, for all n vertices that have the same neighbours, if only one is kept. The factor
         # should be multiplied by n!.
         factor *= factorial(len(twin_list) + 1)
+        v0.n_twins += len(twin_list)
         for twin in twin_list:
             # delete all twins from the graph G
             G.del_vertex(twin)
@@ -51,6 +88,15 @@ def are_twins(v0: "Vertex", v1: "Vertex"):
         v0_neighbours.remove(v1)
         v1_neighbours = v1.neighbours
         v1_neighbours.remove(v0)
-        return v0_neighbours == v1_neighbours
+        return neighbours_equal(v0_neighbours, v1_neighbours)
     else:
-        return v0.neighbours == v1.neighbours
+        return neighbours_equal(v0.neighbours, v1.neighbours)
+
+
+def neighbours_equal(v0_neighbours: "List[Vertex]", v1_neighbours: "List[Vertex]"):
+    for neighbour in v0_neighbours:
+        if neighbour in v1_neighbours:
+            v1_neighbours.remove(neighbour)
+        else:
+            return False
+    return len(v1_neighbours) == 0

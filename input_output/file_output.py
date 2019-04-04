@@ -1,5 +1,4 @@
 from supporting_components.graph_io import load_graph, write_dot
-import subprocess
 import os
 import csv
 import time
@@ -17,16 +16,26 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 ROOT = os.path.abspath('../')
 os.chdir(ROOT)
 
+
+def load_graph_list_from_filepath(filepath):
+    """
+    Given a filepath, this method loads a list of graphs from that file
+    :param filepath: The file the graphs should be extracted from
+    :return: A list of graphs
+        """
+    with open(filepath) as f:
+        L = load_graph(f, read_list=True)
+
+    return L[0]
+
+
 def load_graph_list(filename):
     """
     Given a filename, this method loads a list of graphs from that filename
     :param filename: The file the graphs should be extracted from
     :return: A list of graphs
     """
-    with open(ROOT + filename) as f:
-        L = load_graph(f, read_list=True)
-
-    return L[0]
+    return load_graph_list_from_filepath(ROOT + filename)
 
 
 def save_graph_as_dot(G, filename):
@@ -41,20 +50,6 @@ def save_graph_as_dot(G, filename):
 
     with open(dot_filename, 'w') as g0:
         write_dot(G, g0)
-
-
-def save_graph_in_png(filename):
-    """
-    This method can use a .dot file and transform it into a png image of the graph.
-    If folder /output_files/dot or /output_files/png does not exist it is created using os.makedirs().
-    :param filename: The filename of the .dot file without the extension, this will also be the filename for the .png file
-    """
-    dot_filename = ROOT + '/output_files/dot/' + filename + '.dot'
-    png_filename = ROOT + '/output_files/png/' + filename + '.png'
-    os.makedirs(os.path.dirname(dot_filename), exist_ok=True)
-    os.makedirs(os.path.dirname(png_filename), exist_ok=True)
-
-    subprocess.run(["dot", "-Tpng", dot_filename, "-o", png_filename])
 
 
 def create_csv_file(name: 'String'):
