@@ -10,17 +10,23 @@ def order_computation(H: 'List[permutation]'):
     :param H: Permutation group
     :return: int with the order of the list of permutations
     """
-    # Choose a nontrivial orbit
+    # Choose a with nontrivial orbit
     a = FindNonTrivialOrbit(H)
-    # Determine orbit of nontrivial orbit
+    # Determine orbit of a (list of vertices 'a' can be mapped to)
     O_H = Orbit(H, a)
 
-    # End of recursion, |H| = |O_H| * 1
+    # If length of the list of permutation H is equal to 1 (which is the stabilizer of the previous recursive call):
+    # Length of orbit = length of elements in the permutation in H
+    # Stabilizer = empty set, because there is no permutation that leaves an element untouched
+    # And the order is equal to the orbit that is determined using the previous stabilizer
     if len(H) == 1:
         return len(O_H)
 
-    # Determine stabilizer of nontrivial orbit
+    # Determine stabilizer of a (list of permutations that leave 'a' untouched)
     H_0 = Stabilizer(H, a)
 
-    # |H| = |H_0| * |O_H|
+    # Order of list of permutation H = |H|
+    # Order of stabilizer (which is a list of permutations) H_0 = |H_0|
+    # Length of orbit (which is a list of vertices labels) O_H = |O_H|
+    # Orbit-Stabilizer-theorem:     |H| = |H_0| * |O_H|
     return order_computation(H_0) * len(O_H)

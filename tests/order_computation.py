@@ -37,7 +37,7 @@ def unit_test():
         pass_bool = False
 
     if not test_example_redundant_permutation():
-        fail("test_example_redundant_permuation: TEST FAILED")
+        fail("test_example_redundant_permutation: TEST FAILED")
         pass_bool = False
 
     if pass_bool:
