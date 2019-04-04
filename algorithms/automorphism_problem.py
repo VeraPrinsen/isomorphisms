@@ -1,3 +1,5 @@
+import sys
+
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
 from input_output.sys_output import passed
@@ -29,10 +31,10 @@ def amount_of_automorphisms(G):
     print('&&&&&&permutationobjects&&&&&&&')
     # Convert into objects
     permutation_objects = list()
-    #print(permutation_vectors)
+    print(permutation_vectors)
 
     # TODO: investigate why the last permutation (from trivial node = 0) fails
-    for groupid in range(0, len(permutation_vectors)):
+    for groupid in reversed(range(0, len(permutation_vectors))):
         raw_perm_group = permutation_vectors[groupid]
         # Contains tuple (D, I) of equal length
         cycle_list = []
@@ -44,10 +46,16 @@ def amount_of_automorphisms(G):
 
             cycle_list.append([dX, dY])
 
-        permutation_objects.append(permutation(len(G.vertices), cycle_list))
+        per = permutation(len(G.vertices), cycle_list)
+        if not member_of(permutation(len(G.vertices), cycle_list), permutation_objects):
+            permutation_objects.append(per)
+
+
         #print(groupid)
 
         # TODO: This fails for trees
+
+    print('#vertices G={}'.format(len(G.vertices)))
 
     print(permutation_objects)
     order_computed = order_computation(permutation_objects)
@@ -73,7 +81,9 @@ def tester():
             dY = raw_perm_group[1][i]
             cycle_list.append([dX, dY])
 
-        permutation_objects.append(permutation(24, cycle_list))
+        per = permutation(24, cycle_list)
+        if not member_of(per, permutation_objects):
+            permutation_objects.append(permutation(24, cycle_list))
         print(groupid)
 
         # TODO: This fails for trees
@@ -175,44 +185,17 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         for vy in Iy:
             for vx in Ix:
                 if vx.coupling_label == vy.coupling_label:
-                    x1 = vx
-                    y2 = vy
-                    D_copy.append(x1.coupling_label)
-                    I_copy.append(y2.coupling_label)
-                    max_colornum_backup, colors_backup = G.backup()
-                    dicolor_graph(C, G, x1, y2)
-                    DI_permutations = generate_automorphism(G=G, D=D_copy, I=I_copy)
-                    G.revert(max_colornum_backup, colors_backup)
+                    DI_permutations = get_permutation(C, G, D, I, vx, vy)
                     # Reduce options after first trivial node branch iteration
-                    Ix.remove(x1)
-                    Ix = [x1] + Ix
-                    Iy.remove(y2)
+                    Ix.remove(vx)
+                    Ix = [vx] + Ix
+                    Iy.remove(vy)
                     break
+
 
     for x1 in Ix:
         for y2 in Iy:
-            D_copy = list(D)
-            I_copy = list(I)
-            D_copy.append(x1.coupling_label)
-            I_copy.append(y2.coupling_label)
-
-            #Permutation "validity checker"
-            #Uncomment om permutaties te checken op geldigheid volgens de library
-            cycles = []
-            for d, i in zip(D_copy, I_copy):
-                cycles.append([d, i])
-            try:
-                # disjoint union ! /2
-                permutation(int(len(G.vertices)/2), cycles)
-            except AssertionError:
-                continue
-            except IndexError:
-                continue
-
-            max_colornum_backup, colors_backup = G.backup()
-            dicolor_graph(C, G, x1, y2)
-            perm_right = generate_automorphism(G=G, D=D_copy, I=I_copy, trivial_node=False)
-            G.revert(max_colornum_backup, colors_backup)
+            perm_right = get_permutation(C, G, D, I, x1, y2, trivial_node=False)
 
             # Empty response is a dead end in the evaluation tree, pick next by continue
             if perm_right == [(['unbalanced']),(['unbalanced'])]:
@@ -220,13 +203,33 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
             else:
                 # A bijection, stop loop by break
                 DI_permutations += perm_right
-
                 return DI_permutations
 
     return [(['unbalanced']),(['unbalanced'])]
 
 
-
+def get_permutation(C, G, D, I, x1, y2, trivial_node=True):
+    D_copy = list(D)
+    I_copy = list(I)
+    D_copy.append(x1.coupling_label)
+    I_copy.append(y2.coupling_label)
+    # Permutation "validity checker"
+    # Uncomment om permutaties te checken op geldigheid volgens de library
+    cycles = []
+    for d, i in zip(D_copy, I_copy):
+        cycles.append([d, i])
+    try:
+        # disjoint union ! /2
+        permutation(int(len(G.vertices)/2), cycles)
+    except AssertionError:
+        return [(['unbalanced']),(['unbalanced'])]
+    except IndexError:
+        return [(['unbalanced']),(['unbalanced'])]
+    max_colornum_backup, colors_backup = G.backup()
+    dicolor_graph(C, G, x1, y2)
+    perm_right = generate_automorphism(G=G, D=D_copy, I=I_copy, trivial_node=trivial_node)
+    G.revert(max_colornum_backup, colors_backup)
+    return perm_right
 
 
 def dicolor_graph(C, G, x1, y2):
@@ -243,3 +246,12 @@ def dicolor_graph(C, G, x1, y2):
     G.colors[C].remove(y2)
     G.colors.setdefault(G.max_colornum, list()).append(y2)
 
+
+
+def member_of(per: permutation, H: [permutation]):
+    """
+    :param per: permutation object that needs to be checked
+    :param H: array of permutations
+    :return: True or False
+    """
+    return False
