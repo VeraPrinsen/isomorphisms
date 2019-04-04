@@ -28,7 +28,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
 
     if not solution_exists:
         result_output(filename, n_graphs, processing_time, iso_test_result, iso_count_test_result)
-        return -1
+        return 0
 
     # If the right solutions are available, compare expected and tested values
     title("-------------------------------")

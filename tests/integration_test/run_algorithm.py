@@ -35,7 +35,7 @@ for file_path in file_paths:
 
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
-    iso_count = {}          # Dictionary that saves for each graph the amount of automorphisms
+    automorphisms = {}      # Dictionary that saves for each graph the amount of automorphisms
     total_time = 0          # Total processing time of the graphs of this file
     skip = [False for _ in range(len(graphs))]  # To check if you can skip a cycle
 
@@ -98,20 +98,20 @@ for file_path in file_paths:
             sys.stdout.write('\r' + s)
             G_copy1 = graphs[pair[0]].copy()
             G_copy2 = graphs[pair[0]].copy()
-            start_amount_isomorphisms = time()
-            amount_isomorph_actual = amount_of_isomorphisms(G_copy1, G_copy2)
-            end_amount_isomorphisms = time()
-            total_time += end_amount_isomorphisms - start_amount_isomorphisms
+            start_amount_automorphisms = time()
+            amount_automorphisms_actual = amount_of_isomorphisms(G_copy1, G_copy2)
+            end_amount_automorphisms = time()
+            total_time += end_amount_automorphisms - start_amount_automorphisms
             # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
-                iso_count[graph] = amount_isomorph_actual
+                automorphisms[graph] = amount_automorphisms_actual
     sys.stdout.write('\r' + "Done evaluating " + filename)
     print('')
 
     if run_mode == 1:
-        error_count += test_output(filename, len(graphs), total_time, isomorphisms, iso_count)
+        error_count += test_output(filename, len(graphs), total_time, isomorphisms, automorphisms)
     elif run_mode == 2:
-        tournament_output(filename, total_time, isomorphisms, iso_count)
+        tournament_output(filename, total_time, isomorphisms, automorphisms)
     else:
         fail("RUN MODE NOT RECOGNIZED, PROGRAM WILL TERMINATE")
         break
