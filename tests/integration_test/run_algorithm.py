@@ -30,6 +30,8 @@ RUN ALGORITHM
 if run_mode == 1:
     error_count = 0
 for file_path in file_paths:
+    start_time = time()
+
     graphs = load_graph_list_from_filepath(file_path)
     filename = (file_path.split("/")[-1]).split(".")[0]
 
@@ -47,7 +49,6 @@ for file_path in file_paths:
     # Some data structures that are used to determine if graphs are isomorphic more efficiently
     isomorphisms = []       # List of lists that saves all isomorphic pairs (or more than 2, if that is the case)
     automorphisms = {}      # Dictionary that saves for each graph the amount of automorphisms
-    total_time = 0          # Total processing time of the graphs of this file
     skip = [False for _ in range(len(graphs))]  # To check if you can skip a cycle
 
     # In this first loop, for each combination, it is determined if they are isomorphic or not
@@ -61,10 +62,7 @@ for file_path in file_paths:
                 continue
 
             # Determine if the two graphs are isomorphic
-            start_isomorph = time()
             are_isomorph_actual = are_isomorph(complement[i], complement[j])
-            end_isomorph = time()
-            total_time += end_isomorph - start_isomorph
 
             # Only save results if the combination of graphs is isomorphic
             if are_isomorph_actual:
@@ -102,15 +100,15 @@ for file_path in file_paths:
             group_count += 1
             s = filename + ": Calculating amount of isomorphisms of isomorphic group " + str(pair) + " (" + str(group_count) + " out of " + str(len(isomorphisms)) + " groups)"
             sys.stdout.write('\r' + s)
-            start_amount_isomorphisms = time()
             amount_automorphisms_actual = multiplication_factor[pair[0]] * amount_of_automorphisms(graphs[pair[0]])
-            end_amount_isomorphisms = time()
-            total_time += end_amount_isomorphisms - start_amount_isomorphisms
             # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
                 automorphisms[graph] = amount_automorphisms_actual
     sys.stdout.write('\r' + "Done evaluating " + filename)
     print('')
+
+    end_time = time()
+    total_time = end_time - start_time
 
     if run_mode == 1:
         error_count += test_output(filename, len(graphs), total_time, isomorphisms, automorphisms)
