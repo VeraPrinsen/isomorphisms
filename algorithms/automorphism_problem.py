@@ -1,5 +1,6 @@
 from algorithms.branching import count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization
+from input_output.sys_output import passed
 from supporting_components.basicpermutationgroup import FindNonTrivialOrbit, Stabilizer, Orbit
 from supporting_components.graph import Graph, Vertex
 from algorithms.color_refinement import color_refinement
@@ -25,7 +26,7 @@ def amount_of_automorphisms(G):
     #save_graph_as_dot(G_disjoint_union, 'testGG')
 
     permutation_vectors=generate_automorphism(G=degree_color_initialization(G_disjoint_union), D=[], I=[])
-    print('&&&&&&&&&&&&&')
+    print('&&&&&&permutationobjects&&&&&&&')
     # Convert into objects
     permutation_objects = list()
     print(permutation_vectors)
@@ -125,6 +126,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         # If the graph is unbalanced, the evaluated graph has no automorphism
         return [(['unbalanced']), (['unbalanced'])]
     if is_bijected:
+        passed('bijected!')
         print([D,I])
         return [(D, I)]
 
@@ -155,7 +157,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     # Branching non-trivial (g1(X) - g2(Y))
     # optimize to reduce the search space... X - Y and Y - X not necessary due to symmetry
     # Make a copy of everything before creating a new branch
-    color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX = G.backup()
+    max_colornum_backup_preX, colors_backup_preX = G.backup()
 
     # Branching trivial (g1(X) g2(X))
 
@@ -192,6 +194,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
         I_copy.append(x2.coupling_label)
 
         DI_permutations = generate_automorphism(G=G, D=D_copy, I=I_copy)
+        G.revert(max_colornum_backup_preX, colors_backup_preX)
 
         # Reduce options after first trivial node branch iteration
         Ix.remove(x1)
@@ -201,7 +204,7 @@ def generate_automorphism(G: 'Graph', D: 'List[Vertex]', I: 'List[Vertex]', triv
     # Branching, check all
 
     for x1 in Ix:
-        G.revert(color_list_backup_preX, max_colornum_backup_preX, colors_backup_preX)
+        G.revert(max_colornum_backup_preX, colors_backup_preX)
 
         for y2 in Iy:
 
