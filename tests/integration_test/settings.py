@@ -28,6 +28,7 @@ SETTINGS OF ALGORITHM
 simple_cases = True
 twin_removal = True
 tree_algorithm = True
+complement = True
 
 # Choose a color refinement algorithm
 # 1 - normal color refinement

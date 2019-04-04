@@ -1,6 +1,6 @@
-from tests.integration_test.settings import simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm
+from tests.integration_test.settings import simple_cases, twin_removal, tree_algorithm, color_refinement_algorithm, branching_algorithm, complement
 from supporting_components.graph import Graph
-from algorithms.preprocessing import could_be_isomorphic, remove_twins
+from algorithms.preprocessing import could_be_isomorphic, remove_twins, use_complement
 from algorithms.tree_algorithm import is_tree, trees_count_isomorphisms
 from algorithms.color_initialization import degree_color_initialization, twins_color_initialization
 from algorithms.color_refinement import color_refinement, fast_color_refinement
@@ -70,3 +70,17 @@ def branching_method(G: "Graph", count_flag: "Bool"):
     """
     if branching_algorithm == 1:
         return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
+
+
+def apply_complement(G: "Graph"):
+    """
+    If complement is set to True in the settings of the integration test, a check is done if it is beneficial if the
+    complement of the graph is used in further processing.
+    If the complement should be used, the complement is returned, otherwise the original graph is returned.
+    :param G: The graph to check for if using the complement will result in faster result
+    :return: The (complement of the) graph
+    """
+    if complement:
+        if use_complement(G):
+            return complement(G)
+    return G
