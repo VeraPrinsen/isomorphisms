@@ -227,6 +227,7 @@ class Graph(object):
         self._directed = directed
         self._next_label_value = 0
         self.max_colornum = 0
+        self.colors = {}
 
         for i in range(n):
             self.add_vertex(Vertex(self))
@@ -506,6 +507,27 @@ class Graph(object):
             v.colornum = color_list[v.label]
         self.max_colornum = max_colornum
         self.colors = colors
+
+    def complement(self):
+        """
+        Create the complement of the graph.
+        :return: The complement
+        """
+        complement = Graph(self.directed)
+        vertices_original_to_complement = {}
+
+        # Create vertex mapping from original graph to complement graph
+        for v in self.vertices:
+            vertices_original_to_complement[v] = Vertex(complement)
+            vertices_original_to_complement[v].label = v.label
+        # Add edge to complement graph only if the edge does not exist in the original graph and no undirected edge is
+        # already present in the complement graph between those two vertices
+        for v in self.vertices:
+            neighbours = v.neighbours
+            for w in self.vertices:
+                if w not in neighbours and v != w and not any((edge.tail == vertices_original_to_complement[v] and edge.head == vertices_original_to_complement[w]) or (edge.head == vertices_original_to_complement[v] and edge.tail == vertices_original_to_complement[w]) for edge in complement.edges):
+                    complement.add_edge(Edge(vertices_original_to_complement[v], vertices_original_to_complement[w]))
+        return complement
 
 
 class UnsafeGraph(Graph):
