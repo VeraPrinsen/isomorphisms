@@ -570,6 +570,35 @@ class Graph(object):
                     complement.add_edge(Edge(vertices_original_to_complement[v], vertices_original_to_complement[w]))
         return complement
 
+    def is_disconnected(self):
+        """
+        Checks if the graph is disconnected.
+        :return: Whether or not the graph is disconnected
+        """
+        reached_vertices = self.bfs(1, self.vertices[0])
+        return len(reached_vertices) < len(self.vertices)
+
+    def bfs(self, part, starting_vertex):
+        """
+        Breadth first search through the graph to find all vertices that can be reached from the starting vertex.
+        It labels the reached vertices with the part property specified in the arguments.
+        :param part: The part of the graph currently searching for, set in the part property of the reached vertices
+        :param starting_vertex: The starting vertex of the bfs
+        :return: The list of vertices found
+        """
+        starting_vertex.part = part
+        active_vertices = [starting_vertex]
+        reached_vertices = [starting_vertex]
+        while active_vertices:
+            active_vertex = active_vertices[0]  # BFS
+            for vertex in active_vertex.neighbours:
+                if vertex not in reached_vertices:
+                    reached_vertices.append(vertex)
+                    active_vertices.append(vertex)
+                    vertex.part = part
+            active_vertices.remove(active_vertex)
+        return reached_vertices
+
 
 class UnsafeGraph(Graph):
     @property
