@@ -79,9 +79,9 @@ def result_output(filename, n_graphs, processing_time, iso_result, iso_count_res
     # Write summary to csv file
     if write_to_csv:
         write_csv_line(csv_filepath, ["Amount of combinations of graphs tested:", n_evaluations])
-        write_csv_line(csv_filepath, ["Total processing time (s):", processing_time])
+        write_csv_line(csv_filepath, ["Total processing time (s):", round(processing_time, 3)])
 
     # Write summary to console
     print("Amount of combinations of graphs evaluated: " + str(n_evaluations))
-    print("Total processing time of " + filename + ": " + str(processing_time) + " s")
+    print("Total processing time of " + filename + ": " + str(round(processing_time, 3)) + " s")
     print('')

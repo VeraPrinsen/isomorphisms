@@ -42,9 +42,7 @@ for file_path in file_paths:
     # In this first loop, for each combination, it is determined if they are isomorphic or not
     for i in range(len(graphs) - 1):
         for j in range(i + 1, len(graphs)):
-            s = "Started evaluating " + filename + "... "
-            s += "[" + str(i) + "," + str(j) + "]"
-            s += " / " + str(len(graphs) - 1)
+            s = filename + ": Determining if [" + str(i) + "," + str(j) + "] are isomorphic (out of " + str(len(graphs) - 1) + " graphs)"
             sys.stdout.write('\r' + s)
 
             G = graphs[i]
@@ -60,7 +58,7 @@ for file_path in file_paths:
             start_isomorph = time()
             are_isomorph_actual = are_isomorph(G_copy, H_copy)
             end_isomorph = time()
-            total_time += round((end_isomorph - start_isomorph), 3)
+            total_time += end_isomorph - start_isomorph
 
             # Only save results if the combination of graphs is isomorphic
             if are_isomorph_actual:
@@ -80,7 +78,6 @@ for file_path in file_paths:
                     isomorphisms.append([i, j])
                     skip[i] = True
                     skip[j] = True
-    print('')
 
     # If the problem to be resolved is the #Automorphism problem, all graphs need to be in de result, also those
     # that are not an isomorphism with any other graph. Those graphs will be added to the isomorphism result as
@@ -94,26 +91,31 @@ for file_path in file_paths:
     # because the graphs are isomorphic and the amount of isomorphisms are equal to the amount of automorphisms of the
     # independent graphs
     if problem == 2 or problem == 3:
+        group_count = 0
         for pair in isomorphisms:
+            group_count += 1
+            s = filename + ": Calculating amount of isomorphisms of isomorphic group " + str(pair) + " (" + str(group_count) + " out of " + str(len(isomorphisms)) + " groups)"
+            sys.stdout.write('\r' + s)
             G_copy1 = graphs[pair[0]].copy()
             G_copy2 = graphs[pair[0]].copy()
             start_amount_isomorphisms = time()
             amount_isomorph_actual = amount_of_isomorphisms(G_copy1, G_copy2)
             end_amount_isomorphisms = time()
-            total_time += round((end_amount_isomorphisms - start_amount_isomorphisms), 3)
+            total_time += end_amount_isomorphisms - start_amount_isomorphisms
             # Each graph in the pair has the same amount of automorphisms
             for graph in pair:
                 iso_count[graph] = amount_isomorph_actual
+    sys.stdout.write('\r' + "Done evaluating " + filename)
+    print('')
 
     if run_mode == 1:
         error_count += test_output(filename, len(graphs), total_time, isomorphisms, iso_count)
     elif run_mode == 2:
         tournament_output(filename, total_time, isomorphisms, iso_count)
     else:
-        print("RUN MODE NOT RECOGNIZED, PROGRAM WILL TERMINATE")
+        fail("RUN MODE NOT RECOGNIZED, PROGRAM WILL TERMINATE")
         break
 
-print("")
 if run_mode == 1:
     if error_count > 0:
         fail("INTEGRATION TEST FAILED - " + str(error_count) + " tests failed.")

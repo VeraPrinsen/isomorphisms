@@ -75,11 +75,6 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
             n_test_graphs += 1
             test_failed = False
 
-            if problem == 1 or problem == 2:
-                print("[" + str(i) + "," + str(j) + "] ", end='')
-            if problem == 3:
-                print("[" + str(i) + "] ", end='')
-
             # Retrieve expected and test values
             if problem == 1 or problem == 2:
                 are_isomorph_expected = (i, j) in iso_solution
@@ -115,6 +110,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
 
             # Write on console the results of the GI problem 1 and 2: isomorphisms between two different graphs
             if problem == 1 or problem == 2:
+                print("[" + str(i) + "," + str(j) + "] ", end='')
                 if are_isomorph_expected:
                     if are_isomorph_passed:
                         if console_pass:
@@ -140,6 +136,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
 
             # Write on console the results of the GI problem 3) Amount of automorphisms of one graph
             if problem == 3:
+                print("[" + str(i) + "] ", end='')
                 if amount_automorph_passes:
                     if console_pass:
                         passed("[PASS] Amount of automorphisms is " + str(amount_automorph_expected))
@@ -159,7 +156,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
             write_csv_line(csv_filepath, ["Amount of tests failed:", error_count, "TEST FAILED"])
         else:
             write_csv_line(csv_filepath, ["Amount of tests failed:", error_count, "TEST PASSED"])
-        write_csv_line(csv_filepath, ["Total processing time (s):", processing_time])
+        write_csv_line(csv_filepath, ["Total processing time (s):", round(processing_time, 3)])
 
     # Print summary of the test to console
     print("Amount of combinations of graphs tested: " + str(n_test_graphs))
@@ -170,7 +167,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
     else:
         passed('TEST PASSED')
     print('')
-    print("Total processing time of " + filename + ": " + str(processing_time) + " s")
+    print("Total processing time of " + filename + ": " + str(round(processing_time, 3)) + " s")
     print('')
 
     return error_count
