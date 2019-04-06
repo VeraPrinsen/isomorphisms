@@ -19,7 +19,7 @@ run_mode = 1
 # 1) Graph Isomorphism Problem - Determine if two different graphs are isomorphic
 # 2) Count Isomorphisms - 1) and count the amount of isomorphisms of isomorphic graphs
 # 3) Count Automorphisms - Count automorphisms within one graph
-problem = 1
+problem = 2
 
 """
 SETTINGS OF ALGORITHM
@@ -37,4 +37,5 @@ color_refinement_algorithm = 2
 
 # Choose a branching algorithm
 # 1 - normal branching
-branching_algorithm = 1
+# 2 - fast branching
+branching_algorithm = 2
