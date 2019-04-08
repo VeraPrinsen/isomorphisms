@@ -599,6 +599,33 @@ class Graph(object):
             active_vertices.remove(active_vertex)
         return reached_vertices
 
+    def get_connected_subgraphs(self):
+        """
+        Returns the connected subgraphs of the disconnected graph.
+        Continues bfs on the graph until all vertices are visited.
+        Each vertex belongs to the group of vertices with the same part property.
+        Using the list of lists of vertices of the parts, the disconnected subgraphs are constructed.
+        :return: The connected subgraphs
+        """
+        vertices_connected_subgraphs = []
+        reached_vertices = []
+        for v in self.vertices:
+            if hasattr(v, 'part'):
+                reached_vertices.append(v)
+        vertices_connected_subgraphs.append(reached_vertices)
+        number_of_vertices = len(reached_vertices)
+        part = 1
+        while number_of_vertices < len(self.vertices):
+            for v in self.vertices:
+                if not hasattr(v, 'part'):
+                    vertex = v
+                    part += 1
+                    break
+            reached_vertices = self.bfs(part, vertex)
+            vertices_connected_subgraphs.append(reached_vertices)
+            number_of_vertices += len(reached_vertices)
+        return vertices_connected_subgraphs
+
 
 class UnsafeGraph(Graph):
     @property
