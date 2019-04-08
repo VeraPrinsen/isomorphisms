@@ -65,7 +65,6 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
             v_graph1_colorC.append(v)
         if v.graph_label == 2:
             v_graph2_colorC.append(v)
-            v_graph2_colorC.append(v)
 
     # First try to find a pair of vertices with the same label, which means there are the same vertex
     # in the graph
