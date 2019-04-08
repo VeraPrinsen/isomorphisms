@@ -49,6 +49,11 @@ def remove_twins(G: 'Graph'):
             # also remove it from the queue
             queue.remove(twin)
 
+    i_label = 0
+    for v in G.vertices:
+        v.label = i_label
+        i_label += 1
+
     return factor
 
 

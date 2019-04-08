@@ -37,4 +37,5 @@ color_refinement_algorithm = 2
 
 # Choose a branching algorithm
 # 1 - normal branching
-branching_algorithm = 1
+# 2 - fast branching
+branching_algorithm = 2

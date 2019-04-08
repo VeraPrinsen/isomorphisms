@@ -7,6 +7,12 @@ automorphism_solution = {}
 isomorphism_solution['colorref_smallexample_2_49'] = [(0, 1)]
 isomorphism_solution['colorref_smallexample_4_7'] = [(1, 3), (0, 2)]
 isomorphism_solution['colorref_smallexample_6_15'] = [(0, 1), (2, 3), (4, 5)]
+isomorphism_solution['colorref_smallexample_4_16'] = [(0, 1), (2, 3)]
+
+automorphism_solution['colorref_smallexample_2_49'] = {0: 1, 1: 1}
+automorphism_solution['colorref_smallexample_4_7'] = {0: 2, 1: 1, 2: 2, 3: 1}
+automorphism_solution['colorref_smallexample_6_15'] = {0: 1, 1: 1, 2: 1, 3: 1, 4: 6, 5: 6}
+automorphism_solution['colorref_smallexample_4_16'] = {0: 4, 1: 4, 2: 1, 3: 1}
 
 # Individualization refinement test graphs
 isomorphism_solution['torus24'] = [(0, 3), (1, 2)]

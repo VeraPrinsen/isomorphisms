@@ -1,6 +1,6 @@
 from input_output.sys_output import passed, fail
 from tests import branching, decide_gi, csvwriter, color_refinement, fast_color_refinement, graph, \
-    graph_del_vertex_edge, preprocessing_twins, tree_algorithm
+    graph_del_vertex_edge, preprocessing_twins, tree_algorithm, order_computation, automorphism_problem
 
 """
 All unit tests will be called in sequence.
@@ -39,6 +39,10 @@ print('')
 result_boolean.append(preprocessing_twins.unit_test())
 print('')
 result_boolean.append(tree_algorithm.unit_test(write_csv_any, write_stdout_passed, write_stdout_fail))
+print('')
+result_boolean.append(order_computation.unit_test())
+print('')
+result_boolean.append(automorphism_problem.unit_test())
 print('')
 
 # Finally

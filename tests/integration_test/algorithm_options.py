@@ -5,6 +5,7 @@ from algorithms.simple_cases import could_be_isomorphic
 from algorithms.tree_algorithm import is_tree, trees_are_isomorph, trees_automorphisms
 from algorithms.color_refinement import color_refinement, fast_color_refinement
 from algorithms.branching import count_isomorphisms
+from algorithms.automorphism_problem import count_automorphisms
 
 
 """
@@ -68,8 +69,15 @@ def branching_method(G: "Graph", count_flag: "Bool"):
     This method returns if the disjoint union graph G is isomorph or the amount of isomorphisms based on the value
     of count_flag. Also the right color_refinement method is passed along here.
     """
+    # If it must be determined if the graphs in G are isomorphic
+    if not count_flag:
+        return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
+
+    # If the amount of isomorphisms / automorphisms should be determined
     if branching_algorithm == 1:
         return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
+    if branching_algorithm == 2:
+        return count_automorphisms(G, color_refinement_method())
 
 
 def apply_complement(G: "Graph"):
