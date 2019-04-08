@@ -11,6 +11,9 @@ from tests.integration_test.test_output import test_output
 from tests.integration_test.settings import *
 from tests.integration_test.isomorphism_problem import preprocessing, are_isomorph, amount_of_automorphisms
 
+
+import cProfile, pstats, io
+from pstats import SortKey
 """
 General integration test for the Graph Isomorphisms problem.
 Settings of the algorithm must be changed in > settings.py <
@@ -23,6 +26,10 @@ FILE INPUT
 root = tk.Tk()
 root.withdraw()
 file_paths = filedialog.askopenfilenames()
+
+pr = cProfile.Profile()
+
+pr.enable()
 
 """
 RUN ALGORITHM
@@ -132,3 +139,15 @@ if run_mode == 1:
         fail("INTEGRATION TEST FAILED - " + str(error_count) + " tests failed.")
     elif error_count == 0:
         passed("INTEGRATION TEST PASSED")
+
+pr.disable()
+
+s = io.StringIO()
+
+sortby = SortKey.TIME, SortKey.CUMULATIVE
+
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+
+ps.print_stats()
+
+print(s.getvalue())
