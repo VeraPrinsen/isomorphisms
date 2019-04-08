@@ -39,7 +39,7 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
     if not is_balanced:
         # If the graph is unbalanced, the current mapping is not going to result in an bijection. Return to the
         # previous node in the branching to continue with another mapping.
-        return [[None]]
+        return []
     if is_bijected:
         # If the graph is balanced and bijected, this is a particular mapping of the graph to itself. Return the
         # current mapping.
@@ -109,8 +109,9 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
         next_node_mappings = permutations_of_mapping(G, C, d_mapping, v2, color_refinement_method, still_trivial)
 
         # If there is at least one valid mapping returned from the node, the mappings are added to the mapping of the
-        # current node.
-        if next_node_mappings[0][0] is not None:
+        # current node. The next_node_mappins could be an empty list when a branch of the branching tree did not result
+        # in any mappings or if the next node is a leaf and the coloring was not balanced.
+        if len(next_node_mappings) != 0:
             current_node_mappings += next_node_mappings
             # If the current node is not a trivial node, the mappings can be returned and further branching can be
             # skipped
