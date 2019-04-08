@@ -38,6 +38,10 @@ def is_balanced(G: 'Graph'):
         else:
             raise ValueError('Error: Vertex with graph_label {graph_label} is not of type int"'.format(graph_label=repr(v.graph_label)))
 
+    # If the amount of vertices of
+    if len(g_self_colornums) != len(g_other_colornums):
+        return False, None
+
     for self_colnum in g_self_colornums:
         if self_colnum in g_other_colornums:
             g_other_colornums.remove(self_colnum)
@@ -45,6 +49,7 @@ def is_balanced(G: 'Graph'):
             return False, None
 
     return True, g_self_colornums
+
 
 def __is_bijected(g_self_colornums: list):
     """
