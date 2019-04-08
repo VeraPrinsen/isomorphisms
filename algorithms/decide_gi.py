@@ -38,7 +38,7 @@ def is_balanced(G: 'Graph'):
         else:
             raise ValueError('Error: Vertex with graph_label {graph_label} is not of type int"'.format(graph_label=repr(v.graph_label)))
 
-    # If the amount of vertices of
+    # If the amount of vertices of the two graphs are not the same, the graphs are not isomorphic
     if len(g_self_colornums) != len(g_other_colornums):
         return False, None
 

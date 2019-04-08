@@ -62,15 +62,14 @@ for file_path in file_paths:
             if skip[i] and skip[j]:
                 continue
 
-            # Determine if the two graphs are isomorphic
-            if bool(preprocessed_graphs[i]):
+            # Check if graphs have a complement saved.
+            if bool(preprocessed_graphs[i]) and bool(preprocessed_graphs[j]):
                 G = preprocessed_graphs[i]
-            else:
-                G = graphs[i]
-            if bool(preprocessed_graphs[j]):
                 H = preprocessed_graphs[j]
             else:
+                G = graphs[i]
                 H = graphs[j]
+            # Determine if the two graphs are isomorphic
             are_isomorph_actual = are_isomorph(G, H)
 
             # Only save results if the combination of graphs is isomorphic
