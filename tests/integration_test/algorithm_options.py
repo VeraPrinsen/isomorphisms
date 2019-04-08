@@ -71,11 +71,11 @@ def branching_method(G: "Graph", count_flag: "Bool"):
     """
     # If it must be determined if the graphs in G are isomorphic
     if not count_flag:
-        return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
+        return count_isomorphisms(G, count_flag, color_refinement_method())
 
     # If the amount of isomorphisms / automorphisms should be determined
     if branching_algorithm == 1:
-        return count_isomorphisms(G, [], [], count_flag, color_refinement_method())
+        return count_isomorphisms(G, count_flag, color_refinement_method())
     if branching_algorithm == 2:
         return count_automorphisms(G, color_refinement_method())
 

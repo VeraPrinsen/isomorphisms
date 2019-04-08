@@ -117,11 +117,11 @@ def unit_test(write_csv_any=False, write_stdout_passed=True, write_stdout_fail=T
                 G_disjoint_union_copy = G_disjoint_union.copy()
 
                 start_isomorph = time()
-                boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union_copy), [], [], False, color_refinement)
+                boolean_isomorph = count_isomorphisms(degree_color_initialization(G_disjoint_union_copy), False, color_refinement)
                 end_isomorph = time()
 
                 start_amount_isomorphisms = time()
-                n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), [], [], True, color_refinement)
+                n_isomorphisms = count_isomorphisms(degree_color_initialization(G_disjoint_union), True, color_refinement)
                 end_amount_isomorphisms = time()
 
                 filestr = file + "-" + str(i) + "_" + str(j) + '\t->\t' + 'are_isomorph: ' + "{0:.3f}".format(end_isomorph - start_isomorph) + 's, amount_of_isomorphisms: ' + "{0:.3f}".format(end_amount_isomorphisms - start_amount_isomorphisms) + 's '+ '\t'
