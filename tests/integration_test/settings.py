@@ -19,7 +19,7 @@ run_mode = 1
 # 1) Graph Isomorphism Problem - Determine if two different graphs are isomorphic
 # 2) Count Isomorphisms - 1) and count the amount of isomorphisms of isomorphic graphs
 # 3) Count Automorphisms - Count automorphisms within one graph
-problem = 2
+problem = 1
 
 """
 SETTINGS OF ALGORITHM

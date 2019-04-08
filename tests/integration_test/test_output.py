@@ -20,7 +20,7 @@ def test_output(filename, n_graphs, processing_time, iso_test_result, iso_count_
         if not bool(iso_solution):
             solution_exists = False
     if problem == 2:
-        if not bool(count_solution) and not bool(count_solution):
+        if not bool(iso_solution) or not bool(count_solution):
             solution_exists = False
     if problem == 3:
         if not bool(count_solution):

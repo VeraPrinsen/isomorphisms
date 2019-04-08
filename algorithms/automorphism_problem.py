@@ -10,11 +10,12 @@ def count_automorphisms(G: "Graph", color_refinement_method: Callable[[Graph], N
     """
     This method counts the amount of automorphisms of a Graph using the branching technique that uses the
     permutations to calculate the amount of automorphisms.
-    :param G:
-    :param color_refinement_method:
-    :return:
+    :param G: The graph (disjoint union of two of the same graphs) of which the amount of automorphisms need
+    to be counted.
+    :param color_refinement_method: The color refinement method that is used in the branching
+    :return: The amount of automorphisms of graph G
     """
-    # The branching methode returns a list of different mappings of the graph
+    # The branching method returns a list of different mappings of the graph
     permutation_mappings = branching(G, color_refinement_method, trivial_node=True)
     # These mappings are converted to permutation objects
     permutations = mappings_to_permutations(int(len(G.vertices) / 2), permutation_mappings)
@@ -24,12 +25,13 @@ def count_automorphisms(G: "Graph", color_refinement_method: Callable[[Graph], N
 
 def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], trivial_node=False):
     """
-    It counts the number of automorphisms of a graph G (which is a disjoint union of two of the same graphs).
-    :param G: The graph (disjoint union of two of the same graphs) to count automorphisms for.
+    It returns all possible mappings within graph G (which is a disjoint union of two of the same graphs).
+    :param G: The graph (disjoint union of two of the same graphs)
     :param color_refinement_method: The color refinement method to use within branching.
     :param trivial_node: If set to True, the current node of the branch is a trivial node, meaning that the mappings
-    that have been done are mappings from vertices to itself.
-    :return: The number of automorphisms for graph G
+    that have been done are mappings from vertices to itself. This flag makes sure that branching takes place
+    at least two times when a node is a trivial node.
+    :return: A list of valid mappings within G.
     """
     # Do color refinement on the graph
     color_refinement_method(G)
@@ -38,7 +40,7 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
     is_balanced, is_bijected = is_balanced_or_bijected(G)
     if not is_balanced:
         # If the graph is unbalanced, the current mapping is not going to result in an bijection. Return to the
-        # previous node in the branching to continue with another mapping.
+        # previous node in the branching to continue with another mapping by returning an empty mapping.
         return []
     if is_bijected:
         # If the graph is balanced and bijected, this is a particular mapping of the graph to itself. Return the
@@ -63,30 +65,31 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
             v_graph1_colorC.append(v)
         if v.graph_label == 2:
             v_graph2_colorC.append(v)
+            v_graph2_colorC.append(v)
 
     # First try to find a pair of vertices with the same label, which means there are the same vertex
     # in the graph
-    d_mapping = None
+    v1_mapped = None
     for v1 in v_graph1_colorC:
         for v2 in v_graph2_colorC:
             if v1.coupling_label == v2.coupling_label:
                 # If such a pair is found the vertex to be colored in the first graph is set to d_mapping and the
                 # corresponding vertex of graph 2 is put in front of the list of vertices of graph 2 with color C
-                d_mapping = v1
+                v1_mapped = v1
                 v_graph2_colorC.remove(v2)
                 v_graph2_colorC = [v2] + v_graph2_colorC
                 # The loops can be stopped when a pair is found
                 break
-        if d_mapping is not None:
+        if v1_mapped is not None:
             break
 
     # If no pair of vertices is found with the same label, a None value is put in front of the list of vertices
-    # of graph 2 with color C. This is done to let de next for-loop know that there is no pair of vertices in
+    # of graph 2 with color C. This is done to let the next for-loop know that there is no pair of vertices in
     # color class C. From graph 1 now any random vertex can be chosen, so the first vertex of the list of vertices
     # of graph 1 and color class C is chosen.
-    if d_mapping is None:
+    if v1_mapped is None:
         v_graph2_colorC = [None] + v_graph2_colorC
-        d_mapping = v_graph1_colorC[0]
+        v1_mapped = v_graph1_colorC[0]
 
     # Create an empty list to store the mappings in that are returned from lower nodes in the branching.
     current_node_mappings = []
@@ -96,7 +99,7 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
     for i in range(len(v_graph2_colorC)):
         v2 = v_graph2_colorC[i]
 
-        # If the vertex is None, this meant that there was not a pair of vertices found with the same label and so
+        # If the vertex is None, this means that there was not a pair of vertices found with the same label and so
         # this loop can be skipped
         if v2 is None:
             continue
@@ -106,10 +109,10 @@ def branching(G: 'Graph', color_refinement_method: Callable[[Graph], None], triv
         # current node must be trivial and the mapping must be from a pair of vertices with the same label. This is
         # only true if i is zero, because if there is a pair, the vertex of graph 2 is in front of the loop.
         still_trivial = trivial_node and i == 0
-        next_node_mappings = permutations_of_mapping(G, C, d_mapping, v2, color_refinement_method, still_trivial)
+        next_node_mappings = permutations_of_mapping(G, C, v1_mapped, v2, color_refinement_method, still_trivial)
 
         # If there is at least one valid mapping returned from the node, the mappings are added to the mapping of the
-        # current node. The next_node_mappins could be an empty list when a branch of the branching tree did not result
+        # current node. The next_node_mappings could be an empty list when a branch of the branching tree did not result
         # in any mappings or if the next node is a leaf and the coloring was not balanced.
         if len(next_node_mappings) != 0:
             current_node_mappings += next_node_mappings
@@ -203,11 +206,11 @@ def order_computation(H: 'List[permutation]'):
     :return: int with the order of the list of permutations
     """
     # If H has only one element and it is the unity permutation. The length of the orbit is 1.
-    # Because whatever a you choose, it can only map to itself.
+    # Because whatever 'a' you choose, it can only map to itself.
     if len(H) == 1 and H[0].istrivial():
         return 1
 
-    # And because the method Stabilizer does not return the unity permutation as part of the stabilizer,]
+    # And because the method Stabilizer does not return the unity permutation as part of the stabilizer,
     # if further down in the recursion the length of H is zero, this actually means that only the unity
     # permutation is left, because that one must always be in the stabilizer. So in this case, the length
     # of the orbit is also 1.
@@ -216,11 +219,11 @@ def order_computation(H: 'List[permutation]'):
 
     # In any other case, the theorem holds that the order of H is the order of the stabilizer multiplied by the
     # length of the orbit ( |H| = |H0| * |0_H| ). For this theorem the theory of slide 21 of the lecture slides
-    # of L4 are used.
+    # of lecture L4 are used.
 
     # Choose a with nontrivial orbit
     a = FindNonTrivialOrbit(H)
-    # Determine orbit of a (list of vertices to which 'a' can be mapped to)
+    # Determine orbit of a (list of vertices to which 'a' can be mapped)
     O_H = Orbit(H, a)
     # Determine stabilizer of a (list of permutations that leave 'a' untouched)
     H_0 = Stabilizer(H, a)
