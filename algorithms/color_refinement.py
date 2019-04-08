@@ -9,6 +9,8 @@ def color_refinement(G: "Graph"):
     :param G: Graph to be colored
     :return: Finished colored graph
     """
+    # init
+    #G.neighbours_of = {}
 
     has_changed = True
     while has_changed:
@@ -37,12 +39,18 @@ def fast_color_refinement(G: "Graph"):
     """
 
     queue = __initialize_queue(G)
+    neighbours_of = dict()
     while queue:
         # Get first color and remove that from the queue
         color = queue.pop(0)
         vertices_in_color_group = G.colors[color]
         # Get the neighbours of the color group grouped by color
-        neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group)
+
+        neighbours_of_color_group = __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group, neighbours_of)
+
+        remove_c_vertex_group = list()
+        add_c_vertex_group = list()
+
         for c, color_group in neighbours_of_color_group.items():
             # Do nothing if the size of the set in neighbours_of_color_group is zero or if the size is the same as the size of the list in colors
             if len(color_group) == 0 or len(color_group) == len(G.colors[c]):
@@ -52,8 +60,12 @@ def fast_color_refinement(G: "Graph"):
             for vertex in color_group:
                 vertex.colornum = G.max_colornum
                 # Update colors of graph
+                print('v')
+                print(vertex)
                 G.colors[c].remove(vertex)
+                remove_c_vertex_group.append((c, vertex))
                 G.colors.setdefault(G.max_colornum, list()).append(vertex)
+                add_c_vertex_group.append((G.max_colornum, vertex))
             # Add the correct color to the queue
             if c in queue:
                 queue.append(G.max_colornum)
@@ -64,6 +76,15 @@ def fast_color_refinement(G: "Graph"):
                     queue.append(c)
                 else:
                     queue.append(G.max_colornum)
+
+        # Update neighbours
+        # for tup in add_c_vertex_group:
+        #     neighbours_of[color].setdefault(tup[0], set()).add(tup[1])
+
+        # for tup in remove_c_vertex_group:
+        #     neighbours_of[color][tup[0]].remove(tup[1])
+
+
     return G
 
 
@@ -138,7 +159,7 @@ def __initialize_queue(G: "Graph"):
     return queue
 
 
-def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group: "List[Vertex]"):
+def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group: "List[Vertex]", neighbours_of):
     """
     Returns a dict with the color of the color group as key and the set of neighbours of the color group currently
     investigated as value.
@@ -146,13 +167,37 @@ def __get_color_groups_with_neighbours_in_color_group(vertices_in_color_group: "
     :return: The dict with the color and the vertices in those color groups with a neighbour in the color group
     currently investigated
     """
-    neighbours_of_color_group = {}
+
+    #neighbours_of_color_group = {}
     # Get the color of the color group currently investigated
     color = vertices_in_color_group[0].colornum
+
+    #neighbours_of = {}
+
+    # Allocate a new dict()
+    if not color in neighbours_of:
+        neighbours_of[color] = {}
+
+
     for vertex in vertices_in_color_group:
         neighbours = vertex.neighbours
         for neighbour in neighbours:
             if neighbour.colornum != color:
+                in_dict = False
+
+                for colnum, v_set in neighbours_of[color].items():
+                    if neighbour in v_set and neighbour.colornum != colnum:
+                        print(neighbour)
+                        print(v_set)
+                        neighbours_of[color][colnum].remove(neighbour)
+                        print('rem')
+
+                    if neighbour in v_set and neighbour.colornum == colnum:
+                        in_dict = True
+
+                if not in_dict:
+                    neighbours_of[color].setdefault(neighbour.colornum, set()).add(neighbour)
                 # Only add the vertex to the map if it is not in the color group currently investigated
-                neighbours_of_color_group.setdefault(neighbour.colornum, set()).add(neighbour)
-    return neighbours_of_color_group
+
+
+    return neighbours_of[color]
