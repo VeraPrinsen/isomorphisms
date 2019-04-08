@@ -144,7 +144,7 @@ pr.disable()
 
 s = io.StringIO()
 
-sortby = SortKey.TIME, SortKey.CUMULATIVE
+sortby = SortKey.CUMULATIVE
 
 ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
 
