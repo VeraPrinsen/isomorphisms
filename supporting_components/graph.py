@@ -624,8 +624,42 @@ class Graph(object):
             reached_vertices = self.bfs(part, vertex)
             vertices_connected_subgraphs.append(reached_vertices)
             number_of_vertices += len(reached_vertices)
-        return vertices_connected_subgraphs
 
+        subgraphs = list()
+        for connected_vertices in vertices_connected_subgraphs:
+            subgraphs.append(graph_from_connected_vertices(connected_vertices))
+            #print(subgraphs)
+        return subgraphs
+
+
+def graph_from_connected_vertices(vertices_list: "List[Vertex]"):
+    subG = Graph(directed=False)
+
+    vertex_reference_bigG = dict()
+
+    subgraph_edges = set()
+
+    for v_in_disconnected_G in vertices_list:
+        vertex_reference_bigG[v_in_disconnected_G] = Vertex(graph=subG)
+        vertex_reference_bigG[v_in_disconnected_G].degree_fixed = v_in_disconnected_G.degree_fixed
+        vertex_reference_bigG[v_in_disconnected_G].n_twins = v_in_disconnected_G.n_twins
+
+        # Copy the edges of the vertex
+        for e in v_in_disconnected_G.incidence:
+            subgraph_edges.add(e)
+
+
+    # Add edges
+    # If vertex on Edge is not present when calling add.edge(), the vertex is added to the Graph object.
+    for e_in_big_G in subgraph_edges:
+        subG.add_edge(
+            Edge(
+                vertex_reference_bigG[e_in_big_G.tail],
+                vertex_reference_bigG[e_in_big_G.head]
+            )
+        )
+
+    return subG
 
 class UnsafeGraph(Graph):
     @property
